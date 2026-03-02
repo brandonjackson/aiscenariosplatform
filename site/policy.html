@@ -78,8 +78,7 @@
   (function() {
     'use strict';
 
-    const params = new URLSearchParams(window.location.search);
-    const policyId = params.get('id');
+    const policyId = window.location.hash.slice(1) || new URLSearchParams(window.location.search).get('id');
 
     if (!policyId) {
       window.location.href = 'index.html';
@@ -145,7 +144,7 @@
           const prepColor = ev ? getPreparednessColor(ev.preparedness) : '#ccc';
           const prepText = ev ? ev.preparedness + '/200' : 'N/A';
 
-          return '<a href="scenario.html?id=' + s.id + '" class="related-card">' +
+          return '<a href="scenario.html#' + s.id + '" class="related-card">' +
             '<div class="related-card-header">' +
               '<h3 class="related-card-title">' + s.title + '</h3>' +
               '<span class="related-card-institution">' + s.institution + '</span>' +

@@ -375,13 +375,13 @@
           .slice(0, 3);
 
         const policyHtml = relevantPolicies.length
-          ? relevantPolicies.map((p) => `<a href="policy.html?id=${p.id}" class="policy-tag">${p.name}</a>`).join('')
+          ? relevantPolicies.map((p) => `<a href="policy.html#${p.id}" class="policy-tag">${p.name}</a>`).join('')
           : '<span class="policy-tag">&mdash;</span>';
 
         return `
         <tr>
           <td>
-            <a href="scenario.html?id=${s.id}" class="scenario-name">${s.title}</a>
+            <a href="scenario.html#${s.id}" class="scenario-name">${s.title}</a>
             <div class="scenario-institution">${s.institution}</div>
           </td>
           <td><span class="likelihood-badge">${ev.likelihood}%</span></td>

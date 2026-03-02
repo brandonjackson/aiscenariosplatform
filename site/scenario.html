@@ -151,8 +151,7 @@
   (function() {
     'use strict';
 
-    const params = new URLSearchParams(window.location.search);
-    const scenarioId = params.get('id');
+    const scenarioId = window.location.hash.slice(1) || new URLSearchParams(window.location.search).get('id');
 
     if (!scenarioId) {
       window.location.href = 'index.html';
@@ -268,7 +267,7 @@
             ).join('');
 
             return '<div class="policy-detail-card">' +
-              '<h3 class="policy-detail-name"><a href="policy.html?id=' + p.id + '">' + p.name + '</a></h3>' +
+              '<h3 class="policy-detail-name"><a href="policy.html#' + p.id + '">' + p.name + '</a></h3>' +
               '<div class="policy-detail-tag">' + formatTag(p.challengeTag) + '</div>' +
               '<p class="policy-detail-desc">' + p.description + '</p>' +
               (citations ? '<div class="policy-detail-citations">' + citations + '</div>' : '') +
