@@ -1,0 +1,185 @@
+#!/usr/bin/env node
+
+/**
+ * compile.js — CSV → JSON compiler for AI Scenarios Platform
+ * 
+ * Reads scenarios.csv, evaluations.csv, and policies.csv from data/
+ * Outputs site/data.json with chart-ready, joined data.
+ * 
+ * Usage: npm run compile
+ */
+
+const fs = require('fs');
+const path = require('path');
+const { parse } = require('csv-parse/sync');
+
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const OUTPUT_PATH = path.join(__dirname, '..', 'site', 'data.json');
+
+// --- Helpers ---
+
+function readCSV(filename) {
+  const filepath = path.join(DATA_DIR, filename);
+  const content = fs.readFileSync(filepath, 'utf-8');
+  return parse(content, {
+    columns: true,
+    skip_empty_lines: true,
+    trim: true,
+    relax_quotes: true,
+  });
+}
+
+function toBoolean(val) {
+  return String(val).toUpperCase() === 'TRUE';
+}
+
+function toNumber(val) {
+  const n = Number(val);
+  return isNaN(n) ? 0 : n;
+}
+
+function getRating(score) {
+  if (score <= 40) return 'Critically Unprepared';
+  if (score <= 80) return 'Low';
+  if (score <= 120) return 'Moderate';
+  if (score <= 160) return 'Good';
+  return 'Well Prepared';
+}
+
+// --- Tag columns ---
+const TAG_COLUMNS = [
+  'tag_mass_unemployment',
+  'tag_fiscal_crisis',
+  'tag_inequality',
+  'tag_ai_concentration',
+  'tag_skills_obsolescence',
+  'tag_public_service_disruption',
+  'tag_democratic_erosion',
+  'tag_existential_risk',
+];
+
+// --- Main ---
+
+function compile() {
+  console.log('📊 Compiling AI Scenarios data...\n');
+
+  // 1. Read CSVs
+  const rawScenarios = readCSV('scenarios.csv');
+  const rawEvaluations = readCSV('evaluations.csv');
+  const rawPolicies = readCSV('policies.csv');
+
+  console.log(`  Scenarios:   ${rawScenarios.length}`);
+  console.log(`  Evaluations: ${rawEvaluations.length}`);
+  console.log(`  Policies:    ${rawPolicies.length}`);
+
+  // 2. Deduplicate evaluations — keep latest per scenario_id
+  const latestEvals = {};
+  for (const ev of rawEvaluations) {
+    const id = ev.scenario_id;
+    if (!latestEvals[id] || ev.date > latestEvals[id].date) {
+      latestEvals[id] = ev;
+    }
+  }
+
+  // 3. Transform scenarios
+  const scenarios = rawScenarios.map(row => {
+    const tags = TAG_COLUMNS
+      .filter(col => toBoolean(row[col]))
+      .map(col => col.replace('tag_', ''));
+
+    const ev = latestEvals[row.id];
+    const evaluation = ev ? {
+      date: ev.date,
+      likelihood: toNumber(ev.likelihood),
+      impact: toNumber(ev.impact),
+      preparedness: toNumber(ev.preparedness),
+      rationale: {
+        likelihood: ev.likelihood_rationale || '',
+        impact: ev.impact_rationale || '',
+        preparedness: ev.preparedness_rationale || '',
+      }
+    } : null;
+
+    return {
+      id: row.id,
+      title: row.title,
+      authors: row.authors,
+      institution: row.institution,
+      url: row.url,
+      year: toNumber(row.year),
+      summary: row.summary,
+      steep: {
+        social: row.social,
+        technological: row.technological,
+        economic: row.economic,
+        environmental: row.environmental,
+        political: row.political,
+      },
+      tags,
+      evaluation,
+    };
+  });
+
+  // 4. Transform policies
+  const policies = rawPolicies.map(row => {
+    const citations = [];
+    for (let i = 1; i <= 3; i++) {
+      const text = row[`citation_${i}_text`];
+      const url = row[`citation_${i}_url`];
+      if (text && url) {
+        citations.push({ text, url });
+      }
+    }
+
+    return {
+      id: row.id,
+      name: row.name,
+      challengeTag: row.challenge_tag ? row.challenge_tag.replace('tag_', '') : '',
+      description: row.description,
+      citations,
+    };
+  });
+
+  // 5. Compute aggregate stats
+  const evaluatedScenarios = scenarios.filter(s => s.evaluation);
+  
+  let weightedPreparedness = 0;
+  let totalWeight = 0;
+  for (const s of evaluatedScenarios) {
+    const weight = s.evaluation.likelihood / 100;
+    weightedPreparedness += s.evaluation.preparedness * weight;
+    totalWeight += weight;
+  }
+  
+  const overallPreparedness = totalWeight > 0 
+    ? Math.round(weightedPreparedness / totalWeight) 
+    : 0;
+
+  // Convert to percentage (preparedness is 0-200, so divide by 2 for percentage)
+  const overallPreparednessPct = Math.round(overallPreparedness / 2);
+
+  const output = {
+    meta: {
+      generated: new Date().toISOString(),
+      overallPreparedness,
+      overallPreparednessPct,
+      overallRating: getRating(overallPreparedness),
+      scenarioCount: scenarios.length,
+      policyCount: policies.length,
+    },
+    scenarios,
+    policies,
+  };
+
+  // 6. Write output
+  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
+  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
+
+  console.log(`\n✅ Compiled successfully → ${OUTPUT_PATH}`);
+  console.log(`\n  Overall Preparedness: ${overallPreparedness}/200 (${overallPreparednessPct}%)`);
+  console.log(`  Rating: ${output.meta.overallRating}`);
+  console.log(`  Scenarios: ${output.meta.scenarioCount}`);
+  console.log(`  Policies: ${output.meta.policyCount}\n`);
+}
+
+compile();

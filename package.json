@@ -1,0 +1,17 @@
+{
+  "name": "ai-scenarios-platform",
+  "version": "0.1.0",
+  "description": "AI Scenarios Platform — tracking preparedness for transformative AI",
+  "private": true,
+  "scripts": {
+    "compile": "node scripts/compile.js",
+    "dev": "npx serve site -l 3000",
+    "build": "npm run compile"
+  },
+  "dependencies": {
+    "csv-parse": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
