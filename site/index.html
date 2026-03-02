@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Scenarios — How Prepared Are We for Transformative AI?</title>
+  <meta name="description" content="Tracking and evaluating transformative AI scenarios to gauge global preparedness for economic disruption.">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <div class="site-logo">AI <span>Scenarios</span></div>
+      <nav class="site-nav">
+        <a href="#scenarios">Scenarios</a>
+        <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+
+        <!-- Left: Headline stat -->
+        <div class="hero-headline">
+          <div class="hero-label">AI Preparedness Tracker</div>
+          <h1 class="hero-title">Our current economic preparedness for transformative AI is:</h1>
+          <div class="hero-rating">
+            <span id="hero-rating-value" class="hero-rating-value rating-critically-unprepared">...</span>
+            <span id="hero-rating-pct" class="hero-rating-pct rating-critically-unprepared"></span>
+            <div class="hero-rating-bar">
+              <div id="hero-rating-bar-fill" class="hero-rating-bar-fill bg-critically-unprepared" style="width: 0%;"></div>
+            </div>
+          </div>
+          <div class="hero-actions">
+            <a href="https://github.com/brandonjackson/aiscenariosplatform" class="btn btn-primary" target="_blank" rel="noopener">View Repo</a>
+            <a href="#scenarios" class="btn btn-outline">Explore Scenarios</a>
+          </div>
+        </div>
+
+        <!-- Right: Chart -->
+        <div class="chart-section">
+          <div class="chart-header">
+            <div class="chart-title">Scenario Risk Map</div>
+            <div class="chart-controls">
+              <button data-mode="risk" class="active">Net Risk</button>
+              <button data-mode="impact">Impact</button>
+              <button data-mode="preparedness">Preparedness</button>
+            </div>
+          </div>
+          <div id="chart-container">
+            <div class="chart-tooltip"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-section">
+    <div class="container">
+      <div class="how-section-inner">
+        <div class="section-label">Methodology</div>
+        <h2 class="section-title">How It Works</h2>
+        <p class="how-text">
+          The future is uncertain &mdash; yet we must prepare. That&rsquo;s why we&rsquo;ve evaluated
+          <strong><span id="scenario-count">—</span> scenarios</strong> of transformative AI and tested
+          the effectiveness of <strong><span id="policy-count">—</span> policy proposals</strong>
+          to gauge our AI readiness. Each scenario is scored on likelihood, impact, and how prepared
+          current policies are to address it.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scenario Table -->
+  <section id="scenarios" class="scenarios-section">
+    <div class="container">
+      <div class="section-label">Evaluations</div>
+      <h2 class="section-title">Scenario Overview</h2>
+      <div class="table-wrapper">
+        <table class="scenario-table">
+          <thead>
+            <tr>
+              <th>Scenario</th>
+              <th>Likelihood</th>
+              <th>Relevant Policies</th>
+              <th>Preparedness</th>
+            </tr>
+          </thead>
+          <tbody id="scenario-tbody">
+            <!-- Populated by chart.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span>&copy; 2026 AI Scenarios. Data-driven AI preparedness tracking.</span>
+        <div class="footer-links">
+          <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">Source</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="chart.js"></script>
+</body>
+</html>
