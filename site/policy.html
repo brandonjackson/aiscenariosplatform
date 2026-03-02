@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Policy — AI Scenarios</title>
+  <meta name="description" content="Policy proposal for transformative AI preparedness.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="site-logo">AI <span>Scenarios</span></a>
+      <nav class="site-nav">
+        <a href="index.html#scenarios">Scenarios</a>
+        <a href="methodology.html">Methodology</a>
+        <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Policy Detail -->
+  <main class="detail-page">
+    <div class="container">
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-sep">/</span>
+        <span>Policies</span>
+        <span class="breadcrumb-sep">/</span>
+        <span id="breadcrumb-title">...</span>
+      </nav>
+
+      <!-- Header -->
+      <div class="detail-header">
+        <div class="detail-header-left">
+          <h1 id="policy-title" class="detail-title">Loading...</h1>
+          <div class="detail-meta">
+            <span class="detail-tag" id="policy-challenge-tag"></span>
+          </div>
+          <p id="policy-description" class="detail-summary"></p>
+          <a href="index.html#scenarios" class="btn btn-outline">Back to Overview</a>
+        </div>
+      </div>
+
+      <!-- Citations -->
+      <section class="detail-section" id="citations-section" style="display:none;">
+        <h2 class="section-title">References &amp; Citations</h2>
+        <div class="citation-list" id="citation-list"></div>
+      </section>
+
+      <!-- Related Scenarios -->
+      <section class="detail-section" id="related-section" style="display:none;">
+        <h2 class="section-title">Related Scenarios</h2>
+        <p class="section-subtitle">Scenarios where this policy is relevant based on shared challenge tags.</p>
+        <div class="related-scenarios" id="related-scenarios"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span>&copy; 2026 AI Scenarios. Data-driven AI preparedness tracking.</span>
+        <div class="footer-links">
+          <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">Source</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function() {
+    'use strict';
+
+    const params = new URLSearchParams(window.location.search);
+    const policyId = params.get('id');
+
+    if (!policyId) {
+      window.location.href = 'index.html';
+      return;
+    }
+
+    function formatTag(tag) {
+      return tag.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function getPreparednessColor(score) {
+      if (score <= 40) return '#c0392b';
+      if (score <= 80) return '#e67e22';
+      if (score <= 120) return '#f1c40f';
+      if (score <= 160) return '#27ae60';
+      return '#1e8449';
+    }
+
+    async function init() {
+      let data;
+      try {
+        const response = await fetch('data.json');
+        data = await response.json();
+      } catch (err) {
+        document.getElementById('policy-title').textContent = 'Failed to load data';
+        return;
+      }
+
+      const policy = data.policies.find(p => p.id === policyId);
+      if (!policy) {
+        document.getElementById('policy-title').textContent = 'Policy not found';
+        return;
+      }
+
+      // Page title
+      document.title = policy.name + ' — AI Scenarios';
+
+      // Header
+      document.getElementById('breadcrumb-title').textContent = policy.name;
+      document.getElementById('policy-title').textContent = policy.name;
+      document.getElementById('policy-challenge-tag').textContent = formatTag(policy.challengeTag);
+      document.getElementById('policy-description').textContent = policy.description;
+
+      // Citations
+      if (policy.citations && policy.citations.length > 0) {
+        document.getElementById('citations-section').style.display = '';
+        document.getElementById('citation-list').innerHTML = policy.citations.map(c =>
+          '<div class="citation-card">' +
+            '<a href="' + c.url + '" class="citation-link" target="_blank" rel="noopener">' +
+              '<span class="citation-text">' + c.text + '</span>' +
+              '<span class="citation-url">' + c.url + '</span>' +
+            '</a>' +
+          '</div>'
+        ).join('');
+      }
+
+      // Related Scenarios
+      const related = data.scenarios.filter(s => s.tags.includes(policy.challengeTag));
+      if (related.length > 0) {
+        document.getElementById('related-section').style.display = '';
+        document.getElementById('related-scenarios').innerHTML = related.map(s => {
+          const ev = s.evaluation;
+          const prepColor = ev ? getPreparednessColor(ev.preparedness) : '#ccc';
+          const prepText = ev ? ev.preparedness + '/200' : 'N/A';
+
+          return '<a href="scenario.html?id=' + s.id + '" class="related-card">' +
+            '<div class="related-card-header">' +
+              '<h3 class="related-card-title">' + s.title + '</h3>' +
+              '<span class="related-card-institution">' + s.institution + '</span>' +
+            '</div>' +
+            '<div class="related-card-metrics">' +
+              (ev ? '<span class="related-metric">Likelihood: ' + ev.likelihood + '%</span>' : '') +
+              '<span class="related-metric" style="color:' + prepColor + '">Preparedness: ' + prepText + '</span>' +
+            '</div>' +
+          '</a>';
+        }).join('');
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scenario — AI Scenarios</title>
+  <meta name="description" content="Detailed scenario evaluation for transformative AI preparedness.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="site-logo">AI <span>Scenarios</span></a>
+      <nav class="site-nav">
+        <a href="index.html#scenarios">Scenarios</a>
+        <a href="methodology.html">Methodology</a>
+        <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Scenario Detail -->
+  <main class="detail-page">
+    <div class="container">
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-sep">/</span>
+        <a href="index.html#scenarios">Scenarios</a>
+        <span class="breadcrumb-sep">/</span>
+        <span id="breadcrumb-title">...</span>
+      </nav>
+
+      <!-- Header -->
+      <div class="detail-header">
+        <div class="detail-header-left">
+          <h1 id="scenario-title" class="detail-title">Loading...</h1>
+          <div class="detail-meta">
+            <span id="scenario-authors" class="detail-authors"></span>
+            <span class="detail-meta-sep">&middot;</span>
+            <span id="scenario-institution" class="detail-institution"></span>
+            <span class="detail-meta-sep">&middot;</span>
+            <span id="scenario-year" class="detail-year"></span>
+          </div>
+          <p id="scenario-summary" class="detail-summary"></p>
+          <div class="detail-actions">
+            <a id="scenario-url" href="#" class="btn btn-primary" target="_blank" rel="noopener">Read Original</a>
+            <a href="index.html#scenarios" class="btn btn-outline">Back to Overview</a>
+          </div>
+        </div>
+        <div id="eval-card" class="eval-card" style="display:none;">
+          <div class="eval-card-title">Latest Evaluation</div>
+          <div class="eval-card-date" id="eval-date"></div>
+          <div class="eval-metrics">
+            <div class="eval-metric">
+              <div class="eval-metric-label">Likelihood</div>
+              <div class="eval-metric-value" id="eval-likelihood"></div>
+              <div class="eval-metric-bar"><div class="eval-metric-bar-fill" id="eval-likelihood-bar"></div></div>
+            </div>
+            <div class="eval-metric">
+              <div class="eval-metric-label">Impact</div>
+              <div class="eval-metric-value" id="eval-impact"></div>
+              <div class="eval-metric-bar impact-bar"><div class="eval-metric-bar-fill" id="eval-impact-bar"></div></div>
+            </div>
+            <div class="eval-metric">
+              <div class="eval-metric-label">Preparedness</div>
+              <div class="eval-metric-value" id="eval-preparedness"></div>
+              <div class="eval-metric-bar"><div class="eval-metric-bar-fill" id="eval-preparedness-bar"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEEP Analysis -->
+      <section class="detail-section" id="steep-section" style="display:none;">
+        <h2 class="section-title">STEEP Analysis</h2>
+        <div class="steep-grid">
+          <div class="steep-card">
+            <div class="steep-card-icon">S</div>
+            <h3 class="steep-card-title">Social</h3>
+            <p id="steep-social" class="steep-card-text"></p>
+          </div>
+          <div class="steep-card">
+            <div class="steep-card-icon">T</div>
+            <h3 class="steep-card-title">Technological</h3>
+            <p id="steep-technological" class="steep-card-text"></p>
+          </div>
+          <div class="steep-card">
+            <div class="steep-card-icon">E</div>
+            <h3 class="steep-card-title">Economic</h3>
+            <p id="steep-economic" class="steep-card-text"></p>
+          </div>
+          <div class="steep-card">
+            <div class="steep-card-icon">E</div>
+            <h3 class="steep-card-title">Environmental</h3>
+            <p id="steep-environmental" class="steep-card-text"></p>
+          </div>
+          <div class="steep-card">
+            <div class="steep-card-icon">P</div>
+            <h3 class="steep-card-title">Political</h3>
+            <p id="steep-political" class="steep-card-text"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Evaluation Rationale -->
+      <section class="detail-section" id="rationale-section" style="display:none;">
+        <h2 class="section-title">Evaluation Rationale</h2>
+        <div class="rationale-grid">
+          <div class="rationale-card">
+            <h3 class="rationale-card-title">Likelihood Rationale</h3>
+            <p id="rationale-likelihood" class="rationale-card-text"></p>
+          </div>
+          <div class="rationale-card">
+            <h3 class="rationale-card-title">Impact Rationale</h3>
+            <p id="rationale-impact" class="rationale-card-text"></p>
+          </div>
+          <div class="rationale-card">
+            <h3 class="rationale-card-title">Preparedness Rationale</h3>
+            <p id="rationale-preparedness" class="rationale-card-text"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Policy Challenges & Relevant Policies -->
+      <section class="detail-section" id="policies-section" style="display:none;">
+        <h2 class="section-title">Relevant Policies</h2>
+        <div class="detail-tags" id="scenario-tags"></div>
+        <div class="policy-list" id="policy-list"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span>&copy; 2026 AI Scenarios. Data-driven AI preparedness tracking.</span>
+        <div class="footer-links">
+          <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">Source</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function() {
+    'use strict';
+
+    const params = new URLSearchParams(window.location.search);
+    const scenarioId = params.get('id');
+
+    if (!scenarioId) {
+      window.location.href = 'index.html';
+      return;
+    }
+
+    function getPreparednessColor(score) {
+      if (score <= 40) return '#c0392b';
+      if (score <= 80) return '#e67e22';
+      if (score <= 120) return '#f1c40f';
+      if (score <= 160) return '#27ae60';
+      return '#1e8449';
+    }
+
+    function getImpactColor(impact) {
+      if (impact >= 0) return '#27ae60';
+      if (impact >= -30) return '#e67e22';
+      return '#c0392b';
+    }
+
+    function formatTag(tag) {
+      return tag.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    async function init() {
+      let data;
+      try {
+        const response = await fetch('data.json');
+        data = await response.json();
+      } catch (err) {
+        document.getElementById('scenario-title').textContent = 'Failed to load data';
+        return;
+      }
+
+      const scenario = data.scenarios.find(s => s.id === scenarioId);
+      if (!scenario) {
+        document.getElementById('scenario-title').textContent = 'Scenario not found';
+        return;
+      }
+
+      // Page title
+      document.title = scenario.title + ' — AI Scenarios';
+
+      // Header
+      document.getElementById('breadcrumb-title').textContent = scenario.title;
+      document.getElementById('scenario-title').textContent = scenario.title;
+      document.getElementById('scenario-authors').textContent = scenario.authors;
+      document.getElementById('scenario-institution').textContent = scenario.institution;
+      document.getElementById('scenario-year').textContent = scenario.year;
+      document.getElementById('scenario-summary').textContent = scenario.summary;
+
+      const urlEl = document.getElementById('scenario-url');
+      if (scenario.url) {
+        urlEl.href = scenario.url;
+      } else {
+        urlEl.style.display = 'none';
+      }
+
+      // Evaluation card
+      const ev = scenario.evaluation;
+      if (ev) {
+        document.getElementById('eval-card').style.display = '';
+        document.getElementById('eval-date').textContent = 'Evaluated: ' + ev.date;
+        document.getElementById('eval-likelihood').textContent = ev.likelihood + '%';
+        document.getElementById('eval-likelihood-bar').style.width = ev.likelihood + '%';
+        document.getElementById('eval-likelihood-bar').style.backgroundColor = '#3498db';
+
+        document.getElementById('eval-impact').textContent = ev.impact;
+        const impactPct = Math.abs(ev.impact);
+        document.getElementById('eval-impact-bar').style.width = impactPct + '%';
+        document.getElementById('eval-impact-bar').style.backgroundColor = getImpactColor(ev.impact);
+
+        document.getElementById('eval-preparedness').textContent = ev.preparedness + '/200';
+        const prepPct = (ev.preparedness / 200) * 100;
+        document.getElementById('eval-preparedness-bar').style.width = prepPct + '%';
+        document.getElementById('eval-preparedness-bar').style.backgroundColor = getPreparednessColor(ev.preparedness);
+
+        // Rationale
+        if (ev.rationale) {
+          document.getElementById('rationale-section').style.display = '';
+          document.getElementById('rationale-likelihood').textContent = ev.rationale.likelihood;
+          document.getElementById('rationale-impact').textContent = ev.rationale.impact;
+          document.getElementById('rationale-preparedness').textContent = ev.rationale.preparedness;
+        }
+      }
+
+      // STEEP
+      if (scenario.steep) {
+        document.getElementById('steep-section').style.display = '';
+        document.getElementById('steep-social').textContent = scenario.steep.social;
+        document.getElementById('steep-technological').textContent = scenario.steep.technological;
+        document.getElementById('steep-economic').textContent = scenario.steep.economic;
+        document.getElementById('steep-environmental').textContent = scenario.steep.environmental;
+        document.getElementById('steep-political').textContent = scenario.steep.political;
+      }
+
+      // Tags & Policies
+      if (scenario.tags && scenario.tags.length > 0) {
+        document.getElementById('policies-section').style.display = '';
+        const tagsEl = document.getElementById('scenario-tags');
+        tagsEl.innerHTML = scenario.tags
+          .map(t => '<span class="detail-tag">' + formatTag(t) + '</span>')
+          .join('');
+
+        // Find relevant policies
+        const relevant = data.policies.filter(p => scenario.tags.includes(p.challengeTag));
+        const listEl = document.getElementById('policy-list');
+
+        if (relevant.length > 0) {
+          listEl.innerHTML = relevant.map(p => {
+            const citations = p.citations.map(c =>
+              '<a href="' + c.url + '" class="policy-citation" target="_blank" rel="noopener">' + c.text + '</a>'
+            ).join('');
+
+            return '<div class="policy-detail-card">' +
+              '<h3 class="policy-detail-name"><a href="policy.html?id=' + p.id + '">' + p.name + '</a></h3>' +
+              '<div class="policy-detail-tag">' + formatTag(p.challengeTag) + '</div>' +
+              '<p class="policy-detail-desc">' + p.description + '</p>' +
+              (citations ? '<div class="policy-detail-citations">' + citations + '</div>' : '') +
+              '</div>';
+          }).join('');
+        } else {
+          listEl.innerHTML = '<p class="no-results">No policies currently address this scenario\'s challenges.</p>';
+        }
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
+</body>
+</html>
