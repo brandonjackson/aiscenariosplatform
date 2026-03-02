@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Methodology — AI Scenarios</title>
+  <meta name="description" content="How we evaluate transformative AI scenarios and assess policy preparedness.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="site-logo">AI <span>Scenarios</span></a>
+      <nav class="site-nav">
+        <a href="index.html#scenarios">Scenarios</a>
+        <a href="methodology.html">Methodology</a>
+        <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="methodology-page">
+    <div class="container">
+      <div class="section-label">About</div>
+      <h1 class="section-title" style="font-size: 2rem; margin-bottom: 0.5rem;">Methodology</h1>
+      <p style="color: var(--color-text-light); margin-bottom: 2.5rem; max-width: 680px;">
+        How we select, evaluate, and score transformative AI scenarios to gauge global preparedness.
+      </p>
+
+      <div class="methodology-content">
+
+        <h2>Overview</h2>
+        <p>
+          AI Scenarios tracks published scenarios describing transformative AI futures and evaluates
+          how prepared current policy frameworks are to address them. The goal is to provide a
+          transparent, data-driven assessment of global AI readiness &mdash; not to predict the future,
+          but to measure our preparedness for a range of plausible futures.
+        </p>
+
+        <h2>Scenario Selection</h2>
+        <p>
+          Scenarios are drawn from published research, policy papers, and expert analyses. To be included,
+          a scenario must:
+        </p>
+        <ul>
+          <li>Be published by a credible institution or recognized expert</li>
+          <li>Describe a specific, plausible pathway for transformative AI</li>
+          <li>Have clear implications for economic, social, or political systems</li>
+          <li>Be sufficiently detailed to evaluate against existing policy frameworks</li>
+        </ul>
+        <p>
+          Each scenario is analyzed using the <strong>STEEP framework</strong> (Social, Technological,
+          Economic, Environmental, Political) to ensure comprehensive coverage of implications.
+        </p>
+
+        <h2>Evaluation Criteria</h2>
+        <p>
+          Each scenario is scored on three dimensions. Evaluations may be updated over time as
+          new evidence emerges or policies change.
+        </p>
+
+        <h3>Likelihood (0&ndash;100)</h3>
+        <p>
+          How likely is this scenario to materialize, at least in broad strokes, within the
+          timeframe described? This is not a precise probability but an expert assessment of
+          plausibility given current trends.
+        </p>
+        <table class="scale-table">
+          <thead><tr><th>Score</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>0&ndash;20</td><td>Very unlikely given current evidence</td></tr>
+            <tr><td>21&ndash;40</td><td>Possible but requires several uncertain assumptions</td></tr>
+            <tr><td>41&ndash;60</td><td>Plausible &mdash; could go either way</td></tr>
+            <tr><td>61&ndash;80</td><td>Likely based on current trends</td></tr>
+            <tr><td>81&ndash;100</td><td>Already underway or near-certain</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Impact (&minus;100 to +100)</h3>
+        <p>
+          The <strong>unmitigated</strong> impact of the scenario if it occurs without additional
+          policy intervention. Negative scores indicate harmful outcomes; positive scores indicate
+          beneficial outcomes.
+        </p>
+        <table class="scale-table">
+          <thead><tr><th>Score</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>&minus;100 to &minus;61</td><td>Catastrophic &mdash; severe, widespread harm</td></tr>
+            <tr><td>&minus;60 to &minus;21</td><td>Significant &mdash; serious but manageable harm</td></tr>
+            <tr><td>&minus;20 to +20</td><td>Neutral &mdash; mixed or minimal effects</td></tr>
+            <tr><td>+21 to +60</td><td>Beneficial &mdash; broadly positive outcomes</td></tr>
+            <tr><td>+61 to +100</td><td>Transformatively positive &mdash; major breakthroughs</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Preparedness (0&ndash;200)</h3>
+        <p>
+          How well-equipped are current policy frameworks, institutions, and governance structures
+          to handle this scenario? A score of 0 means no meaningful preparation exists; 200 means
+          comprehensive, tested policies are in place.
+        </p>
+        <table class="scale-table">
+          <thead><tr><th>Score</th><th>Rating</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>0&ndash;40</td><td style="color: #c0392b; font-weight: 600;">Critically Unprepared</td><td>No relevant policy infrastructure</td></tr>
+            <tr><td>41&ndash;80</td><td style="color: #e67e22; font-weight: 600;">Low</td><td>Early discussions but no concrete frameworks</td></tr>
+            <tr><td>81&ndash;120</td><td style="color: #f1c40f; font-weight: 600;">Moderate</td><td>Some policies exist but with significant gaps</td></tr>
+            <tr><td>121&ndash;160</td><td style="color: #27ae60; font-weight: 600;">Good</td><td>Solid frameworks with room for improvement</td></tr>
+            <tr><td>161&ndash;200</td><td style="color: #1e8449; font-weight: 600;">Well Prepared</td><td>Comprehensive, tested policy infrastructure</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Overall Preparedness Score</h2>
+        <p>
+          The headline preparedness score is a <strong>weighted average</strong> of all scenario
+          preparedness scores, weighted by each scenario&rsquo;s likelihood. This means more likely
+          scenarios contribute more to the overall score, reflecting the principle that we should
+          be most prepared for the futures most likely to occur.
+        </p>
+        <p>
+          <strong>Formula:</strong> Overall = &Sigma;(preparedness<sub>i</sub> &times; likelihood<sub>i</sub>) / &Sigma;(likelihood<sub>i</sub>)
+        </p>
+
+        <h2>Policy Challenges</h2>
+        <p>
+          Each scenario is tagged with one or more <strong>policy challenge categories</strong>
+          that it raises. These tags connect scenarios to relevant policy proposals:
+        </p>
+        <ul>
+          <li><strong>Mass Unemployment</strong> &mdash; Widespread job displacement</li>
+          <li><strong>Fiscal Crisis</strong> &mdash; Tax base erosion and fiscal instability</li>
+          <li><strong>Inequality</strong> &mdash; Wealth and income concentration</li>
+          <li><strong>AI Concentration</strong> &mdash; Market power concentration in AI firms</li>
+          <li><strong>Skills Obsolescence</strong> &mdash; Rapid depreciation of human skills</li>
+          <li><strong>Public Service Disruption</strong> &mdash; Government service transformation challenges</li>
+          <li><strong>Democratic Erosion</strong> &mdash; Threats to democratic governance</li>
+          <li><strong>Existential Risk</strong> &mdash; Catastrophic or existential-level threats</li>
+        </ul>
+
+        <h2>Data Pipeline</h2>
+        <p>
+          All data is stored in structured CSV files (scenarios, evaluations, policies) and compiled
+          into chart-ready JSON using a Node.js build script. The entire dataset and methodology are
+          open-source and available for inspection on
+          <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">GitHub</a>.
+        </p>
+
+        <h2>Limitations</h2>
+        <ul>
+          <li>Evaluations reflect informed judgment, not precise scientific measurement</li>
+          <li>Scenario coverage is not exhaustive &mdash; important futures may be missing</li>
+          <li>Preparedness assessments focus primarily on economic and governance dimensions</li>
+          <li>Scores are relative assessments and should not be compared across different frameworks</li>
+        </ul>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span>&copy; 2026 AI Scenarios. Data-driven AI preparedness tracking.</span>
+        <div class="footer-links">
+          <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">Source</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

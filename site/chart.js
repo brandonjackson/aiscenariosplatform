@@ -334,11 +334,34 @@
     const tbody = document.getElementById('scenario-tbody');
     if (!tbody) return;
 
-    const scenarios = data.scenarios.filter((s) => s.evaluation);
+    const searchInput = document.getElementById('filter-search');
+    const tagSelect = document.getElementById('filter-tag');
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+    const selectedTag = tagSelect ? tagSelect.value : '';
+
+    let scenarios = data.scenarios.filter((s) => s.evaluation);
     const policies = data.policies;
+
+    // Apply filters
+    if (searchTerm) {
+      scenarios = scenarios.filter((s) =>
+        s.title.toLowerCase().includes(searchTerm) ||
+        s.institution.toLowerCase().includes(searchTerm) ||
+        s.authors.toLowerCase().includes(searchTerm) ||
+        s.summary.toLowerCase().includes(searchTerm)
+      );
+    }
+    if (selectedTag) {
+      scenarios = scenarios.filter((s) => s.tags.includes(selectedTag));
+    }
 
     // Sort by likelihood descending
     scenarios.sort((a, b) => b.evaluation.likelihood - a.evaluation.likelihood);
+
+    if (scenarios.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" class="no-results">No scenarios match your filters.</td></tr>';
+      return;
+    }
 
     tbody.innerHTML = scenarios
       .map((s) => {
@@ -352,13 +375,13 @@
           .slice(0, 3);
 
         const policyHtml = relevantPolicies.length
-          ? relevantPolicies.map((p) => `<span class="policy-tag">${p.name}</span>`).join('')
-          : '<span class="policy-tag">—</span>';
+          ? relevantPolicies.map((p) => `<a href="policy.html?id=${p.id}" class="policy-tag">${p.name}</a>`).join('')
+          : '<span class="policy-tag">&mdash;</span>';
 
         return `
         <tr>
           <td>
-            <div class="scenario-name">${s.title}</div>
+            <a href="scenario.html?id=${s.id}" class="scenario-name">${s.title}</a>
             <div class="scenario-institution">${s.institution}</div>
           </td>
           <td><span class="likelihood-badge">${ev.likelihood}%</span></td>
@@ -406,6 +429,16 @@
     document.querySelectorAll('.chart-controls button').forEach((btn) => {
       btn.addEventListener('click', () => setMode(btn.dataset.mode));
     });
+
+    // Bind search/filter
+    const searchInput = document.getElementById('filter-search');
+    const tagSelect = document.getElementById('filter-tag');
+    if (searchInput) {
+      searchInput.addEventListener('input', populateScenarioTable);
+    }
+    if (tagSelect) {
+      tagSelect.addEventListener('change', populateScenarioTable);
+    }
 
     // Responsive resize
     let resizeTimer;

@@ -264,16 +264,16 @@ Evaluations and policies should be plausible seed data. The evaluations should r
 
 ### Phase 1 (MVP — this build)
 - [x] Data schema (CSVs)
-- [ ] Compile script
-- [ ] Static homepage with interactive chart
-- [ ] Responsive design
-- [ ] GitHub Pages deployable
+- [x] Compile script
+- [x] Static homepage with interactive chart
+- [x] Responsive design
+- [x] GitHub Pages deployable
 
 ### Phase 2 (Next iteration)
-- [ ] Individual scenario pages
-- [ ] Individual policy pages
-- [ ] Search/filter
-- [ ] Methodology page
+- [x] Individual scenario pages
+- [x] Individual policy pages
+- [x] Search/filter
+- [x] Methodology page
 - [ ] RSS feed for evaluation updates
 
 ### Phase 3 (Future)
