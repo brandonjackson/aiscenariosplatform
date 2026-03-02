@@ -1,0 +1,658 @@
+{
+  "meta": {
+    "generated": "2026-03-02T21:57:27.242Z",
+    "overallPreparedness": 30,
+    "overallPreparednessPct": 15,
+    "overallRating": "Critically Unprepared",
+    "scenarioCount": 10,
+    "policyCount": 15
+  },
+  "scenarios": [
+    {
+      "id": "sit-awareness",
+      "title": "Situational Awareness",
+      "authors": "Leopold Aschenbrenner",
+      "institution": "Independent (former OpenAI)",
+      "url": "https://situational-awareness.ai/",
+      "year": 2024,
+      "summary": "Projects that superintelligence is achievable by 2027-2028 through scaling current approaches, triggering an intelligence explosion and intense geopolitical competition.",
+      "steep": {
+        "social": "Mass societal disruption as AI surpasses human cognition across all domains; potential for extreme social stratification between those who control AI and those who don't.",
+        "technological": "Assumes continued exponential scaling of compute and algorithmic efficiency; predicts AGI-level systems within 2-3 years followed by rapid recursive self-improvement.",
+        "economic": "Economic concentration in whoever achieves superintelligence first; massive value capture by a tiny number of firms; potential for post-scarcity or total economic disruption.",
+        "environmental": "Massive energy demands for superintelligent systems; environmental impact depends entirely on whether AI is directed toward sustainability or unconstrained growth.",
+        "political": "Frames as a geopolitical race primarily between US and China; argues for government-lab partnerships and potential nationalization of AI development."
+      },
+      "tags": [
+        "mass_unemployment",
+        "fiscal_crisis",
+        "inequality",
+        "ai_concentration",
+        "skills_obsolescence",
+        "public_service_disruption",
+        "democratic_erosion",
+        "existential_risk"
+      ],
+      "evaluation": {
+        "date": "2026-02-15",
+        "likelihood": 35,
+        "impact": -90,
+        "preparedness": 15,
+        "rationale": {
+          "likelihood": "Superintelligence by 2028 is possible but relies on aggressive assumptions about scaling and recursive improvement. Most experts place this as a tail risk rather than base case.",
+          "impact": "If realized, impact would be among the most extreme scenarios — near-total economic and social restructuring with minimal time for adaptation.",
+          "preparedness": "Essentially no policy infrastructure exists for managing an intelligence explosion. Government awareness is growing but concrete preparations are near zero."
+        }
+      }
+    },
+    {
+      "id": "tbi-whirlwind",
+      "title": "The Whirlwind: AI's Rapid Transformation",
+      "authors": "Tony Blair Institute",
+      "institution": "Tony Blair Institute for Global Change",
+      "url": "https://www.institute.global/insights/politics-and-governance/the-whirlwind",
+      "year": 2024,
+      "summary": "Argues AI will transform governance, public services and the economy within 5 years, requiring immediate institutional adaptation rather than wait-and-see approaches.",
+      "steep": {
+        "social": "Public service transformation creates winners and losers; digital divide deepens unless proactively managed; healthcare and education radically reshaped.",
+        "technological": "Assumes rapid capability gains in language models enabling automation of most knowledge work; multimodal AI reshaping service delivery.",
+        "economic": "GDP growth accelerates but labor share of income falls; massive retraining needs; potential fiscal windfall from productivity gains if managed well.",
+        "environmental": "Relatively optimistic on environmental impact through AI-optimized systems, but acknowledges energy costs of AI infrastructure.",
+        "political": "Calls for proactive government transformation; new institutions needed; risk of democratic erosion if governments can't keep pace with corporate AI deployment."
+      },
+      "tags": [
+        "mass_unemployment",
+        "fiscal_crisis",
+        "inequality",
+        "skills_obsolescence",
+        "public_service_disruption",
+        "democratic_erosion"
+      ],
+      "evaluation": {
+        "date": "2026-02-15",
+        "likelihood": 70,
+        "impact": -55,
+        "preparedness": 40,
+        "rationale": {
+          "likelihood": "Rapid AI-driven government and service transformation is already underway in several countries. The 5-year timeline is plausible given current adoption rates.",
+          "impact": "Impact is significant but not catastrophic if managed proactively; main risk is uneven adaptation leaving vulnerable populations behind.",
+          "preparedness": "UK and some EU governments have begun adaptation planning, but most lack concrete implementation roadmaps. Digital transformation units exist but aren't AI-focused."
+        }
+      }
+    },
+    {
+      "id": "amodei-machines",
+      "title": "Machines of Loving Grace",
+      "authors": "Dario Amodei",
+      "institution": "Anthropic",
+      "url": "https://darioamodei.com/machines-of-loving-grace",
+      "year": 2024,
+      "summary": "Optimistic scenario for powerful AI: if safety challenges are solved, AI could dramatically accelerate progress in health, poverty reduction, governance, and science within 5-10 years.",
+      "steep": {
+        "social": "Dramatic improvements in global health and poverty; but benefits depend heavily on equitable access and governance structures.",
+        "technological": "Assumes powerful AI that is reliably aligned and controllable; human-AI collaboration as primary mode rather than full automation.",
+        "economic": "Broadly positive economic transformation with AI as amplifier of human capability; acknowledges need for redistribution mechanisms.",
+        "environmental": "Significant environmental benefits through AI-accelerated clean energy, materials science, and climate modeling.",
+        "political": "Optimistic about AI supporting better governance, but contingent on solving alignment and maintaining democratic oversight."
+      },
+      "tags": [
+        "inequality",
+        "ai_concentration"
+      ],
+      "evaluation": {
+        "date": "2026-02-15",
+        "likelihood": 25,
+        "impact": 70,
+        "preparedness": 30,
+        "rationale": {
+          "likelihood": "Optimistic scenario requires solving alignment, achieving broad capability, AND ensuring equitable deployment — each is uncertain, together they're unlikely in the near term.",
+          "impact": "If realized, this would be enormously positive — breakthroughs in health, poverty, and science. Positive impact score reflects the upside.",
+          "preparedness": "Some investment in AI safety research and beneficial AI programs, but nowhere near the scale needed to ensure this positive scenario materializes."
+        }
+      }
+    },
+    {
+      "id": "epoch-compendium",
+      "title": "The Compendium: AI & Economic Transformation",
+      "authors": "Epoch AI Research Team",
+      "institution": "Epoch AI",
+      "url": "https://epoch.ai/blog/the-compendium",
+      "year": 2025,
+      "summary": "Comprehensive economic analysis of transformative AI: models GDP growth trajectories, labor displacement timelines, and capital concentration under various automation scenarios.",
+      "steep": {
+        "social": "Social disruption concentrated in knowledge-work sectors first; potential for mass purposelessness even with economic safety nets.",
+        "technological": "Detailed modeling of AI capability trajectories across task types; estimates timeline to full automation of various job categories.",
+        "economic": "Projects potential 10-30% GDP growth but with severe distributional problems; models show capital owners capturing majority of gains without intervention.",
+        "environmental": "Notes massive compute energy requirements; models environmental impact of AI infrastructure buildout.",
+        "political": "Emphasizes need for novel economic policy; existing institutions ill-equipped for speed of transformation."
+      },
+      "tags": [
+        "mass_unemployment",
+        "fiscal_crisis",
+        "inequality",
+        "ai_concentration",
+        "skills_obsolescence"
+      ],
+      "evaluation": {
+        "date": "2026-02-15",
+        "likelihood": 60,
+        "impact": -65,
+        "preparedness": 25,
+        "rationale": {
+          "likelihood": "Epoch's economic modeling is rigorous and their automation timelines track with current capability trends. The distributional crisis is the most likely near-term risk.",
+          "impact": "Severe distributional impacts even with GDP growth; the Engels Pause dynamic could destabilize social contracts across advanced economies.",
+          "preparedness": "Tax policy, labor market institutions, and social safety nets are designed for a pre-AI economy. Reform discussions are early-stage at best."
+        }
+      }
+    },
+    {
+      "id": "ai2027",
+      "title": "AI 2027: Near-Term Trajectories",
+      "authors": "Daniel Kokotajlo et al.",
+      "institution": "AI Futures Project",
+      "url": "https://ai-2027.com/",
+      "year": 2025,
+      "summary": "Detailed scenario modeling the path from current AI to transformative systems by 2027, including lab dynamics, capability jumps, and societal response timelines.",
+      "steep": {
+        "social": "Rapid capability gains outpace societal adaptation; potential for crisis moments when AI capabilities visibly surpass human performance on economically important tasks.",
+        "technological": "Models specific capability milestones: autonomous research by 2026, broadly superhuman reasoning by 2027; assumes continued scaling plus algorithmic breakthroughs.",
+        "economic": "Economic transformation begins in earnest by 2026 with autonomous AI agents performing professional services; labor market disruption accelerates rapidly.",
+        "environmental": "Energy infrastructure becomes critical bottleneck; AI companies become largest energy consumers.",
+        "political": "Government response lags private sector by 12-18 months; regulatory frameworks designed for current AI become obsolete."
+      },
+      "tags": [
+        "mass_unemployment",
+        "fiscal_crisis",
+        "inequality",
+        "ai_concentration",
+        "skills_obsolescence",
+        "public_service_disruption",
+        "democratic_erosion",
+        "existential_risk"
+      ],
+      "evaluation": {
+        "date": "2026-02-15",
+        "likelihood": 40,
+        "impact": -75,
+        "preparedness": 20,
+        "rationale": {
+          "likelihood": "Aggressive timeline but from well-informed forecasters. The specific capability milestones are the key uncertainty — if scaling continues, 2027 is not impossible.",
+          "impact": "Near-term transformative AI would catch institutions and individuals deeply unprepared, leading to chaotic adjustment period.",
+          "preparedness": "Government response timelines of 12-18 months lag mean policies enacted today won't be effective until the transformation is already underway."
+        }
+      }
+    },
+    {
+      "id": "wc-wipeout",
+      "title": "White Collar Wipeout",
+      "authors": "Various (scenario synthesis)",
+      "institution": "Windfall Trust / Multiple",
+      "url": "https://windfalltrust.com/",
+      "year": 2025,
+      "summary": "Scenario in which AI rapidly automates professional and knowledge work, creating mass unemployment among previously secure middle-class workers while GDP continues to grow.",
+      "steep": {
+        "social": "Middle class social contract breaks down; professional identity crisis; mental health epidemic among displaced knowledge workers.",
+        "technological": "Assumes AI reaches and exceeds professional-grade performance in law, finance, consulting, medicine, software development within 3-5 years.",
+        "economic": "GDP grows 5-15% annually but labor share of income collapses; Engels Pause 2.0 where workers become poorer even as economy grows; consumption crisis follows.",
+        "environmental": "Modest direct environmental impact; potential positive impact from AI-optimized systems offset by growth in compute infrastructure.",
+        "political": "Fiscal crisis as income tax base erodes; demand for UBI/safety nets surges; political polarization between beneficiaries and losers of AI transition."
+      },
+      "tags": [
+        "mass_unemployment",
+        "fiscal_crisis",
+        "inequality",
+        "skills_obsolescence",
+        "public_service_disruption",
+        "democratic_erosion"
+      ],
+      "evaluation": {
+        "date": "2026-02-15",
+        "likelihood": 65,
+        "impact": -70,
+        "preparedness": 20,
+        "rationale": {
+          "likelihood": "Professional job displacement is already visible in coding, legal research, financial analysis. The question is speed and breadth, not whether it happens.",
+          "impact": "Middle class destabilization has profound second-order effects: consumption crisis, fiscal crisis, political polarization, mental health epidemic.",
+          "preparedness": "Almost no countries have policies specifically designed for rapid white-collar displacement. Retraining programs are scaled for manufacturing job losses, not professional services."
+        }
+      }
+    },
+    {
+      "id": "ord-precipice",
+      "title": "The Precipice: Existential Risk from AI",
+      "authors": "Toby Ord",
+      "institution": "Future of Humanity Institute",
+      "url": "https://theprecipice.com/",
+      "year": 2020,
+      "summary": "Frames advanced AI as the most significant existential risk humanity faces this century, with a 10% chance of existential catastrophe from unaligned superintelligence.",
+      "steep": {
+        "social": "Existential risk framing implies all social structures at risk; emphasizes intergenerational ethics and responsibility to future generations.",
+        "technological": "Focuses on alignment problem: sufficiently advanced AI systems may pursue goals misaligned with human values in ways that are catastrophic and irreversible.",
+        "economic": "Economic considerations secondary to survival; but notes that competitive dynamics create race conditions that increase risk.",
+        "environmental": "Environmental concerns subsumed under existential risk framing.",
+        "political": "Argues for unprecedented global coordination; likens to nuclear weapons governance but with harder verification problems."
+      },
+      "tags": [
+        "ai_concentration",
+        "existential_risk"
+      ],
+      "evaluation": {
+        "date": "2026-02-15",
+        "likelihood": 10,
+        "impact": -100,
+        "preparedness": 10,
+        "rationale": {
+          "likelihood": "10% existential risk this century from AI is Ord's estimate. While this is a low probability, the severity demands attention. Exact probability is deeply uncertain.",
+          "impact": "By definition, existential risk represents the maximum possible negative impact — loss of all future human potential.",
+          "preparedness": "International AI governance is in its infancy. No equivalent of nuclear non-proliferation frameworks exists for AI. Alignment research is underfunded relative to capability research."
+        }
+      }
+    },
+    {
+      "id": "suleyman-coming",
+      "title": "The Coming Wave",
+      "authors": "Mustafa Suleyman",
+      "institution": "Inflection AI / Microsoft",
+      "url": "https://www.the-coming-wave.com/",
+      "year": 2023,
+      "summary": "Argues AI and synthetic biology represent an unstoppable wave of technology that will fundamentally reshape power structures; calls for 'containment' as the central challenge.",
+      "steep": {
+        "social": "Technology diffusion means transformative capabilities become widely accessible, including to malicious actors; societal resilience is the key challenge.",
+        "technological": "Frames AI as part of a broader wave including synthetic biology; emphasizes the containment problem — keeping powerful tech under control while allowing benefits.",
+        "economic": "Economic disruption seen as inevitable; focus is on whether institutions can adapt fast enough to manage the transition without catastrophic failures.",
+        "environmental": "Highlights synthetic biology intersection; environmental risks from both AI energy use and biotech applications.",
+        "political": "Central argument is about governance: the nation-state may not be the right unit to govern these technologies; calls for new institutional forms."
+      },
+      "tags": [
+        "mass_unemployment",
+        "inequality",
+        "ai_concentration",
+        "skills_obsolescence",
+        "public_service_disruption",
+        "democratic_erosion",
+        "existential_risk"
+      ],
+      "evaluation": {
+        "date": "2026-02-15",
+        "likelihood": 55,
+        "impact": -50,
+        "preparedness": 35,
+        "rationale": {
+          "likelihood": "The 'coming wave' framing is compelling — technology diffusion is historically unstoppable. The containment challenge is real and growing.",
+          "impact": "Moderate negative impact reflecting the dual-use nature: significant risks but also genuine potential for benefits if governance catches up.",
+          "preparedness": "Some containment thinking is entering policy discourse, but institutional forms for governing dual-use AI remain largely theoretical."
+        }
+      }
+    },
+    {
+      "id": "imf-ai-econ",
+      "title": "AI and the Economy: Macro Impacts",
+      "authors": "Kristalina Georgieva et al.",
+      "institution": "International Monetary Fund",
+      "url": "https://www.imf.org/en/Topics/AI",
+      "year": 2024,
+      "summary": "IMF analysis projecting AI will affect 40% of global jobs, with advanced economies most exposed; warns of significant inequality increases without policy intervention.",
+      "steep": {
+        "social": "Advanced economies face highest exposure; developing countries may be shielded initially but miss out on productivity gains; global inequality dynamics shift.",
+        "technological": "Conservative technological assumptions relative to other scenarios; focuses on current and near-term AI capabilities rather than speculative superintelligence.",
+        "economic": "Projects 40% job exposure in advanced economies; models fiscal impacts including tax base erosion and social spending increases; emphasizes macro-prudential approach.",
+        "environmental": "Limited environmental analysis; focuses on economic and fiscal dimensions.",
+        "political": "Emphasizes multilateral coordination; calls for updating social safety nets, education systems, and tax frameworks across G20 nations."
+      },
+      "tags": [
+        "mass_unemployment",
+        "fiscal_crisis",
+        "inequality",
+        "skills_obsolescence",
+        "public_service_disruption"
+      ],
+      "evaluation": {
+        "date": "2026-02-15",
+        "likelihood": 75,
+        "impact": -45,
+        "preparedness": 45,
+        "rationale": {
+          "likelihood": "The IMF's conservative estimate of 40% job exposure is well-supported by multiple analyses. This is arguably the most likely near-term disruption scenario.",
+          "impact": "Impact is significant but the IMF framing focuses on manageable transitions — the question is whether policy responds fast enough.",
+          "preparedness": "IMF and G20 have begun policy dialogue; some countries are updating labor market and tax frameworks. Most prepared of any scenario, but still inadequate."
+        }
+      }
+    },
+    {
+      "id": "rand-ai-security",
+      "title": "AI and National Security Transformation",
+      "authors": "Various",
+      "institution": "RAND Corporation",
+      "url": "https://www.rand.org/topics/artificial-intelligence.html",
+      "year": 2024,
+      "summary": "Analysis of how AI transforms national security landscape: autonomous weapons, cyber capabilities, intelligence analysis, and strategic stability between great powers.",
+      "steep": {
+        "social": "Military AI deployment creates new ethical dilemmas; autonomous weapons raise accountability questions; civilian-military AI divide grows.",
+        "technological": "Focuses on military-relevant AI capabilities: autonomous systems, cyber operations, intelligence processing, decision support for strategic command.",
+        "economic": "Defense spending restructured around AI; new arms race dynamics; economic impact through military-industrial complex transformation.",
+        "environmental": "Environmental impact of military AI infrastructure; potential for AI-optimized environmental monitoring but also for AI-enabled resource extraction.",
+        "political": "Strategic stability between nuclear powers disrupted; AI-enabled first-strike capabilities change deterrence calculus; calls for new arms control frameworks."
+      },
+      "tags": [
+        "fiscal_crisis",
+        "ai_concentration",
+        "public_service_disruption",
+        "democratic_erosion",
+        "existential_risk"
+      ],
+      "evaluation": {
+        "date": "2026-02-15",
+        "likelihood": 50,
+        "impact": -60,
+        "preparedness": 30,
+        "rationale": {
+          "likelihood": "Military AI transformation is accelerating across major powers. Strategic stability risks are real but timeline is uncertain.",
+          "impact": "National security disruption could cascade into broader instability; autonomous weapons and AI-enabled cyber attacks pose novel threats.",
+          "preparedness": "Military AI governance is ahead of economic AI governance in some respects (existing arms control frameworks) but behind in others (no AI-specific treaties)."
+        }
+      }
+    }
+  ],
+  "policies": [
+    {
+      "id": "token-tax",
+      "name": "Variable-Rate Token Tax",
+      "challengeTag": "fiscal_crisis",
+      "description": "A tax on AI inference compute (tokens) that scales with capability level, creating a new revenue base as traditional income tax erodes. Revenue funds transition programs and public AI infrastructure.",
+      "citations": [
+        {
+          "text": "Windfall Trust policy brief on token taxation",
+          "url": "https://windfalltrust.com/"
+        },
+        {
+          "text": "IMF working paper on digital taxation",
+          "url": "https://www.imf.org/en/Publications/WP"
+        },
+        {
+          "text": "OECD digital economy taxation framework",
+          "url": "https://www.oecd.org/tax/beps/"
+        }
+      ]
+    },
+    {
+      "id": "wealth-tax",
+      "name": "AI Wealth Tax",
+      "challengeTag": "inequality",
+      "description": "Progressive tax on AI-derived capital gains and wealth concentration, targeting the extreme value capture by AI company shareholders and compute owners.",
+      "citations": [
+        {
+          "text": "Piketty on capital taxation in the 21st century",
+          "url": "https://wid.world/"
+        },
+        {
+          "text": "Saez and Zucman on progressive wealth taxation",
+          "url": "https://eml.berkeley.edu/~saez/"
+        },
+        {
+          "text": "UK Wealth Tax Commission report",
+          "url": "https://www.ukwealth.tax/"
+        }
+      ]
+    },
+    {
+      "id": "skills-fund",
+      "name": "National Skills Transition Fund",
+      "challengeTag": "skills_obsolescence",
+      "description": "Government-backed fund providing income support and retraining for workers displaced by AI, with a focus on professional and knowledge workers rather than just manufacturing.",
+      "citations": [
+        {
+          "text": "Singapore SkillsFuture program evaluation",
+          "url": "https://www.skillsfuture.gov.sg/"
+        },
+        {
+          "text": "OECD skills outlook AI and automation",
+          "url": "https://www.oecd.org/employment/skills-and-work/"
+        },
+        {
+          "text": "UK Lifetime Skills Guarantee analysis",
+          "url": "https://www.gov.uk/government/publications"
+        }
+      ]
+    },
+    {
+      "id": "dpu-framework",
+      "name": "Digital Public Utility Framework",
+      "challengeTag": "ai_concentration",
+      "description": "Designates critical AI infrastructure as regulated utilities, requiring providers to offer access, maintain standards, and accept oversight in exchange for operating privileges.",
+      "citations": [
+        {
+          "text": "Windfall Trust Digital Public Utilities paper",
+          "url": "https://windfalltrust.com/"
+        },
+        {
+          "text": "Aspen Digital public utility governance models",
+          "url": "https://www.aspendigital.org/"
+        },
+        {
+          "text": "EU Digital Markets Act as precedent",
+          "url": "https://digital-markets-act.ec.europa.eu/"
+        }
+      ]
+    },
+    {
+      "id": "ubi-pilot",
+      "name": "Universal Basic Income Pilots",
+      "challengeTag": "mass_unemployment",
+      "description": "Scaled UBI programs providing unconditional income floors, designed to maintain consumption and social stability during periods of rapid labor market disruption.",
+      "citations": [
+        {
+          "text": "Stanford Basic Income Lab research",
+          "url": "https://basicincome.stanford.edu/"
+        },
+        {
+          "text": "Finland UBI experiment results",
+          "url": "https://julkaisut.valtioneuvosto.fi/"
+        },
+        {
+          "text": "GiveDirectly UBI evidence review",
+          "url": "https://www.givedirectly.org/research-on-cash-transfers/"
+        }
+      ]
+    },
+    {
+      "id": "public-ai",
+      "name": "Public AI Service Corporation",
+      "challengeTag": "public_service_disruption",
+      "description": "A government-backed entity providing AI services for public sector needs — health, education, benefits administration — ensuring critical services aren't dependent on private AI providers.",
+      "citations": [
+        {
+          "text": "British AI Corporation proposal (Chatham House)",
+          "url": "https://www.chathamhouse.org/"
+        },
+        {
+          "text": "BBC model for public digital infrastructure",
+          "url": "https://www.bbc.co.uk/aboutthebbc"
+        },
+        {
+          "text": "Estonia e-governance AI integration",
+          "url": "https://e-estonia.com/"
+        }
+      ]
+    },
+    {
+      "id": "alignment-fund",
+      "name": "International AI Safety Research Fund",
+      "challengeTag": "existential_risk",
+      "description": "Multilateral fund for AI alignment and safety research, modeled on CERN, ensuring safety research keeps pace with capability development.",
+      "citations": [
+        {
+          "text": "METR autonomous capability evaluations",
+          "url": "https://metr.org/"
+        },
+        {
+          "text": "CERN governance model analysis",
+          "url": "https://home.cern/about"
+        },
+        {
+          "text": "Anthropic responsible scaling policy",
+          "url": "https://www.anthropic.com/research"
+        }
+      ]
+    },
+    {
+      "id": "dem-oversight",
+      "name": "Democratic AI Oversight Board",
+      "challengeTag": "democratic_erosion",
+      "description": "Independent regulatory body with democratic accountability, technical expertise, and enforcement power to oversee AI deployment in sensitive domains.",
+      "citations": [
+        {
+          "text": "EU AI Act implementation framework",
+          "url": "https://artificialintelligenceact.eu/"
+        },
+        {
+          "text": "UK AI Safety Institute mandate",
+          "url": "https://www.gov.uk/government/organisations/ai-safety-institute"
+        },
+        {
+          "text": "Ada Lovelace Institute regulatory proposals",
+          "url": "https://www.adalovelaceinstitute.org/"
+        }
+      ]
+    },
+    {
+      "id": "fiscal-buffer",
+      "name": "AI Transition Fiscal Buffer",
+      "challengeTag": "fiscal_crisis",
+      "description": "Sovereign wealth fund mechanism that captures AI productivity gains through equity stakes and compute levies, building fiscal resilience before tax base erosion accelerates.",
+      "citations": [
+        {
+          "text": "Norway sovereign wealth fund model",
+          "url": "https://www.nbim.no/"
+        },
+        {
+          "text": "Singapore GIC sovereign wealth approach",
+          "url": "https://www.gic.com.sg/"
+        },
+        {
+          "text": "IMF fiscal policy in the age of AI",
+          "url": "https://www.imf.org/"
+        }
+      ]
+    },
+    {
+      "id": "job-guarantee",
+      "name": "AI-Era Job Guarantee",
+      "challengeTag": "mass_unemployment",
+      "description": "Government employer-of-last-resort program focusing on care work, community development, and environmental restoration — sectors where human presence has intrinsic value.",
+      "citations": [
+        {
+          "text": "Pavlina Tcherneva job guarantee proposal",
+          "url": "https://www.levyinstitute.org/"
+        },
+        {
+          "text": "India MGNREGA program evaluation",
+          "url": "https://nrega.nic.in/"
+        },
+        {
+          "text": "Center on Budget and Policy Priorities analysis",
+          "url": "https://www.cbpp.org/"
+        }
+      ]
+    },
+    {
+      "id": "compute-commons",
+      "name": "Compute Commons Initiative",
+      "challengeTag": "ai_concentration",
+      "description": "Public compute infrastructure ensuring researchers and small organizations can access AI training and inference without dependence on hyperscaler monopolies.",
+      "citations": [
+        {
+          "text": "National AI Research Resource proposal",
+          "url": "https://www.ai.gov/nairr/"
+        },
+        {
+          "text": "UK compute review recommendations",
+          "url": "https://www.gov.uk/government/publications"
+        },
+        {
+          "text": "EU EuroHPC joint undertaking",
+          "url": "https://eurohpc-ju.europa.eu/"
+        }
+      ]
+    },
+    {
+      "id": "adaptive-ed",
+      "name": "Adaptive Education System",
+      "challengeTag": "skills_obsolescence",
+      "description": "Reform of education systems to emphasize adaptability and continuous learning rather than fixed credentials, with AI-powered personalized learning pathways.",
+      "citations": [
+        {
+          "text": "OECD Future of Education and Skills 2030",
+          "url": "https://www.oecd.org/education/2030-project/"
+        },
+        {
+          "text": "MIT Work of the Future report",
+          "url": "https://workofthefuture.mit.edu/"
+        },
+        {
+          "text": "UNESCO AI in education framework",
+          "url": "https://www.unesco.org/en/digital-education/artificial-intelligence"
+        }
+      ]
+    },
+    {
+      "id": "arms-control",
+      "name": "AI Arms Control Framework",
+      "challengeTag": "democratic_erosion",
+      "description": "International treaty framework for military AI, establishing verification mechanisms, prohibited applications, and confidence-building measures between major powers.",
+      "citations": [
+        {
+          "text": "RAND AI arms control analysis",
+          "url": "https://www.rand.org/"
+        },
+        {
+          "text": "UN Convention on Certain Conventional Weapons AI discussions",
+          "url": "https://www.un.org/disarmament/"
+        },
+        {
+          "text": "Campaign to Stop Killer Robots",
+          "url": "https://www.stopkillerrobots.org/"
+        }
+      ]
+    },
+    {
+      "id": "data-dividend",
+      "name": "Citizens Data Dividend",
+      "challengeTag": "inequality",
+      "description": "Mechanism for citizens to receive payments from AI companies that use public data and publicly-funded research, recognizing collective contribution to AI development.",
+      "citations": [
+        {
+          "text": "Jaron Lanier data dignity proposal",
+          "url": "https://www.radicalmarkets.com/"
+        },
+        {
+          "text": "California data dividend proposal",
+          "url": "https://leginfo.legislature.ca.gov/"
+        },
+        {
+          "text": "World Economic Forum data governance framework",
+          "url": "https://www.weforum.org/"
+        }
+      ]
+    },
+    {
+      "id": "safety-net-reform",
+      "name": "Social Safety Net Modernization",
+      "challengeTag": "public_service_disruption",
+      "description": "Comprehensive reform of benefits systems to handle rapid employment transitions, including portable benefits, income smoothing, and AI-assisted case management.",
+      "citations": [
+        {
+          "text": "Brookings Institution future of work report",
+          "url": "https://www.brookings.edu/"
+        },
+        {
+          "text": "UK Universal Credit modernization analysis",
+          "url": "https://www.gov.uk/universal-credit"
+        },
+        {
+          "text": "Aspen Institute Future of Work Initiative",
+          "url": "https://www.aspeninstitute.org/"
+        }
+      ]
+    }
+  ]
+}
