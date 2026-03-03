@@ -157,6 +157,24 @@
     const xScale = d3.scaleLinear().domain([0, 100]).range([0, innerWidth]);
     const yScale = d3.scaleLinear().domain(mode.yDomain).range([innerHeight, 0]);
 
+    // Plot area background: red → white → green vertical gradient
+    const plotDefs = svg.append('defs');
+    const plotBgGrad = plotDefs
+      .append('linearGradient')
+      .attr('id', 'plot-bg-gradient')
+      .attr('x1', '0%').attr('y1', '0%')
+      .attr('x2', '0%').attr('y2', '100%');
+    plotBgGrad.append('stop').attr('offset', '0%').attr('stop-color', '#fde8e6');
+    plotBgGrad.append('stop').attr('offset', '50%').attr('stop-color', '#ffffff');
+    plotBgGrad.append('stop').attr('offset', '100%').attr('stop-color', '#e6f5eb');
+
+    g.append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', innerWidth)
+      .attr('height', innerHeight)
+      .attr('fill', 'url(#plot-bg-gradient)');
+
     // Danger zone gradient (Net Risk mode) — reflects the dot color space
     // Covers entire chart area, from green (bottom-left) through yellow/orange to red/dark (top-right)
     if (mode.dangerZone) {

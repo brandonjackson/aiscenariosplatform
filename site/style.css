@@ -265,10 +265,6 @@ a:hover {
   padding: 1.5rem;
 }
 
-#chart-container {
-  background: linear-gradient(to bottom, #fde8e6 0%, #ffffff 50%, #e6f5eb 100%);
-  border-radius: 4px;
-}
 
 .chart-header {
   display: flex;
