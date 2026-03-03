@@ -259,10 +259,15 @@ a:hover {
 
 /* --- Chart Section --- */
 .chart-section {
-  background: linear-gradient(to bottom, #fde8e6 0%, #ffffff 50%, #e6f5eb 100%);
+  background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.5rem;
+}
+
+#chart-container {
+  background: linear-gradient(to bottom, #fde8e6 0%, #ffffff 50%, #e6f5eb 100%);
+  border-radius: 4px;
 }
 
 .chart-header {
