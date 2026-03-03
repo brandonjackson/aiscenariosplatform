@@ -15,34 +15,36 @@
   const DOT_RADIUS = 7;
   const DOT_RADIUS_HOVER = 10;
 
+  // Likelihood axis category boundaries and labels
+  const LIKELIHOOD_TICKS = [12.5, 37.5, 62.5, 87.5];
+  const LIKELIHOOD_LABELS = ['Improbable', 'Possible', 'Plausible', 'Probable'];
+  const LIKELIHOOD_BOUNDARIES = [25, 50, 75];
+
   const MODE_CONFIG = {
     risk: {
       label: 'Net Risk',
-      xLabel: 'Likelihood (%)',
-      yLabel: 'Net Risk Score',
+      yLabel: 'Net Risk',
       getY: (d) => {
         // impact × (1 - preparedness/200), higher = worse
         // impact is negative for harmful, so we negate to get positive "risk"
         const risk = Math.abs(d.evaluation.impact) * (1 - d.evaluation.preparedness / 200);
         return risk;
       },
-      yDomain: [0, 100],
+      yDomain: [0, 100], // 0=bottom=better, 100=top=worse
       dangerZone: true,
     },
     impact: {
       label: 'Impact',
-      xLabel: 'Likelihood (%)',
-      yLabel: 'Unmitigated Impact',
+      yLabel: 'Impact',
       getY: (d) => d.evaluation.impact,
-      yDomain: [-100, 100],
+      yDomain: [100, -100], // 100(beneficial)=bottom=better, -100(harmful)=top=worse
       dangerZone: false,
     },
     preparedness: {
       label: 'Preparedness',
-      xLabel: 'Likelihood (%)',
-      yLabel: 'Preparedness Score',
+      yLabel: 'Preparedness',
       getY: (d) => d.evaluation.preparedness,
-      yDomain: [0, 200],
+      yDomain: [200, 0], // 200(prepared)=bottom=better, 0(unprepared)=top=worse
       dangerZone: false,
     },
   };
@@ -172,7 +174,7 @@
         .text('HIGH RISK ZONE');
     }
 
-    // Grid lines
+    // Grid lines — Y axis
     g.append('g')
       .attr('class', 'grid-y')
       .call(d3.axisLeft(yScale).ticks(5).tickSize(-innerWidth).tickFormat(''))
@@ -182,42 +184,56 @@
 
     g.selectAll('.grid-y .domain').remove();
 
+    // Grid lines — X axis at category boundaries (25, 50, 75)
     g.append('g')
       .attr('class', 'grid-x')
       .attr('transform', `translate(0,${innerHeight})`)
-      .call(d3.axisBottom(xScale).ticks(5).tickSize(-innerHeight).tickFormat(''))
+      .call(d3.axisBottom(xScale).tickValues(LIKELIHOOD_BOUNDARIES).tickSize(-innerHeight).tickFormat(''))
       .selectAll('line')
       .attr('stroke', '#e2e4ea')
       .attr('stroke-dasharray', '3,3');
 
     g.selectAll('.grid-x .domain').remove();
 
-    // Axes
+    // X axis — qualitative likelihood labels
     const xAxis = g
       .append('g')
       .attr('transform', `translate(0,${innerHeight})`)
-      .call(d3.axisBottom(xScale).ticks(5).tickFormat((d) => d + '%'));
+      .call(
+        d3.axisBottom(xScale)
+          .tickValues(LIKELIHOOD_TICKS)
+          .tickFormat((d, i) => LIKELIHOOD_LABELS[i])
+      );
 
     xAxis.selectAll('text').attr('font-size', '11px').attr('fill', '#6b7084');
     xAxis.selectAll('line').attr('stroke', '#ccc');
     xAxis.select('.domain').attr('stroke', '#ccc');
 
-    const yAxis = g.append('g').call(d3.axisLeft(yScale).ticks(5));
-    yAxis.selectAll('text').attr('font-size', '11px').attr('fill', '#6b7084');
+    // Y axis — no numeric labels, just gridlines for reference
+    const yAxis = g.append('g').call(d3.axisLeft(yScale).ticks(5).tickFormat(''));
     yAxis.selectAll('line').attr('stroke', '#ccc');
     yAxis.select('.domain').attr('stroke', '#ccc');
 
-    // Axis labels
-    svg
-      .append('text')
-      .attr('x', MARGIN.left + innerWidth / 2)
-      .attr('y', height - 6)
-      .attr('text-anchor', 'middle')
-      .attr('font-size', '12px')
-      .attr('fill', '#6b7084')
+    // Y axis endpoint labels: "Better" at bottom, "Worse" at top
+    g.append('text')
+      .attr('x', -10)
+      .attr('y', 4)
+      .attr('text-anchor', 'end')
+      .attr('font-size', '11px')
+      .attr('fill', '#e74c3c')
       .attr('font-family', 'Source Sans 3, sans-serif')
-      .text(mode.xLabel);
+      .text('Worse');
 
+    g.append('text')
+      .attr('x', -10)
+      .attr('y', innerHeight + 4)
+      .attr('text-anchor', 'end')
+      .attr('font-size', '11px')
+      .attr('fill', '#27ae60')
+      .attr('font-family', 'Source Sans 3, sans-serif')
+      .text('Better');
+
+    // Y axis label (mode name, rotated)
     svg
       .append('text')
       .attr('transform', 'rotate(-90)')
