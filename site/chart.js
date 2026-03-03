@@ -157,25 +157,48 @@
     const xScale = d3.scaleLinear().domain([0, 100]).range([0, innerWidth]);
     const yScale = d3.scaleLinear().domain(mode.yDomain).range([innerHeight, 0]);
 
-    // Danger zone gradient (Net Risk mode)
+    // Danger zone gradient (Net Risk mode) — reflects the dot color space
+    // Covers entire chart area, from green (bottom-left) through yellow/orange to red/dark (top-right)
     if (mode.dangerZone) {
       const defs = svg.append('defs');
-      const gradient = defs
-        .append('radialGradient')
-        .attr('id', 'danger-gradient')
-        .attr('cx', '100%')
-        .attr('cy', '0%')
-        .attr('r', '100%');
 
-      gradient.append('stop').attr('offset', '0%').attr('stop-color', '#e74c3c').attr('stop-opacity', 0.15);
-      gradient.append('stop').attr('offset', '100%').attr('stop-color', '#e74c3c').attr('stop-opacity', 0);
+      // Horizontal gradient: left (low likelihood, green) → right (high likelihood, darker)
+      const hGrad = defs
+        .append('linearGradient')
+        .attr('id', 'danger-gradient-h')
+        .attr('x1', '0%').attr('y1', '0%')
+        .attr('x2', '100%').attr('y2', '0%');
+
+      hGrad.append('stop').attr('offset', '0%').attr('stop-color', '#27ae60').attr('stop-opacity', 0.0);
+      hGrad.append('stop').attr('offset', '40%').attr('stop-color', '#f1c40f').attr('stop-opacity', 0.08);
+      hGrad.append('stop').attr('offset', '70%').attr('stop-color', '#e67e22').attr('stop-opacity', 0.12);
+      hGrad.append('stop').attr('offset', '100%').attr('stop-color', '#c0392b').attr('stop-opacity', 0.18);
+
+      // Vertical gradient: bottom (low risk, safe) → top (high risk, danger)
+      const vGrad = defs
+        .append('linearGradient')
+        .attr('id', 'danger-gradient-v')
+        .attr('x1', '0%').attr('y1', '100%')
+        .attr('x2', '0%').attr('y2', '0%');
+
+      vGrad.append('stop').attr('offset', '0%').attr('stop-color', '#27ae60').attr('stop-opacity', 0.0);
+      vGrad.append('stop').attr('offset', '50%').attr('stop-color', '#e67e22').attr('stop-opacity', 0.06);
+      vGrad.append('stop').attr('offset', '100%').attr('stop-color', '#4a4a4a').attr('stop-opacity', 0.18);
+
+      // Layer both gradients over the full chart area
+      g.append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', innerWidth)
+        .attr('height', innerHeight)
+        .attr('fill', 'url(#danger-gradient-h)');
 
       g.append('rect')
-        .attr('x', innerWidth / 2)
+        .attr('x', 0)
         .attr('y', 0)
-        .attr('width', innerWidth / 2)
-        .attr('height', innerHeight / 2)
-        .attr('fill', 'url(#danger-gradient)');
+        .attr('width', innerWidth)
+        .attr('height', innerHeight)
+        .attr('fill', 'url(#danger-gradient-v)');
 
       // Danger zone label
       g.append('text')
@@ -183,7 +206,7 @@
         .attr('y', 16)
         .attr('text-anchor', 'end')
         .attr('font-size', '10px')
-        .attr('fill', '#e74c3c')
+        .attr('fill', '#c0392b')
         .attr('opacity', 0.5)
         .attr('font-family', 'Source Sans 3, sans-serif')
         .text('HIGH RISK ZONE');
@@ -194,7 +217,7 @@
       .attr('class', 'grid-y')
       .call(d3.axisLeft(yScale).ticks(5).tickSize(-innerWidth).tickFormat(''))
       .selectAll('line')
-      .attr('stroke', '#e2e4ea')
+      .attr('stroke', 'rgba(255,255,255,0.1)')
       .attr('stroke-dasharray', '3,3');
 
     g.selectAll('.grid-y .domain').remove();
@@ -205,7 +228,7 @@
       .attr('transform', `translate(0,${innerHeight})`)
       .call(d3.axisBottom(xScale).tickValues(LIKELIHOOD_BOUNDARIES).tickSize(-innerHeight).tickFormat(''))
       .selectAll('line')
-      .attr('stroke', '#e2e4ea')
+      .attr('stroke', 'rgba(255,255,255,0.1)')
       .attr('stroke-dasharray', '3,3');
 
     g.selectAll('.grid-x .domain').remove();
@@ -220,14 +243,14 @@
           .tickFormat((d, i) => LIKELIHOOD_LABELS[i])
       );
 
-    xAxis.selectAll('text').attr('font-size', '11px').attr('fill', '#6b7084');
-    xAxis.selectAll('line').attr('stroke', '#ccc');
-    xAxis.select('.domain').attr('stroke', '#ccc');
+    xAxis.selectAll('text').attr('font-size', '11px').attr('fill', 'rgba(255,255,255,0.5)');
+    xAxis.selectAll('line').attr('stroke', 'rgba(255,255,255,0.2)');
+    xAxis.select('.domain').attr('stroke', 'rgba(255,255,255,0.2)');
 
     // Y axis — no numeric labels, just gridlines for reference
     const yAxis = g.append('g').call(d3.axisLeft(yScale).ticks(5).tickFormat(''));
-    yAxis.selectAll('line').attr('stroke', '#ccc');
-    yAxis.select('.domain').attr('stroke', '#ccc');
+    yAxis.selectAll('line').attr('stroke', 'rgba(255,255,255,0.2)');
+    yAxis.select('.domain').attr('stroke', 'rgba(255,255,255,0.2)');
 
     // Y axis endpoint labels: "Better" at bottom, "Worse" at top
     g.append('text')
@@ -256,7 +279,7 @@
       .attr('y', 14)
       .attr('text-anchor', 'middle')
       .attr('font-size', '12px')
-      .attr('fill', '#6b7084')
+      .attr('fill', 'rgba(255,255,255,0.5)')
       .attr('font-family', 'Source Sans 3, sans-serif')
       .text(mode.yLabel);
 
@@ -288,7 +311,7 @@
       .attr('x', DOT_RADIUS + 4)
       .attr('y', 4)
       .attr('font-size', '10px')
-      .attr('fill', '#6b7084')
+      .attr('fill', 'rgba(255,255,255,0.65)')
       .attr('font-family', 'Source Sans 3, sans-serif')
       .attr('pointer-events', 'none');
 
