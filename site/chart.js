@@ -217,7 +217,7 @@
       .attr('class', 'grid-y')
       .call(d3.axisLeft(yScale).ticks(5).tickSize(-innerWidth).tickFormat(''))
       .selectAll('line')
-      .attr('stroke', 'rgba(255,255,255,0.1)')
+      .attr('stroke', '#e2e4ea')
       .attr('stroke-dasharray', '3,3');
 
     g.selectAll('.grid-y .domain').remove();
@@ -228,7 +228,7 @@
       .attr('transform', `translate(0,${innerHeight})`)
       .call(d3.axisBottom(xScale).tickValues(LIKELIHOOD_BOUNDARIES).tickSize(-innerHeight).tickFormat(''))
       .selectAll('line')
-      .attr('stroke', 'rgba(255,255,255,0.1)')
+      .attr('stroke', '#e2e4ea')
       .attr('stroke-dasharray', '3,3');
 
     g.selectAll('.grid-x .domain').remove();
@@ -243,14 +243,14 @@
           .tickFormat((d, i) => LIKELIHOOD_LABELS[i])
       );
 
-    xAxis.selectAll('text').attr('font-size', '11px').attr('fill', 'rgba(255,255,255,0.5)');
-    xAxis.selectAll('line').attr('stroke', 'rgba(255,255,255,0.2)');
-    xAxis.select('.domain').attr('stroke', 'rgba(255,255,255,0.2)');
+    xAxis.selectAll('text').attr('font-size', '11px').attr('fill', '#6b7084');
+    xAxis.selectAll('line').attr('stroke', '#ccc');
+    xAxis.select('.domain').attr('stroke', '#ccc');
 
     // Y axis — no numeric labels, just gridlines for reference
     const yAxis = g.append('g').call(d3.axisLeft(yScale).ticks(5).tickFormat(''));
-    yAxis.selectAll('line').attr('stroke', 'rgba(255,255,255,0.2)');
-    yAxis.select('.domain').attr('stroke', 'rgba(255,255,255,0.2)');
+    yAxis.selectAll('line').attr('stroke', '#ccc');
+    yAxis.select('.domain').attr('stroke', '#ccc');
 
     // Y axis endpoint labels: "Better" at bottom, "Worse" at top
     g.append('text')
@@ -279,7 +279,7 @@
       .attr('y', 14)
       .attr('text-anchor', 'middle')
       .attr('font-size', '12px')
-      .attr('fill', 'rgba(255,255,255,0.5)')
+      .attr('fill', '#6b7084')
       .attr('font-family', 'Source Sans 3, sans-serif')
       .text(mode.yLabel);
 
@@ -311,7 +311,7 @@
       .attr('x', DOT_RADIUS + 4)
       .attr('y', 4)
       .attr('font-size', '10px')
-      .attr('fill', 'rgba(255,255,255,0.65)')
+      .attr('fill', '#6b7084')
       .attr('font-family', 'Source Sans 3, sans-serif')
       .attr('pointer-events', 'none');
 
