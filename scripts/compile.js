@@ -40,10 +40,10 @@ function toNumber(val) {
 
 function getRating(score) {
   if (score <= 40) return 'Critically Unprepared';
-  if (score <= 80) return 'Low';
-  if (score <= 120) return 'Moderate';
-  if (score <= 160) return 'Good';
-  return 'Well Prepared';
+  if (score <= 80) return 'Highly Unprepared';
+  if (score <= 120) return 'Unprepared';
+  if (score <= 160) return 'Almost Prepared';
+  return 'Prepared';
 }
 
 // --- Tag columns ---

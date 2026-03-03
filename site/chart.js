@@ -22,8 +22,8 @@
 
   const MODE_CONFIG = {
     risk: {
-      label: 'Net Risk',
-      yLabel: 'Net Risk',
+      label: 'Net Impact',
+      yLabel: 'Net Impact',
       getY: (d) => {
         // impact × (1 - preparedness/200), higher = worse
         // impact is negative for harmful, so we negate to get positive "risk"
@@ -50,16 +50,31 @@
   };
 
   // --- Color helpers ---
+  // Net impact score: |impact| × (1 - preparedness/200), range 0-100, higher = worse
+  function getNetImpact(d) {
+    return Math.abs(d.evaluation.impact) * (1 - d.evaluation.preparedness / 200);
+  }
+
+  // 5-stage scale based on net impact (0-100, higher = worse)
+  function getNetImpactColor(netImpact) {
+    if (netImpact >= 80) return '#4a4a4a'; // Critically Unprepared (dark grey)
+    if (netImpact >= 60) return '#c0392b'; // Highly Unprepared (red)
+    if (netImpact >= 40) return '#e67e22'; // Unprepared (orange)
+    if (netImpact >= 20) return '#f1c40f'; // Almost Prepared (yellow)
+    return '#27ae60';                       // Prepared (green)
+  }
+
+  // Preparedness-based color for table bars (0-200 scale)
   function getPreparednessColor(score) {
-    if (score <= 40) return '#c0392b';
-    if (score <= 80) return '#e67e22';
-    if (score <= 120) return '#f1c40f';
-    if (score <= 160) return '#27ae60';
-    return '#1e8449';
+    if (score <= 40) return '#4a4a4a';  // Critically Unprepared
+    if (score <= 80) return '#c0392b';  // Highly Unprepared
+    if (score <= 120) return '#e67e22'; // Unprepared
+    if (score <= 160) return '#f1c40f'; // Almost Prepared
+    return '#27ae60';                    // Prepared
   }
 
   function getDotColor(d) {
-    return getPreparednessColor(d.evaluation.preparedness);
+    return getNetImpactColor(getNetImpact(d));
   }
 
   // --- Tooltip ---
@@ -420,12 +435,12 @@
   function getRatingClass(rating) {
     const map = {
       'Critically Unprepared': 'rating-critically-unprepared',
-      Low: 'rating-low',
-      Moderate: 'rating-moderate',
-      Good: 'rating-good',
-      'Well Prepared': 'rating-well-prepared',
+      'Highly Unprepared': 'rating-highly-unprepared',
+      'Unprepared': 'rating-unprepared',
+      'Almost Prepared': 'rating-almost-prepared',
+      'Prepared': 'rating-prepared',
     };
-    return map[rating] || 'rating-low';
+    return map[rating] || 'rating-highly-unprepared';
   }
 
   // --- Initialization ---
