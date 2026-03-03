@@ -115,7 +115,7 @@ a:hover {
 /* --- Hero Section --- */
 .hero {
   padding: 4rem 0 3rem;
-  background: linear-gradient(to bottom, #fdf0ef 0%, #ffffff 50%, #eef9f2 100%);
+  background: #fff;
 }
 
 .hero-grid {
@@ -259,7 +259,7 @@ a:hover {
 
 /* --- Chart Section --- */
 .chart-section {
-  background: var(--color-bg);
+  background: linear-gradient(to bottom, #fde8e6 0%, #ffffff 50%, #e6f5eb 100%);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.5rem;
