@@ -115,6 +115,8 @@ a:hover {
 /* --- Hero Section --- */
 .hero {
   padding: 4rem 0 3rem;
+  background: var(--color-primary);
+  color: #fff;
 }
 
 .hero-grid {
@@ -134,7 +136,7 @@ a:hover {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-text-light);
+  color: rgba(255, 255, 255, 0.5);
   margin-bottom: 0.75rem;
 }
 
@@ -142,7 +144,7 @@ a:hover {
   font-family: var(--font-heading);
   font-size: 2rem;
   line-height: 1.3;
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 1.5rem;
   font-weight: 400;
 }
@@ -169,7 +171,7 @@ a:hover {
 
 .hero-rating-bar {
   height: 6px;
-  background: var(--color-border);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 3px;
   margin-top: 0.5rem;
   overflow: hidden;
@@ -240,10 +242,27 @@ a:hover {
   text-decoration: none;
 }
 
+.btn-hero-white {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-hero-white:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  text-decoration: none;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-hero-white svg {
+  flex-shrink: 0;
+}
+
 /* --- Chart Section --- */
 .chart-section {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   padding: 1.5rem;
 }
@@ -258,13 +277,13 @@ a:hover {
 .chart-title {
   font-family: var(--font-heading);
   font-size: 1.2rem;
-  color: var(--color-primary);
+  color: #fff;
 }
 
 .chart-controls {
   display: flex;
   gap: 0;
-  border: 1px solid var(--color-border);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -275,11 +294,11 @@ a:hover {
   font-size: 0.8rem;
   font-weight: 600;
   border: none;
-  background: var(--color-bg);
-  color: var(--color-text-light);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   transition: all var(--transition);
-  border-right: 1px solid var(--color-border);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .chart-controls button:last-child {
@@ -287,12 +306,12 @@ a:hover {
 }
 
 .chart-controls button:hover {
-  background: var(--color-bg-alt);
-  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
 }
 
 .chart-controls button.active {
-  background: var(--color-primary);
+  background: rgba(255, 255, 255, 0.15);
   color: #fff;
 }
 
@@ -345,14 +364,108 @@ a:hover {
   font-size: 0.78rem;
 }
 
-/* --- How It Works --- */
+/* --- What is Transformative AI? --- */
+.what-section {
+  padding: 4rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.what-section-inner {
+  max-width: 720px;
+}
+
+.what-text {
+  font-size: 1.1rem;
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+.what-text strong {
+  color: var(--color-primary);
+}
+
+/* --- Tracking the Best Ideas --- */
+.tracking-section {
+  padding: 4rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.tracking-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.tracking-stat {
+  text-align: center;
+}
+
+.tracking-stat-number {
+  font-family: var(--font-heading);
+  font-size: 4rem;
+  line-height: 1;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.tracking-stat-label {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* --- How It Works (3 steps) --- */
 .how-section {
   padding: 4rem 0;
   border-top: 1px solid var(--color-border);
 }
 
-.how-section-inner {
-  max-width: 720px;
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.how-step {
+  position: relative;
+  padding: 1.5rem;
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.how-step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.how-step-title {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.how-step-text {
+  font-size: 0.92rem;
+  color: var(--color-text);
+  line-height: 1.6;
 }
 
 .section-label {
@@ -371,16 +484,6 @@ a:hover {
   color: var(--color-primary);
   margin-bottom: 1rem;
   font-weight: 400;
-}
-
-.how-text {
-  font-size: 1.1rem;
-  color: var(--color-text);
-  line-height: 1.7;
-}
-
-.how-text strong {
-  color: var(--color-primary);
 }
 
 /* --- Scenario Table --- */
@@ -1083,8 +1186,18 @@ a.policy-tag:hover {
     font-size: 1.4rem;
   }
 
-  .how-text {
-    font-size: 1rem;
+  .tracking-stats {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .tracking-stat-number {
+    font-size: 3rem;
+  }
+
+  .how-steps {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   /* Make table horizontally scrollable */

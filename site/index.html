@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Scenarios — How Prepared Are We for Transformative AI?</title>
+  <title>AI Scenarios Tracker — How Prepared Are We for Transformative AI?</title>
   <meta name="description" content="Tracking and evaluating transformative AI scenarios to gauge global preparedness for economic disruption.">
   <link rel="stylesheet" href="style.css">
   <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -13,7 +13,7 @@
   <!-- Header -->
   <header class="site-header">
     <div class="container">
-      <div class="site-logo">AI <span>Scenarios</span></div>
+      <div class="site-logo">AI Scenarios <span>Tracker</span></div>
       <nav class="site-nav">
         <a href="#scenarios">Scenarios</a>
         <a href="methodology.html">Methodology</a>
@@ -29,7 +29,6 @@
 
         <!-- Left: Headline stat -->
         <div class="hero-headline">
-          <div class="hero-label">AI Preparedness Tracker</div>
           <h1 class="hero-title">Our current economic preparedness for transformative AI is:</h1>
           <div class="hero-rating">
             <span id="hero-rating-value" class="hero-rating-value rating-critically-unprepared">...</span>
@@ -39,8 +38,8 @@
             </div>
           </div>
           <div class="hero-actions">
-            <a href="https://github.com/brandonjackson/aiscenariosplatform" class="btn btn-primary" target="_blank" rel="noopener">View Repo</a>
-            <a href="#scenarios" class="btn btn-outline">Explore Scenarios</a>
+            <a href="https://github.com/brandonjackson/aiscenariosplatform" class="btn btn-hero-white" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>View Repo</a>
+            <a href="methodology.html" class="btn btn-hero-white"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Methodology</a>
           </div>
         </div>
 
@@ -63,19 +62,66 @@
     </div>
   </section>
 
+  <!-- What is Transformative AI? -->
+  <section class="what-section">
+    <div class="container">
+      <div class="what-section-inner">
+        <div class="section-label">The Challenge</div>
+        <h2 class="section-title">What is transformative AI?</h2>
+        <p class="what-text">
+          We want AI to make the world better &mdash; to accelerate scientific discovery, improve public services,
+          and raise living standards for everyone. But there is real risk that the rapid advance of AI causes
+          economic disruption severe enough to threaten the social contract. The key to ensuring things get
+          better, not worse, is <strong>better collective intelligence</strong>: tracking what could happen,
+          testing what we can do about it, and holding ourselves accountable for being prepared.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tracking the Best Ideas -->
+  <section class="tracking-section">
+    <div class="container">
+      <div class="section-label">By the Numbers</div>
+      <h2 class="section-title">Tracking the best ideas</h2>
+      <div class="tracking-stats">
+        <div class="tracking-stat">
+          <div class="tracking-stat-number" id="scenario-count">10</div>
+          <div class="tracking-stat-label">Scenarios Evaluated</div>
+        </div>
+        <div class="tracking-stat">
+          <div class="tracking-stat-number" id="policy-count">47</div>
+          <div class="tracking-stat-label">Policies Tested</div>
+        </div>
+        <div class="tracking-stat">
+          <div class="tracking-stat-number">20</div>
+          <div class="tracking-stat-label">Expert Evaluators</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- How It Works -->
   <section class="how-section">
     <div class="container">
-      <div class="how-section-inner">
-        <div class="section-label">Methodology</div>
-        <h2 class="section-title">How It Works</h2>
-        <p class="how-text">
-          The future is uncertain &mdash; yet we must prepare. That&rsquo;s why we&rsquo;ve evaluated
-          <strong><span id="scenario-count">—</span> scenarios</strong> of transformative AI and tested
-          the effectiveness of <strong><span id="policy-count">—</span> policy proposals</strong>
-          to gauge our AI readiness. Each scenario is scored on likelihood, impact, and how prepared
-          current policies are to address it.
-        </p>
+      <div class="section-label">Process</div>
+      <h2 class="section-title">How It Works</h2>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-step-number">1</div>
+          <h3 class="how-step-title">Scenarios Proposed</h3>
+          <p class="how-step-text">People worldwide identify possible scenarios of transformative AI and policy interventions that could address them.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-step-number">2</div>
+          <h3 class="how-step-title">Expert Evaluation</h3>
+          <p class="how-step-text">Windfall regularly convenes a Scenarios Panel of experts to assess the likelihood and impact of each scenario.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-step-number">3</div>
+          <h3 class="how-step-title">Preparedness Rating</h3>
+          <p class="how-step-text">Windfall constantly updates the Policy Atlas to track readiness and ensure we are prepared for what lies ahead.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -121,7 +167,7 @@
   <footer class="site-footer">
     <div class="container">
       <div class="footer-inner">
-        <span>&copy; 2026 AI Scenarios. Data-driven AI preparedness tracking.</span>
+        <span>&copy; 2026 AI Scenarios Tracker. Data-driven AI preparedness tracking.</span>
         <div class="footer-links">
           <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">Source</a>
         </div>
