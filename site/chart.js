@@ -15,62 +15,74 @@
   const DOT_RADIUS = 7;
   const DOT_RADIUS_HOVER = 10;
 
-  // Likelihood axis category boundaries and labels
-  const LIKELIHOOD_TICKS = [12.5, 37.5, 62.5, 87.5];
-  const LIKELIHOOD_LABELS = ['Improbable', 'Possible', 'Plausible', 'Probable'];
-  const LIKELIHOOD_BOUNDARIES = [25, 50, 75];
+  // Likelihood axis: 1-5 integer scale
+  const LIKELIHOOD_TICKS = [1, 2, 3, 4, 5];
+  const LIKELIHOOD_LABELS = ['Improbable', 'Possible', 'Plausible', 'Probable', 'Happening'];
+  const LIKELIHOOD_BOUNDARIES = [1.5, 2.5, 3.5, 4.5];
+
+  // Descriptive label maps for all 1-5 scales
+  const LIKELIHOOD_LABEL_MAP = {
+    1: 'Improbable', 2: 'Possible', 3: 'Plausible', 4: 'Probable', 5: 'Happening',
+  };
+  const IMPACT_LABEL_MAP = {
+    1: 'SC Improving', 2: 'SC Stable', 3: 'SC Broken for Some', 4: 'SC Broken for All', 5: 'Systemic Risk',
+  };
+  const PREPAREDNESS_LABEL_MAP = {
+    1: 'No Sufficient Policies', 2: 'Policies Immature', 3: 'Not Implemented',
+    4: 'Somewhat Implemented', 5: 'Widely Implemented',
+  };
+
+  function getLikelihoodLabel(score) { return LIKELIHOOD_LABEL_MAP[score] || `${score}/5`; }
+  function getImpactLabel(score) { return IMPACT_LABEL_MAP[score] || `${score}/5`; }
+  function getPreparednessScoreLabel(score) { return PREPAREDNESS_LABEL_MAP[score] || `${score}/5`; }
 
   const MODE_CONFIG = {
     risk: {
       label: 'Net Impact',
       yLabel: 'Net Impact',
-      getY: (d) => {
-        // impact × (1 - preparedness/200), higher = worse
-        // impact is negative for harmful, so we negate to get positive "risk"
-        const risk = Math.abs(d.evaluation.impact) * (1 - d.evaluation.preparedness / 200);
-        return risk;
-      },
-      yDomain: [0, 100], // 0=bottom=better, 100=top=worse
+      // Net Impact = Likelihood × (Impact - Preparedness), clipped to 0 (higher = worse)
+      getY: (d) => Math.max(0, (d.evaluation.impact - d.evaluation.preparedness) * d.evaluation.likelihood),
+      yDomain: [0, 20], // 0=bottom=better, 20=top=worse (max: 5×(5-1)=20)
       dangerZone: true,
     },
     impact: {
       label: 'Impact',
       yLabel: 'Impact',
       getY: (d) => d.evaluation.impact,
-      yDomain: [100, -100], // 100(beneficial)=bottom=better, -100(harmful)=top=worse
+      yDomain: [1, 5], // 1(improving)=bottom=better, 5(systemic risk)=top=worse
       dangerZone: false,
     },
     preparedness: {
       label: 'Preparedness',
       yLabel: 'Preparedness',
       getY: (d) => d.evaluation.preparedness,
-      yDomain: [200, 0], // 200(prepared)=bottom=better, 0(unprepared)=top=worse
+      yDomain: [5, 1], // 5(widely implemented)=bottom=better, 1(no policies)=top=worse
       dangerZone: false,
     },
   };
 
   // --- Color helpers ---
-  // Net impact score: |impact| × (1 - preparedness/200), range 0-100, higher = worse
+  // Net Impact = Likelihood × (Impact - Preparedness), range 0–20, higher = worse
   function getNetImpact(d) {
-    return Math.abs(d.evaluation.impact) * (1 - d.evaluation.preparedness / 200);
+    return Math.max(0, (d.evaluation.impact - d.evaluation.preparedness) * d.evaluation.likelihood);
   }
 
-  // 5-stage scale based on net impact (0-100, higher = worse)
+  // 5-stage scale based on net impact (0–20, higher = worse)
   function getNetImpactColor(netImpact) {
-    if (netImpact >= 80) return '#4a4a4a'; // Critically Unprepared (dark grey)
-    if (netImpact >= 60) return '#c0392b'; // Highly Unprepared (red)
-    if (netImpact >= 40) return '#e67e22'; // Unprepared (orange)
-    if (netImpact >= 20) return '#f1c40f'; // Almost Prepared (yellow)
+    if (netImpact >= 16) return '#4a4a4a'; // Critically Unprepared (dark grey)
+    if (netImpact >= 12) return '#c0392b'; // Highly Unprepared (red)
+    if (netImpact >= 8)  return '#e67e22'; // Unprepared (orange)
+    if (netImpact >= 4)  return '#f1c40f'; // Almost Prepared (yellow)
     return '#27ae60';                       // Prepared (green)
   }
 
-  // Preparedness-based color for table bars (0-200 scale)
+  // Preparedness-based color for table bars (1–5 scale)
   function getPreparednessColor(score) {
-    if (score <= 40) return '#4a4a4a';  // Critically Unprepared
-    if (score <= 80) return '#c0392b';  // Highly Unprepared
-    if (score <= 120) return '#e67e22'; // Unprepared
-    if (score <= 160) return '#f1c40f'; // Almost Prepared
-    return '#27ae60';                    // Prepared
+    if (score <= 1) return '#4a4a4a'; // Critically Unprepared
+    if (score <= 2) return '#c0392b'; // Highly Unprepared
+    if (score <= 3) return '#e67e22'; // Unprepared
+    if (score <= 4) return '#f1c40f'; // Almost Prepared
+    return '#27ae60';                  // Prepared
   }
 
   function getDotColor(d) {
@@ -84,9 +96,9 @@
 
     tooltip.innerHTML = `
       <div class="tt-title">${d.title}</div>
-      <div class="tt-row"><span class="tt-label">Likelihood</span><span>${d.evaluation.likelihood}%</span></div>
-      <div class="tt-row"><span class="tt-label">Impact</span><span>${d.evaluation.impact}</span></div>
-      <div class="tt-row"><span class="tt-label">Preparedness</span><span>${d.evaluation.preparedness}/200</span></div>
+      <div class="tt-row"><span class="tt-label">Likelihood</span><span>${getLikelihoodLabel(d.evaluation.likelihood)}</span></div>
+      <div class="tt-row"><span class="tt-label">Impact</span><span>${getImpactLabel(d.evaluation.impact)}</span></div>
+      <div class="tt-row"><span class="tt-label">Preparedness</span><span>${getPreparednessScoreLabel(d.evaluation.preparedness)}</span></div>
       <div class="tt-summary">${truncate(d.summary, 120)}</div>
     `;
 
@@ -153,8 +165,8 @@
       .append('g')
       .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
-    // Scales
-    const xScale = d3.scaleLinear().domain([0, 100]).range([0, innerWidth]);
+    // Scales — X axis: 1-5 integer scale with padding on each side
+    const xScale = d3.scaleLinear().domain([0.5, 5.5]).range([0, innerWidth]);
     const yScale = d3.scaleLinear().domain(mode.yDomain).range([innerHeight, 0]);
 
     // Plot area background: red → white → green vertical gradient
@@ -384,11 +396,11 @@
       ratingValueEl.className = 'hero-rating-value ' + ratingClass;
     }
     if (ratingPctEl) {
-      ratingPctEl.textContent = `(${meta.overallPreparednessPct}%)`;
+      ratingPctEl.textContent = `(${meta.overallPreparedness}/5)`;
       ratingPctEl.className = 'hero-rating-pct ' + ratingClass;
     }
     if (ratingBarFill) {
-      ratingBarFill.style.width = (meta.overallPreparedness / 200) * 100 + '%';
+      ratingBarFill.style.width = (meta.overallPreparedness / 5) * 100 + '%';
       ratingBarFill.className = 'hero-rating-bar-fill bg-' + ratingClass.replace('rating-', '');
     }
 
@@ -438,7 +450,7 @@
     tbody.innerHTML = scenarios
       .map((s) => {
         const ev = s.evaluation;
-        const prepPct = Math.round((ev.preparedness / 200) * 100);
+        const prepPct = Math.round((ev.preparedness / 5) * 100);
         const prepColor = getPreparednessColor(ev.preparedness);
 
         // Find relevant policies (match challenge tags to scenario tags)
@@ -456,7 +468,7 @@
             <a href="scenario.html#${s.id}" class="scenario-name">${s.title}</a>
             <div class="scenario-institution">${s.institution}</div>
           </td>
-          <td><span class="likelihood-badge">${ev.likelihood}%</span></td>
+          <td><span class="likelihood-badge">${getLikelihoodLabel(ev.likelihood)}</span></td>
           <td>
             <div class="policy-tags">${policyHtml}</div>
           </td>
@@ -465,7 +477,7 @@
               <div class="preparedness-bar">
                 <div class="preparedness-bar-fill" style="width: ${prepPct}%; background-color: ${prepColor};"></div>
               </div>
-              <span class="preparedness-label" style="color: ${prepColor};">${ev.preparedness}/200</span>
+              <span class="preparedness-label" style="color: ${prepColor};">${ev.preparedness}/5</span>
             </div>
           </td>
         </tr>`;

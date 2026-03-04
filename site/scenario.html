@@ -158,18 +158,25 @@
       return;
     }
 
+    // Likelihood/Impact/Preparedness: 1-5 scale
+    const LIKELIHOOD_LABELS = {1:'Improbable',2:'Possible',3:'Plausible',4:'Probable',5:'Happening'};
+    const IMPACT_LABELS = {1:'SC Improving',2:'SC Stable',3:'SC Broken for Some',4:'SC Broken for All',5:'Systemic Risk'};
+    const PREP_LABELS = {1:'No Sufficient Policies',2:'Policies Immature',3:'Not Implemented',4:'Somewhat Implemented',5:'Widely Implemented'};
+
     function getPreparednessColor(score) {
-      if (score <= 40) return '#c0392b';
-      if (score <= 80) return '#e67e22';
-      if (score <= 120) return '#f1c40f';
-      if (score <= 160) return '#27ae60';
-      return '#1e8449';
+      if (score <= 1) return '#4a4a4a';
+      if (score <= 2) return '#c0392b';
+      if (score <= 3) return '#e67e22';
+      if (score <= 4) return '#f1c40f';
+      return '#27ae60';
     }
 
     function getImpactColor(impact) {
-      if (impact >= 0) return '#27ae60';
-      if (impact >= -30) return '#e67e22';
-      return '#c0392b';
+      if (impact >= 5) return '#4a4a4a'; // Systemic Risk
+      if (impact >= 4) return '#c0392b'; // SC Broken for All
+      if (impact >= 3) return '#e67e22'; // SC Broken for Some
+      if (impact >= 2) return '#f1c40f'; // SC Stable
+      return '#27ae60';                   // SC Improving
     }
 
     function formatTag(tag) {
@@ -215,17 +222,16 @@
       if (ev) {
         document.getElementById('eval-card').style.display = '';
         document.getElementById('eval-date').textContent = 'Evaluated: ' + ev.date;
-        document.getElementById('eval-likelihood').textContent = ev.likelihood + '%';
-        document.getElementById('eval-likelihood-bar').style.width = ev.likelihood + '%';
+        document.getElementById('eval-likelihood').textContent = LIKELIHOOD_LABELS[ev.likelihood] || `${ev.likelihood}/5`;
+        document.getElementById('eval-likelihood-bar').style.width = (ev.likelihood / 5) * 100 + '%';
         document.getElementById('eval-likelihood-bar').style.backgroundColor = '#3498db';
 
-        document.getElementById('eval-impact').textContent = ev.impact;
-        const impactPct = Math.abs(ev.impact);
-        document.getElementById('eval-impact-bar').style.width = impactPct + '%';
+        document.getElementById('eval-impact').textContent = IMPACT_LABELS[ev.impact] || `${ev.impact}/5`;
+        document.getElementById('eval-impact-bar').style.width = (ev.impact / 5) * 100 + '%';
         document.getElementById('eval-impact-bar').style.backgroundColor = getImpactColor(ev.impact);
 
-        document.getElementById('eval-preparedness').textContent = ev.preparedness + '/200';
-        const prepPct = (ev.preparedness / 200) * 100;
+        document.getElementById('eval-preparedness').textContent = (PREP_LABELS[ev.preparedness] || `${ev.preparedness}/5`);
+        const prepPct = (ev.preparedness / 5) * 100;
         document.getElementById('eval-preparedness-bar').style.width = prepPct + '%';
         document.getElementById('eval-preparedness-bar').style.backgroundColor = getPreparednessColor(ev.preparedness);
 

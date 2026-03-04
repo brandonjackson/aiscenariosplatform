@@ -89,12 +89,15 @@
       return tag.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
 
+    const LIKELIHOOD_LABELS = {1:'Improbable',2:'Possible',3:'Plausible',4:'Probable',5:'Happening'};
+    const PREP_LABELS = {1:'No Sufficient Policies',2:'Policies Immature',3:'Not Implemented',4:'Somewhat Implemented',5:'Widely Implemented'};
+
     function getPreparednessColor(score) {
-      if (score <= 40) return '#c0392b';
-      if (score <= 80) return '#e67e22';
-      if (score <= 120) return '#f1c40f';
-      if (score <= 160) return '#27ae60';
-      return '#1e8449';
+      if (score <= 1) return '#4a4a4a';
+      if (score <= 2) return '#c0392b';
+      if (score <= 3) return '#e67e22';
+      if (score <= 4) return '#f1c40f';
+      return '#27ae60';
     }
 
     async function init() {
@@ -142,7 +145,8 @@
         document.getElementById('related-scenarios').innerHTML = related.map(s => {
           const ev = s.evaluation;
           const prepColor = ev ? getPreparednessColor(ev.preparedness) : '#ccc';
-          const prepText = ev ? ev.preparedness + '/200' : 'N/A';
+          const prepText = ev ? (PREP_LABELS[ev.preparedness] || ev.preparedness + '/5') : 'N/A';
+          const likelihoodText = ev ? (LIKELIHOOD_LABELS[ev.likelihood] || ev.likelihood + '/5') : '';
 
           return '<a href="scenario.html#' + s.id + '" class="related-card">' +
             '<div class="related-card-header">' +
@@ -150,7 +154,7 @@
               '<span class="related-card-institution">' + s.institution + '</span>' +
             '</div>' +
             '<div class="related-card-metrics">' +
-              (ev ? '<span class="related-metric">Likelihood: ' + ev.likelihood + '%</span>' : '') +
+              (ev ? '<span class="related-metric">Likelihood: ' + likelihoodText + '</span>' : '') +
               '<span class="related-metric" style="color:' + prepColor + '">Preparedness: ' + prepText + '</span>' +
             '</div>' +
           '</a>';

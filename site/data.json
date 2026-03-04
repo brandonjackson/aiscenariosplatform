@@ -1,9 +1,9 @@
 {
   "meta": {
-    "generated": "2026-03-03T18:51:51.115Z",
-    "overallPreparedness": 30,
-    "overallPreparednessPct": 15,
-    "overallRating": "Critically Unprepared",
+    "generated": "2026-03-04T07:47:30.752Z",
+    "overallPreparedness": 1.7,
+    "overallPreparednessPct": 34,
+    "overallRating": "Highly Unprepared",
     "scenarioCount": 10,
     "policyCount": 15
   },
@@ -35,9 +35,9 @@
       ],
       "evaluation": {
         "date": "2026-02-15",
-        "likelihood": 35,
-        "impact": -90,
-        "preparedness": 15,
+        "likelihood": 2,
+        "impact": 5,
+        "preparedness": 1,
         "rationale": {
           "likelihood": "Superintelligence by 2028 is possible but relies on aggressive assumptions about scaling and recursive improvement. Most experts place this as a tail risk rather than base case.",
           "impact": "If realized, impact would be among the most extreme scenarios — near-total economic and social restructuring with minimal time for adaptation.",
@@ -70,9 +70,9 @@
       ],
       "evaluation": {
         "date": "2026-02-15",
-        "likelihood": 70,
-        "impact": -55,
-        "preparedness": 40,
+        "likelihood": 4,
+        "impact": 3,
+        "preparedness": 2,
         "rationale": {
           "likelihood": "Rapid AI-driven government and service transformation is already underway in several countries. The 5-year timeline is plausible given current adoption rates.",
           "impact": "Impact is significant but not catastrophic if managed proactively; main risk is uneven adaptation leaving vulnerable populations behind.",
@@ -101,12 +101,12 @@
       ],
       "evaluation": {
         "date": "2026-02-15",
-        "likelihood": 25,
-        "impact": 70,
-        "preparedness": 30,
+        "likelihood": 2,
+        "impact": 1,
+        "preparedness": 2,
         "rationale": {
           "likelihood": "Optimistic scenario requires solving alignment, achieving broad capability, AND ensuring equitable deployment — each is uncertain, together they're unlikely in the near term.",
-          "impact": "If realized, this would be enormously positive — breakthroughs in health, poverty, and science. Positive impact score reflects the upside.",
+          "impact": "If realized, this would be enormously positive — breakthroughs in health, poverty, and science. Social contract would meaningfully improve for future generations.",
           "preparedness": "Some investment in AI safety research and beneficial AI programs, but nowhere near the scale needed to ensure this positive scenario materializes."
         }
       }
@@ -135,9 +135,9 @@
       ],
       "evaluation": {
         "date": "2026-02-15",
-        "likelihood": 60,
-        "impact": -65,
-        "preparedness": 25,
+        "likelihood": 3,
+        "impact": 4,
+        "preparedness": 2,
         "rationale": {
           "likelihood": "Epoch's economic modeling is rigorous and their automation timelines track with current capability trends. The distributional crisis is the most likely near-term risk.",
           "impact": "Severe distributional impacts even with GDP growth; the Engels Pause dynamic could destabilize social contracts across advanced economies.",
@@ -172,9 +172,9 @@
       ],
       "evaluation": {
         "date": "2026-02-15",
-        "likelihood": 40,
-        "impact": -75,
-        "preparedness": 20,
+        "likelihood": 2,
+        "impact": 4,
+        "preparedness": 1,
         "rationale": {
           "likelihood": "Aggressive timeline but from well-informed forecasters. The specific capability milestones are the key uncertainty — if scaling continues, 2027 is not impossible.",
           "impact": "Near-term transformative AI would catch institutions and individuals deeply unprepared, leading to chaotic adjustment period.",
@@ -207,9 +207,9 @@
       ],
       "evaluation": {
         "date": "2026-02-15",
-        "likelihood": 65,
-        "impact": -70,
-        "preparedness": 20,
+        "likelihood": 4,
+        "impact": 4,
+        "preparedness": 1,
         "rationale": {
           "likelihood": "Professional job displacement is already visible in coding, legal research, financial analysis. The question is speed and breadth, not whether it happens.",
           "impact": "Middle class destabilization has profound second-order effects: consumption crisis, fiscal crisis, political polarization, mental health epidemic.",
@@ -238,12 +238,12 @@
       ],
       "evaluation": {
         "date": "2026-02-15",
-        "likelihood": 10,
-        "impact": -100,
-        "preparedness": 10,
+        "likelihood": 1,
+        "impact": 5,
+        "preparedness": 1,
         "rationale": {
           "likelihood": "10% existential risk this century from AI is Ord's estimate. While this is a low probability, the severity demands attention. Exact probability is deeply uncertain.",
-          "impact": "By definition, existential risk represents the maximum possible negative impact — loss of all future human potential.",
+          "impact": "By definition, existential risk represents the maximum possible negative impact — loss of all future human potential. Institutions would fail entirely.",
           "preparedness": "International AI governance is in its infancy. No equivalent of nuclear non-proliferation frameworks exists for AI. Alignment research is underfunded relative to capability research."
         }
       }
@@ -274,12 +274,12 @@
       ],
       "evaluation": {
         "date": "2026-02-15",
-        "likelihood": 55,
-        "impact": -50,
-        "preparedness": 35,
+        "likelihood": 3,
+        "impact": 3,
+        "preparedness": 2,
         "rationale": {
           "likelihood": "The 'coming wave' framing is compelling — technology diffusion is historically unstoppable. The containment challenge is real and growing.",
-          "impact": "Moderate negative impact reflecting the dual-use nature: significant risks but also genuine potential for benefits if governance catches up.",
+          "impact": "Moderate negative impact reflecting the dual-use nature: significant risks concentrated in specific groups but also genuine potential for benefits if governance catches up.",
           "preparedness": "Some containment thinking is entering policy discourse, but institutional forms for governing dual-use AI remain largely theoretical."
         }
       }
@@ -308,12 +308,12 @@
       ],
       "evaluation": {
         "date": "2026-02-15",
-        "likelihood": 75,
-        "impact": -45,
-        "preparedness": 45,
+        "likelihood": 4,
+        "impact": 3,
+        "preparedness": 2,
         "rationale": {
           "likelihood": "The IMF's conservative estimate of 40% job exposure is well-supported by multiple analyses. This is arguably the most likely near-term disruption scenario.",
-          "impact": "Impact is significant but the IMF framing focuses on manageable transitions — the question is whether policy responds fast enough.",
+          "impact": "Impact is significant but the IMF framing focuses on manageable transitions — the social contract is strained for some groups but not universally broken.",
           "preparedness": "IMF and G20 have begun policy dialogue; some countries are updating labor market and tax frameworks. Most prepared of any scenario, but still inadequate."
         }
       }
@@ -342,12 +342,12 @@
       ],
       "evaluation": {
         "date": "2026-02-15",
-        "likelihood": 50,
-        "impact": -60,
-        "preparedness": 30,
+        "likelihood": 3,
+        "impact": 4,
+        "preparedness": 2,
         "rationale": {
           "likelihood": "Military AI transformation is accelerating across major powers. Strategic stability risks are real but timeline is uncertain.",
-          "impact": "National security disruption could cascade into broader instability; autonomous weapons and AI-enabled cyber attacks pose novel threats.",
+          "impact": "National security disruption could cascade into broader instability; autonomous weapons and AI-enabled cyber attacks pose novel threats breaking social contracts.",
           "preparedness": "Military AI governance is ahead of economic AI governance in some respects (existing arms control frameworks) but behind in others (no AI-specific treaties)."
         }
       }
