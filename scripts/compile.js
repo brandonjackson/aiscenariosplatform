@@ -67,10 +67,12 @@ function compile() {
   const rawScenarios = readCSV('scenarios.csv');
   const rawEvaluations = readCSV('evaluations.csv');
   const rawPolicies = readCSV('policies.csv');
+  const rawChallenges = readCSV('challenges.csv');
 
   console.log(`  Scenarios:   ${rawScenarios.length}`);
   console.log(`  Evaluations: ${rawEvaluations.length}`);
   console.log(`  Policies:    ${rawPolicies.length}`);
+  console.log(`  Challenges:  ${rawChallenges.length}`);
 
   // 2. Deduplicate evaluations — keep latest per scenario_id
   const latestEvals = {};
@@ -140,7 +142,40 @@ function compile() {
     };
   });
 
-  // 5. Compute aggregate stats
+  // 5. Transform challenges and compute per-challenge preparedness
+  const challenges = rawChallenges.map(row => {
+    const tagName = row.tag ? row.tag.replace('tag_', '') : '';
+
+    // Find scenarios that have this challenge tag and have evaluations
+    const taggedScenarios = scenarios.filter(s =>
+      s.tags.includes(tagName) && s.evaluation
+    );
+
+    // Compute weighted average preparedness for this challenge
+    let weightedPrep = 0;
+    let totalW = 0;
+    for (const s of taggedScenarios) {
+      const w = s.evaluation.likelihood;
+      weightedPrep += s.evaluation.preparedness * w;
+      totalW += w;
+    }
+    const preparedness = totalW > 0
+      ? Math.round(weightedPrep / totalW * 10) / 10
+      : null;
+
+    return {
+      id: row.id,
+      tag: tagName,
+      problemName: row.problem_name,
+      opportunityName: row.opportunity_name,
+      description: row.description,
+      preparedness,
+      rating: preparedness !== null ? getRating(preparedness) : null,
+      scenarioCount: taggedScenarios.length,
+    };
+  });
+
+  // 6. Compute aggregate stats
   const evaluatedScenarios = scenarios.filter(s => s.evaluation);
   
   let weightedPreparedness = 0;
@@ -166,6 +201,7 @@ function compile() {
     },
     scenarios,
     policies,
+    challenges,
   };
 
   // 6. Write output

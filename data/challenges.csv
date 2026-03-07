@@ -1,0 +1,9 @@
+id,tag,problem_name,opportunity_name,description
+mass-unemployment,tag_mass_unemployment,Mass Unemployment,Prevent Mass Unemployment,"Ensuring rapid AI-driven automation does not leave millions without livelihoods, by creating new pathways to employment and income security."
+fiscal-crisis,tag_fiscal_crisis,Fiscal Crisis,Prevent Fiscal Crisis,"Protecting government revenue bases as AI erodes traditional tax streams, and building fiscal resilience for the transition period."
+inequality,tag_inequality,Inequality,Reduce Inequality,"Preventing extreme concentration of AI-generated wealth and ensuring broad-based benefit from productivity gains."
+ai-concentration,tag_ai_concentration,AI Concentration,Prevent AI Concentration,"Avoiding monopolistic control of critical AI infrastructure and ensuring competitive, accessible AI ecosystems."
+skills-obsolescence,tag_skills_obsolescence,Skills Obsolescence,Prevent Skills Obsolescence,"Adapting education and training systems so workers can continuously acquire relevant skills in a rapidly changing economy."
+public-service-disruption,tag_public_service_disruption,Public Service Disruption,Protect Public Services,"Ensuring essential public services remain reliable, accessible, and human-centred as AI transforms service delivery."
+democratic-erosion,tag_democratic_erosion,Democratic Erosion,Safeguard Democracy,"Maintaining democratic accountability, transparency, and citizen agency in the face of AI-enabled surveillance and manipulation."
+existential-risk,tag_existential_risk,Existential Risk,Mitigate Existential Risk,"Ensuring advanced AI systems remain aligned with human values and that catastrophic or irreversible outcomes are prevented."

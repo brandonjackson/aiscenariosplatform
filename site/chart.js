@@ -453,6 +453,9 @@
 
     // Scenario table
     populateScenarioTable();
+
+    // Policy atlas tree
+    renderPolicyTree();
   }
 
   function populateScenarioTable() {
@@ -537,6 +540,225 @@
     return map[rating] || 'rating-highly-unprepared';
   }
 
+  // --- Policy Atlas Tree ---
+  function renderPolicyTree() {
+    const container = document.getElementById('policy-tree-container');
+    if (!container || !data || !data.challenges) return;
+
+    container.innerHTML = '';
+
+    const challenges = data.challenges;
+    const policies = data.policies;
+
+    // Build tree data: root → challenges → policies
+    const treeData = {
+      name: 'Preparedness',
+      children: challenges.map(c => ({
+        name: c.opportunityName,
+        preparedness: c.preparedness,
+        rating: c.rating,
+        challengeTag: c.tag,
+        children: policies
+          .filter(p => p.challengeTag === c.tag)
+          .map(p => ({
+            name: p.name,
+            policyId: p.id,
+            isPolicy: true,
+          })),
+      })),
+    };
+
+    // Layout
+    const nodeWidth = 160;
+    const nodeHeight = 44;
+    const levelGapX = 80;
+    const nodeGapY = 8;
+
+    // Compute required height
+    // Level 0: 1 node (root)
+    // Level 1: challenges.length nodes
+    // Level 2: policies per challenge (variable)
+    // Height driven by level 2 total leaf count
+    const totalLeaves = treeData.children.reduce((sum, c) => sum + Math.max(c.children.length, 1), 0);
+    const treeHeight = totalLeaves * (nodeHeight + nodeGapY) + 40;
+    const containerWidth = container.clientWidth || 1060;
+    const svgWidth = Math.max(containerWidth, 3 * nodeWidth + 2 * levelGapX + 120);
+    const svgHeight = Math.max(treeHeight, 300);
+
+    // Column x positions
+    const col0X = 40;
+    const col1X = col0X + nodeWidth + levelGapX;
+    const col2X = col1X + nodeWidth + levelGapX;
+
+    const svg = d3.select(container)
+      .append('svg')
+      .attr('width', svgWidth)
+      .attr('height', svgHeight)
+      .attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet');
+
+    // Compute y positions for level 2 leaves (policies), then center parents
+    let leafY = 20;
+    const challengePositions = [];
+
+    for (const challenge of treeData.children) {
+      const policyPositions = [];
+      const numPolicies = Math.max(challenge.children.length, 1);
+
+      for (let i = 0; i < challenge.children.length; i++) {
+        policyPositions.push({
+          ...challenge.children[i],
+          x: col2X,
+          y: leafY + i * (nodeHeight + nodeGapY),
+        });
+      }
+
+      const blockHeight = numPolicies * nodeHeight + (numPolicies - 1) * nodeGapY;
+      const challengeY = leafY + blockHeight / 2 - nodeHeight / 2;
+
+      challengePositions.push({
+        ...challenge,
+        x: col1X,
+        y: challengeY,
+        policyPositions,
+      });
+
+      leafY += blockHeight + nodeGapY * 2;
+    }
+
+    // Root position (centered on all challenges)
+    const allChallengeYs = challengePositions.map(c => c.y + nodeHeight / 2);
+    const rootY = (Math.min(...allChallengeYs) + Math.max(...allChallengeYs)) / 2 - nodeHeight / 2;
+
+    // Draw connectors first (behind nodes)
+    const linkGroup = svg.append('g').attr('class', 'tree-links');
+
+    // Root → challenges
+    for (const ch of challengePositions) {
+      linkGroup.append('path')
+        .attr('d', buildLink(col0X + nodeWidth, rootY + nodeHeight / 2, ch.x, ch.y + nodeHeight / 2))
+        .attr('fill', 'none')
+        .attr('stroke', '#d1d5db')
+        .attr('stroke-width', 1.5);
+    }
+
+    // Challenges → policies
+    for (const ch of challengePositions) {
+      for (const p of ch.policyPositions) {
+        linkGroup.append('path')
+          .attr('d', buildLink(ch.x + nodeWidth, ch.y + nodeHeight / 2, p.x, p.y + nodeHeight / 2))
+          .attr('fill', 'none')
+          .attr('stroke', '#d1d5db')
+          .attr('stroke-width', 1.5);
+      }
+    }
+
+    // Draw root node
+    drawNode(svg, col0X, rootY, nodeWidth, nodeHeight, 'Preparedness', getPreparednessColor(data.meta.overallPreparedness), true);
+
+    // Draw challenge nodes
+    for (const ch of challengePositions) {
+      const color = ch.preparedness !== null ? getPreparednessColor(ch.preparedness) : '#999';
+      drawNode(svg, ch.x, ch.y, nodeWidth, nodeHeight, ch.name, color, false);
+    }
+
+    // Draw policy leaf nodes
+    for (const ch of challengePositions) {
+      for (const p of ch.policyPositions) {
+        drawLeafNode(svg, p.x, p.y, nodeWidth, nodeHeight, p.name, p.policyId);
+      }
+    }
+  }
+
+  function buildLink(x1, y1, x2, y2) {
+    const midX = (x1 + x2) / 2;
+    return `M${x1},${y1} C${midX},${y1} ${midX},${y2} ${x2},${y2}`;
+  }
+
+  function drawNode(svg, x, y, w, h, label, accentColor, isRoot) {
+    const g = svg.append('g').attr('transform', `translate(${x},${y})`);
+
+    g.append('rect')
+      .attr('width', w)
+      .attr('height', h)
+      .attr('rx', 6)
+      .attr('ry', 6)
+      .attr('fill', '#fff')
+      .attr('stroke', accentColor)
+      .attr('stroke-width', 2);
+
+    // Accent left bar
+    g.append('rect')
+      .attr('width', 4)
+      .attr('height', h)
+      .attr('rx', 2)
+      .attr('ry', 0)
+      .attr('fill', accentColor);
+
+    // Clip text to node width
+    const textX = 14;
+    const maxTextWidth = w - 20;
+
+    g.append('text')
+      .attr('x', textX)
+      .attr('y', h / 2)
+      .attr('dy', '0.35em')
+      .attr('font-size', isRoot ? '13px' : '11px')
+      .attr('font-weight', isRoot ? '700' : '600')
+      .attr('fill', '#1a1a2e')
+      .text(label)
+      .each(function () {
+        truncateSVGText(this, maxTextWidth);
+      });
+  }
+
+  function drawLeafNode(svg, x, y, w, h, label, policyId) {
+    const g = svg.append('g')
+      .attr('transform', `translate(${x},${y})`)
+      .style('cursor', 'pointer')
+      .on('click', () => { window.location.href = `policy.html#${policyId}`; });
+
+    g.append('rect')
+      .attr('width', w)
+      .attr('height', h)
+      .attr('rx', 6)
+      .attr('ry', 6)
+      .attr('fill', '#f7f8fa')
+      .attr('stroke', '#e2e4ea')
+      .attr('stroke-width', 1);
+
+    const textX = 10;
+    const maxTextWidth = w - 16;
+
+    g.append('text')
+      .attr('x', textX)
+      .attr('y', h / 2)
+      .attr('dy', '0.35em')
+      .attr('font-size', '10px')
+      .attr('font-weight', '400')
+      .attr('fill', '#6b7084')
+      .text(label)
+      .each(function () {
+        truncateSVGText(this, maxTextWidth);
+      });
+
+    // Hover effect
+    g.on('mouseenter', function () {
+      d3.select(this).select('rect').attr('stroke', '#3498db').attr('fill', '#eef6fd');
+    }).on('mouseleave', function () {
+      d3.select(this).select('rect').attr('stroke', '#e2e4ea').attr('fill', '#f7f8fa');
+    });
+  }
+
+  function truncateSVGText(textEl, maxWidth) {
+    const el = d3.select(textEl);
+    let text = el.text();
+    while (el.node().getComputedTextLength() > maxWidth && text.length > 0) {
+      text = text.slice(0, -1);
+      el.text(text + '...');
+    }
+  }
+
   // --- Initialization ---
   async function init() {
     try {
@@ -569,7 +791,7 @@
     let resizeTimer;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(renderChart, 200);
+      resizeTimer = setTimeout(() => { renderChart(); renderPolicyTree(); }, 200);
     });
   }
 
