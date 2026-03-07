@@ -15,10 +15,10 @@
   const DOT_RADIUS = 7;
   const DOT_RADIUS_HOVER = 10;
 
-  // Likelihood axis labels (1-5 scale)
-  const LIKELIHOOD_TICKS = [1, 2, 3, 4, 5];
+  // Likelihood axis labels (1-5 scale, matching range splits)
+  const LIKELIHOOD_TICKS = [1.4, 2.2, 3.0, 3.8, 4.6];
   const LIKELIHOOD_LABELS = ['Improbable', 'Possible', 'Plausible', 'Probable', 'Emerging'];
-  const LIKELIHOOD_BOUNDARIES = [1.5, 2.5, 3.5, 4.5];
+  const LIKELIHOOD_BOUNDARIES = [1.8, 2.6, 3.4, 4.2];
 
   const MODE_CONFIG = {
     risk: {
@@ -84,6 +84,24 @@
     return getScoreColor(score);
   }
 
+  // Likelihood label mapping (1-5 scale, using same float ranges)
+  function getLikelihoodLabel(score) {
+    if (score < 1.8) return 'Improbable';
+    if (score < 2.6) return 'Possible';
+    if (score < 3.4) return 'Plausible';
+    if (score < 4.2) return 'Probable';
+    return 'Emerging';
+  }
+
+  // Likelihood color: white to mid grey
+  function getLikelihoodColor(score) {
+    if (score < 1.8) return '#cccccc'; // Improbable (lightest)
+    if (score < 2.6) return '#aaaaaa'; // Possible
+    if (score < 3.4) return '#888888'; // Plausible
+    if (score < 4.2) return '#666666'; // Probable
+    return '#444444';                  // Emerging (mid grey)
+  }
+
   function getDotColor(d) {
     return getNetImpactColor(getNetImpact(d));
   }
@@ -96,7 +114,7 @@
     const ev = d.evaluation;
     tooltip.innerHTML = `
       <div class="tt-title">${d.title}</div>
-      <div class="tt-row"><span class="tt-label">Likelihood</span><span>${ev.likelihood}/5</span></div>
+      <div class="tt-row"><span class="tt-label">Likelihood</span><span style="color:${getLikelihoodColor(ev.likelihood)}">${getLikelihoodLabel(ev.likelihood)}</span></div>
       <div class="tt-row"><span class="tt-label">Impact</span><span style="color:${getScoreColor(ev.impact)}">${getScoreLabel(ev.impact)}</span></div>
       <div class="tt-row"><span class="tt-label">Preparedness</span><span style="color:${getScoreColor(ev.preparedness)}">${getScoreLabel(ev.preparedness)}</span></div>
       <div class="tt-summary">${truncate(d.summary, 120)}</div>
@@ -468,7 +486,7 @@
             <a href="scenario.html#${s.id}" class="scenario-name">${s.title}</a>
             <div class="scenario-institution">${s.institution}</div>
           </td>
-          <td><span class="likelihood-badge">${ev.likelihood}/5</span></td>
+          <td><span class="likelihood-badge" style="color: ${getLikelihoodColor(ev.likelihood)};">${getLikelihoodLabel(ev.likelihood)}</span></td>
           <td>
             <div class="policy-tags">${policyHtml}</div>
           </td>

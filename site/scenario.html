@@ -184,6 +184,24 @@
       return getScoreColor(impact);
     }
 
+    // Likelihood label mapping (1-5 scale, using same float ranges)
+    function getLikelihoodLabel(score) {
+      if (score < 1.8) return 'Improbable';
+      if (score < 2.6) return 'Possible';
+      if (score < 3.4) return 'Plausible';
+      if (score < 4.2) return 'Probable';
+      return 'Emerging';
+    }
+
+    // Likelihood color: white to mid grey
+    function getLikelihoodColor(score) {
+      if (score < 1.8) return '#cccccc';
+      if (score < 2.6) return '#aaaaaa';
+      if (score < 3.4) return '#888888';
+      if (score < 4.2) return '#666666';
+      return '#444444';
+    }
+
     function formatTag(tag) {
       return tag.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
@@ -227,9 +245,11 @@
       if (ev) {
         document.getElementById('eval-card').style.display = '';
         document.getElementById('eval-date').textContent = 'Evaluated: ' + ev.date;
-        document.getElementById('eval-likelihood').textContent = ev.likelihood + '/5';
+        const likelihoodEl = document.getElementById('eval-likelihood');
+        likelihoodEl.textContent = getLikelihoodLabel(ev.likelihood);
+        likelihoodEl.style.color = getLikelihoodColor(ev.likelihood);
         document.getElementById('eval-likelihood-bar').style.width = ((ev.likelihood - 1) / 4) * 100 + '%';
-        document.getElementById('eval-likelihood-bar').style.backgroundColor = '#3498db';
+        document.getElementById('eval-likelihood-bar').style.backgroundColor = getLikelihoodColor(ev.likelihood);
 
         const impactEl = document.getElementById('eval-impact');
         impactEl.textContent = getScoreLabel(ev.impact);

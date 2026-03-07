@@ -111,6 +111,24 @@
       return getScoreColor(score);
     }
 
+    // Likelihood label mapping (1-5 scale, using same float ranges)
+    function getLikelihoodLabel(score) {
+      if (score < 1.8) return 'Improbable';
+      if (score < 2.6) return 'Possible';
+      if (score < 3.4) return 'Plausible';
+      if (score < 4.2) return 'Probable';
+      return 'Emerging';
+    }
+
+    // Likelihood color: white to mid grey
+    function getLikelihoodColor(score) {
+      if (score < 1.8) return '#cccccc';
+      if (score < 2.6) return '#aaaaaa';
+      if (score < 3.4) return '#888888';
+      if (score < 4.2) return '#666666';
+      return '#444444';
+    }
+
     async function init() {
       let data;
       try {
@@ -164,7 +182,7 @@
               '<span class="related-card-institution">' + s.institution + '</span>' +
             '</div>' +
             '<div class="related-card-metrics">' +
-              (ev ? '<span class="related-metric">Likelihood: ' + ev.likelihood + '/5</span>' : '') +
+              (ev ? '<span class="related-metric" style="color:' + getLikelihoodColor(ev.likelihood) + '">Likelihood: ' + getLikelihoodLabel(ev.likelihood) + '</span>' : '') +
               '<span class="related-metric" style="color:' + prepColor + '">Preparedness: ' + prepText + '</span>' +
             '</div>' +
           '</a>';
