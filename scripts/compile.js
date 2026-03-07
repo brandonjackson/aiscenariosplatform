@@ -142,7 +142,7 @@ function compile() {
     };
   });
 
-  // 5. Transform challenges and compute per-challenge preparedness
+  // 5. Transform challenges — use CSV preparedness if available, else compute from scenarios
   const challenges = rawChallenges.map(row => {
     const tagName = row.tag ? row.tag.replace('tag_', '') : '';
 
@@ -151,17 +151,27 @@ function compile() {
       s.tags.includes(tagName) && s.evaluation
     );
 
-    // Compute weighted average preparedness for this challenge
-    let weightedPrep = 0;
-    let totalW = 0;
-    for (const s of taggedScenarios) {
-      const w = s.evaluation.likelihood;
-      weightedPrep += s.evaluation.preparedness * w;
-      totalW += w;
+    // Use CSV preparedness value if provided, otherwise compute weighted average
+    let preparedness;
+    if (row.preparedness && !isNaN(Number(row.preparedness))) {
+      preparedness = toNumber(row.preparedness);
+    } else {
+      let weightedPrep = 0;
+      let totalW = 0;
+      for (const s of taggedScenarios) {
+        const w = s.evaluation.likelihood;
+        weightedPrep += s.evaluation.preparedness * w;
+        totalW += w;
+      }
+      preparedness = totalW > 0
+        ? Math.round(weightedPrep / totalW * 10) / 10
+        : null;
     }
-    const preparedness = totalW > 0
-      ? Math.round(weightedPrep / totalW * 10) / 10
-      : null;
+
+    // Find policies for this challenge
+    const challengePolicies = policies
+      .filter(p => p.challengeTag === tagName)
+      .map(p => p.id);
 
     return {
       id: row.id,
@@ -172,6 +182,7 @@ function compile() {
       preparedness,
       rating: preparedness !== null ? getRating(preparedness) : null,
       scenarioCount: taggedScenarios.length,
+      policyIds: challengePolicies,
     };
   });
 

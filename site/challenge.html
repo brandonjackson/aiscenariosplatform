@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Challenge — AI Preparedness Tracker</title>
+  <meta name="description" content="Policy challenge area for transformative AI preparedness.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="site-logo">AI Preparedness <span>Tracker</span></a>
+      <nav class="site-nav">
+        <a href="index.html#scenarios">Scenarios</a>
+        <a href="policies.html">Policies</a>
+        <a href="methodology.html">Methodology</a>
+        <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Challenge Detail -->
+  <main class="detail-page">
+    <div class="container">
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-sep">/</span>
+        <a href="policies.html">Policies</a>
+        <span class="breadcrumb-sep">/</span>
+        <span id="breadcrumb-title">...</span>
+      </nav>
+
+      <!-- Header -->
+      <div class="detail-header">
+        <div class="detail-header-left">
+          <h1 id="challenge-title" class="detail-title">Loading...</h1>
+          <p id="challenge-description" class="detail-summary"></p>
+          <div class="detail-actions">
+            <a href="policies.html" class="btn btn-outline">Back to Policy Atlas</a>
+          </div>
+        </div>
+        <div id="challenge-eval-card" class="eval-card" style="display:none;">
+          <div class="eval-card-title">Preparedness</div>
+          <div class="eval-metrics">
+            <div>
+              <div class="eval-metric-label">Score</div>
+              <div class="eval-metric-value" id="challenge-prep-score"></div>
+              <div class="eval-metric-bar">
+                <div class="eval-metric-bar-fill" id="challenge-prep-bar"></div>
+              </div>
+            </div>
+            <div>
+              <div class="eval-metric-label">Rating</div>
+              <div id="challenge-prep-badge"></div>
+            </div>
+            <div>
+              <div class="eval-metric-label">Scenarios</div>
+              <div class="eval-metric-value" id="challenge-scenario-count"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Policies for this challenge -->
+      <section class="detail-section" id="policies-section" style="display:none;">
+        <h2 class="section-title">Policy Proposals</h2>
+        <p class="section-subtitle">Policies that address this challenge area.</p>
+        <div class="policy-list" id="challenge-policies"></div>
+      </section>
+
+      <!-- Related Scenarios -->
+      <section class="detail-section" id="scenarios-section" style="display:none;">
+        <h2 class="section-title">Related Scenarios</h2>
+        <p class="section-subtitle">Scenarios that involve this challenge.</p>
+        <div class="related-scenarios" id="challenge-scenarios"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span>&copy; 2026 AI Preparedness Tracker. Data-driven AI preparedness tracking.</span>
+        <div class="footer-links">
+          <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">Source</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function() {
+    'use strict';
+
+    const challengeId = window.location.hash.slice(1) || new URLSearchParams(window.location.search).get('id');
+
+    if (!challengeId) {
+      window.location.href = 'policies.html';
+      return;
+    }
+
+    function formatTag(tag) {
+      return tag.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    }
+
+    function getPreparednessLabel(score) {
+      if (score < 1.8) return 'Critically Unprepared';
+      if (score < 2.6) return 'Highly Unprepared';
+      if (score < 3.4) return 'Unprepared';
+      if (score < 4.2) return 'Almost Prepared';
+      return 'Prepared';
+    }
+
+    function getPreparednessColor(score) {
+      if (score < 1.8) return '#000000';
+      if (score < 2.6) return '#c0392b';
+      if (score < 3.4) return '#e67e22';
+      if (score < 4.2) return '#f1c40f';
+      return '#27ae60';
+    }
+
+    function getLikelihoodLabel(score) {
+      if (score < 1.8) return 'Improbable';
+      if (score < 2.6) return 'Possible';
+      if (score < 3.4) return 'Plausible';
+      if (score < 4.2) return 'Probable';
+      return 'Emerging';
+    }
+
+    function getLikelihoodColor(score) {
+      if (score < 1.8) return '#cccccc';
+      if (score < 2.6) return '#aaaaaa';
+      if (score < 3.4) return '#888888';
+      if (score < 4.2) return '#666666';
+      return '#444444';
+    }
+
+    function makeBadge(label, bgColor, textColor) {
+      return '<span class="score-badge" style="background:' + bgColor + ';color:' + textColor + ';border:1px solid #fff;border-radius:5px;">' + label + '</span>';
+    }
+
+    async function init() {
+      var data;
+      try {
+        var response = await fetch('data.json');
+        data = await response.json();
+      } catch (err) {
+        document.getElementById('challenge-title').textContent = 'Failed to load data';
+        return;
+      }
+
+      var challenge = data.challenges.find(function(c) { return c.id === challengeId; });
+      if (!challenge) {
+        document.getElementById('challenge-title').textContent = 'Challenge not found';
+        return;
+      }
+
+      // Page title
+      document.title = challenge.opportunityName + ' — AI Preparedness Tracker';
+      document.getElementById('breadcrumb-title').textContent = challenge.opportunityName;
+      document.getElementById('challenge-title').textContent = challenge.opportunityName;
+      document.getElementById('challenge-description').textContent = challenge.description;
+
+      // Preparedness card
+      if (challenge.preparedness !== null) {
+        document.getElementById('challenge-eval-card').style.display = '';
+        var prepPct = Math.round(((challenge.preparedness - 1) / 4) * 100);
+        var prepColor = getPreparednessColor(challenge.preparedness);
+        document.getElementById('challenge-prep-score').textContent = challenge.preparedness + '/5';
+        document.getElementById('challenge-prep-bar').style.width = prepPct + '%';
+        document.getElementById('challenge-prep-bar').style.backgroundColor = prepColor;
+        document.getElementById('challenge-prep-badge').innerHTML = makeBadge(
+          getPreparednessLabel(challenge.preparedness), prepColor, '#fff'
+        );
+        document.getElementById('challenge-scenario-count').textContent = challenge.scenarioCount;
+      }
+
+      // Policies
+      var policies = data.policies.filter(function(p) { return p.challengeTag === challenge.tag; });
+      if (policies.length > 0) {
+        document.getElementById('policies-section').style.display = '';
+        document.getElementById('challenge-policies').innerHTML = policies.map(function(p) {
+          var citationsHtml = p.citations.map(function(c) {
+            return '<a href="' + c.url + '" class="policy-citation" target="_blank" rel="noopener">' + c.text + '</a>';
+          }).join('');
+
+          return '<div class="policy-detail-card">' +
+            '<div class="policy-detail-name"><a href="policy.html#' + p.id + '">' + p.name + '</a></div>' +
+            '<p class="policy-detail-desc">' + p.description + '</p>' +
+            (citationsHtml ? '<div class="policy-detail-citations">' + citationsHtml + '</div>' : '') +
+          '</div>';
+        }).join('');
+      }
+
+      // Related scenarios
+      var scenarios = data.scenarios.filter(function(s) { return s.tags.includes(challenge.tag); });
+      if (scenarios.length > 0) {
+        document.getElementById('scenarios-section').style.display = '';
+        document.getElementById('challenge-scenarios').innerHTML = scenarios.map(function(s) {
+          var ev = s.evaluation;
+          return '<a href="scenario.html#' + s.id + '" class="related-card">' +
+            '<div class="related-card-header">' +
+              '<h3 class="related-card-title">' + s.title + '</h3>' +
+              '<span class="related-card-institution">' + s.institution + '</span>' +
+            '</div>' +
+            '<div class="related-card-metrics">' +
+              (ev ? '<span class="related-metric">Likelihood: ' + makeBadge(getLikelihoodLabel(ev.likelihood), getLikelihoodColor(ev.likelihood), '#fff') + '</span>' : '') +
+              (ev ? '<span class="related-metric">Preparedness: ' + makeBadge(getPreparednessLabel(ev.preparedness), getPreparednessColor(ev.preparedness), '#fff') + '</span>' : '') +
+            '</div>' +
+          '</a>';
+        }).join('');
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
+</body>
+</html>

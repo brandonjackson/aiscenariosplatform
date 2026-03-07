@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Policy Atlas — AI Preparedness Tracker</title>
+  <meta name="description" content="Policy proposals and challenge areas for transformative AI preparedness.">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="site-logo">AI Preparedness <span>Tracker</span></a>
+      <nav class="site-nav">
+        <a href="index.html#scenarios">Scenarios</a>
+        <a href="policies.html" class="active">Policies</a>
+        <a href="methodology.html">Methodology</a>
+        <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Policy Atlas Tree -->
+  <section class="policies-section">
+    <div class="container">
+      <div class="section-label">Policy Atlas</div>
+      <h2 class="section-title">Opportunity Solution Tree</h2>
+      <p class="policies-subtitle">How policy proposals map to the challenges they address. Node colour indicates preparedness level for each challenge.</p>
+      <div id="policy-tree-container" class="policy-tree-container"></div>
+    </div>
+  </section>
+
+  <!-- Challenges Overview -->
+  <section class="challenges-section">
+    <div class="container">
+      <div class="section-label">Challenges</div>
+      <h2 class="section-title">Policy Challenge Areas</h2>
+      <div class="challenges-grid" id="challenges-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- All Policies -->
+  <section class="all-policies-section">
+    <div class="container">
+      <div class="section-label">All Policies</div>
+      <h2 class="section-title">Policy Proposals</h2>
+      <div class="filter-bar">
+        <input type="text" id="policy-filter-search" class="filter-search" placeholder="Search policies...">
+        <select id="policy-filter-tag" class="filter-select">
+          <option value="">All Challenges</option>
+        </select>
+      </div>
+      <div class="policy-list" id="policy-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span>&copy; 2026 AI Preparedness Tracker. Data-driven AI preparedness tracking.</span>
+        <div class="footer-links">
+          <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">Source</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function() {
+    'use strict';
+
+    let data = null;
+
+    // --- Color helpers ---
+    function getPreparednessLabel(score) {
+      if (score < 1.8) return 'Critically Unprepared';
+      if (score < 2.6) return 'Highly Unprepared';
+      if (score < 3.4) return 'Unprepared';
+      if (score < 4.2) return 'Almost Prepared';
+      return 'Prepared';
+    }
+
+    function getPreparednessColor(score) {
+      if (score < 1.8) return '#000000';
+      if (score < 2.6) return '#c0392b';
+      if (score < 3.4) return '#e67e22';
+      if (score < 4.2) return '#f1c40f';
+      return '#27ae60';
+    }
+
+    function formatTag(tag) {
+      return tag.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function makeBadge(label, bgColor, textColor) {
+      return '<span class="score-badge" style="background:' + bgColor + ';color:' + textColor + ';border:1px solid #fff;border-radius:5px;">' + label + '</span>';
+    }
+
+    function preparednessBadge(score) {
+      return makeBadge(getPreparednessLabel(score), getPreparednessColor(score), '#fff');
+    }
+
+    // --- Policy Atlas Tree ---
+    function renderPolicyTree() {
+      const container = document.getElementById('policy-tree-container');
+      if (!container || !data || !data.challenges) return;
+
+      container.innerHTML = '';
+
+      const challenges = data.challenges;
+      const policies = data.policies;
+
+      const treeData = {
+        name: 'Preparedness',
+        score: data.meta.overallPreparedness,
+        children: challenges.map(c => ({
+          name: c.opportunityName,
+          preparedness: c.preparedness,
+          rating: c.rating,
+          challengeTag: c.tag,
+          challengeId: c.id,
+          children: policies
+            .filter(p => p.challengeTag === c.tag)
+            .map(p => ({
+              name: p.name,
+              policyId: p.id,
+              isPolicy: true,
+            })),
+        })),
+      };
+
+      const nodeWidth = 160;
+      const nodeHeight = 44;
+      const levelGapX = 80;
+      const nodeGapY = 8;
+
+      const totalLeaves = treeData.children.reduce((sum, c) => sum + Math.max(c.children.length, 1), 0);
+      const treeHeight = totalLeaves * (nodeHeight + nodeGapY) + 40;
+      const containerWidth = container.clientWidth || 1060;
+      const svgWidth = Math.max(containerWidth, 3 * nodeWidth + 2 * levelGapX + 120);
+      const svgHeight = Math.max(treeHeight, 300);
+
+      const col0X = 40;
+      const col1X = col0X + nodeWidth + levelGapX;
+      const col2X = col1X + nodeWidth + levelGapX;
+
+      const svg = d3.select(container)
+        .append('svg')
+        .attr('width', svgWidth)
+        .attr('height', svgHeight)
+        .attr('viewBox', '0 0 ' + svgWidth + ' ' + svgHeight)
+        .attr('preserveAspectRatio', 'xMidYMid meet');
+
+      let leafY = 20;
+      const challengePositions = [];
+
+      for (const challenge of treeData.children) {
+        const policyPositions = [];
+        const numPolicies = Math.max(challenge.children.length, 1);
+
+        for (let i = 0; i < challenge.children.length; i++) {
+          policyPositions.push({
+            ...challenge.children[i],
+            x: col2X,
+            y: leafY + i * (nodeHeight + nodeGapY),
+          });
+        }
+
+        const blockHeight = numPolicies * nodeHeight + (numPolicies - 1) * nodeGapY;
+        const challengeY = leafY + blockHeight / 2 - nodeHeight / 2;
+
+        challengePositions.push({
+          ...challenge,
+          x: col1X,
+          y: challengeY,
+          policyPositions,
+        });
+
+        leafY += blockHeight + nodeGapY * 2;
+      }
+
+      const allChallengeYs = challengePositions.map(c => c.y + nodeHeight / 2);
+      const rootY = (Math.min(...allChallengeYs) + Math.max(...allChallengeYs)) / 2 - nodeHeight / 2;
+
+      const linkGroup = svg.append('g').attr('class', 'tree-links');
+
+      for (const ch of challengePositions) {
+        linkGroup.append('path')
+          .attr('d', buildLink(col0X + nodeWidth, rootY + nodeHeight / 2, ch.x, ch.y + nodeHeight / 2))
+          .attr('fill', 'none')
+          .attr('stroke', '#d1d5db')
+          .attr('stroke-width', 1.5);
+      }
+
+      for (const ch of challengePositions) {
+        for (const p of ch.policyPositions) {
+          linkGroup.append('path')
+            .attr('d', buildLink(ch.x + nodeWidth, ch.y + nodeHeight / 2, p.x, p.y + nodeHeight / 2))
+            .attr('fill', 'none')
+            .attr('stroke', '#d1d5db')
+            .attr('stroke-width', 1.5);
+        }
+      }
+
+      // Root node with overall preparedness score
+      drawNode(svg, col0X, rootY, nodeWidth, nodeHeight,
+        'Preparedness (' + data.meta.overallPreparedness + '/5)',
+        getPreparednessColor(data.meta.overallPreparedness), true, null);
+
+      // Challenge nodes — link to challenge.html
+      for (const ch of challengePositions) {
+        const color = ch.preparedness !== null ? getPreparednessColor(ch.preparedness) : '#999';
+        drawNode(svg, ch.x, ch.y, nodeWidth, nodeHeight, ch.name, color, false, ch.challengeId);
+      }
+
+      // Policy leaf nodes
+      for (const ch of challengePositions) {
+        for (const p of ch.policyPositions) {
+          drawLeafNode(svg, p.x, p.y, nodeWidth, nodeHeight, p.name, p.policyId);
+        }
+      }
+    }
+
+    function buildLink(x1, y1, x2, y2) {
+      const midX = (x1 + x2) / 2;
+      return 'M' + x1 + ',' + y1 + ' C' + midX + ',' + y1 + ' ' + midX + ',' + y2 + ' ' + x2 + ',' + y2;
+    }
+
+    function drawNode(svg, x, y, w, h, label, accentColor, isRoot, challengeId) {
+      const g = svg.append('g').attr('transform', 'translate(' + x + ',' + y + ')');
+
+      if (challengeId) {
+        g.style('cursor', 'pointer')
+          .on('click', function() { window.location.href = 'challenge.html#' + challengeId; });
+      }
+
+      g.append('rect')
+        .attr('width', w)
+        .attr('height', h)
+        .attr('rx', 6)
+        .attr('ry', 6)
+        .attr('fill', '#fff')
+        .attr('stroke', accentColor)
+        .attr('stroke-width', 2);
+
+      g.append('rect')
+        .attr('width', 4)
+        .attr('height', h)
+        .attr('rx', 2)
+        .attr('ry', 0)
+        .attr('fill', accentColor);
+
+      const textX = 14;
+      const maxTextWidth = w - 20;
+
+      g.append('text')
+        .attr('x', textX)
+        .attr('y', h / 2)
+        .attr('dy', '0.35em')
+        .attr('font-size', isRoot ? '13px' : '11px')
+        .attr('font-weight', isRoot ? '700' : '600')
+        .attr('fill', '#1a1a2e')
+        .text(label)
+        .each(function () {
+          truncateSVGText(this, maxTextWidth);
+        });
+
+      if (challengeId) {
+        g.on('mouseenter', function() {
+          d3.select(this).select('rect').attr('stroke-width', 3);
+        }).on('mouseleave', function() {
+          d3.select(this).select('rect').attr('stroke-width', 2);
+        });
+      }
+    }
+
+    function drawLeafNode(svg, x, y, w, h, label, policyId) {
+      const g = svg.append('g')
+        .attr('transform', 'translate(' + x + ',' + y + ')')
+        .style('cursor', 'pointer')
+        .on('click', function() { window.location.href = 'policy.html#' + policyId; });
+
+      g.append('rect')
+        .attr('width', w)
+        .attr('height', h)
+        .attr('rx', 6)
+        .attr('ry', 6)
+        .attr('fill', '#f7f8fa')
+        .attr('stroke', '#e2e4ea')
+        .attr('stroke-width', 1);
+
+      const textX = 10;
+      const maxTextWidth = w - 16;
+
+      g.append('text')
+        .attr('x', textX)
+        .attr('y', h / 2)
+        .attr('dy', '0.35em')
+        .attr('font-size', '10px')
+        .attr('font-weight', '400')
+        .attr('fill', '#6b7084')
+        .text(label)
+        .each(function () {
+          truncateSVGText(this, maxTextWidth);
+        });
+
+      g.on('mouseenter', function () {
+        d3.select(this).select('rect').attr('stroke', '#3498db').attr('fill', '#eef6fd');
+      }).on('mouseleave', function () {
+        d3.select(this).select('rect').attr('stroke', '#e2e4ea').attr('fill', '#f7f8fa');
+      });
+    }
+
+    function truncateSVGText(textEl, maxWidth) {
+      const el = d3.select(textEl);
+      let text = el.text();
+      while (el.node().getComputedTextLength() > maxWidth && text.length > 0) {
+        text = text.slice(0, -1);
+        el.text(text + '...');
+      }
+    }
+
+    // --- Challenges Grid ---
+    function renderChallengesGrid() {
+      const grid = document.getElementById('challenges-grid');
+      if (!grid || !data || !data.challenges) return;
+
+      grid.innerHTML = data.challenges.map(function(c) {
+        const color = c.preparedness !== null ? getPreparednessColor(c.preparedness) : '#999';
+        const policyCount = data.policies.filter(function(p) { return p.challengeTag === c.tag; }).length;
+        return '<a href="challenge.html#' + c.id + '" class="challenge-card" style="border-left: 4px solid ' + color + ';">' +
+          '<div class="challenge-card-header">' +
+            '<h3 class="challenge-card-title">' + c.opportunityName + '</h3>' +
+            (c.preparedness !== null ? preparednessBadge(c.preparedness) : '') +
+          '</div>' +
+          '<p class="challenge-card-desc">' + c.description + '</p>' +
+          '<div class="challenge-card-meta">' +
+            '<span>' + c.scenarioCount + ' scenarios</span>' +
+            '<span>' + policyCount + ' policies</span>' +
+          '</div>' +
+        '</a>';
+      }).join('');
+    }
+
+    // --- Policies List ---
+    function renderPoliciesList() {
+      const list = document.getElementById('policy-list');
+      const searchInput = document.getElementById('policy-filter-search');
+      const tagSelect = document.getElementById('policy-filter-tag');
+      if (!list || !data) return;
+
+      const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+      const selectedTag = tagSelect ? tagSelect.value : '';
+
+      let policies = data.policies;
+
+      if (searchTerm) {
+        policies = policies.filter(function(p) {
+          return p.name.toLowerCase().includes(searchTerm) ||
+            p.description.toLowerCase().includes(searchTerm) ||
+            p.challengeTag.toLowerCase().includes(searchTerm);
+        });
+      }
+      if (selectedTag) {
+        policies = policies.filter(function(p) { return p.challengeTag === selectedTag; });
+      }
+
+      if (policies.length === 0) {
+        list.innerHTML = '<p class="no-results">No policies match your filters.</p>';
+        return;
+      }
+
+      list.innerHTML = policies.map(function(p) {
+        const citationsHtml = p.citations.map(function(c) {
+          return '<a href="' + c.url + '" class="policy-citation" target="_blank" rel="noopener">' + c.text + '</a>';
+        }).join('');
+
+        return '<div class="policy-detail-card">' +
+          '<div class="policy-detail-name"><a href="policy.html#' + p.id + '">' + p.name + '</a></div>' +
+          '<div class="policy-detail-tag">' + formatTag(p.challengeTag) + '</div>' +
+          '<p class="policy-detail-desc">' + p.description + '</p>' +
+          (citationsHtml ? '<div class="policy-detail-citations">' + citationsHtml + '</div>' : '') +
+        '</div>';
+      }).join('');
+    }
+
+    // --- Populate filter dropdown ---
+    function populateFilterDropdown() {
+      const tagSelect = document.getElementById('policy-filter-tag');
+      if (!tagSelect || !data || !data.challenges) return;
+
+      data.challenges.forEach(function(c) {
+        const opt = document.createElement('option');
+        opt.value = c.tag;
+        opt.textContent = c.opportunityName;
+        tagSelect.appendChild(opt);
+      });
+    }
+
+    // --- Init ---
+    async function init() {
+      try {
+        const response = await fetch('data.json');
+        data = await response.json();
+      } catch (err) {
+        console.error('Failed to load data.json:', err);
+        return;
+      }
+
+      renderPolicyTree();
+      renderChallengesGrid();
+      populateFilterDropdown();
+      renderPoliciesList();
+
+      // Bind filters
+      var searchInput = document.getElementById('policy-filter-search');
+      var tagSelect = document.getElementById('policy-filter-tag');
+      if (searchInput) searchInput.addEventListener('input', renderPoliciesList);
+      if (tagSelect) tagSelect.addEventListener('change', renderPoliciesList);
+
+      // Responsive resize
+      let resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderPolicyTree, 200);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
+</body>
+</html>
