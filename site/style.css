@@ -1031,6 +1031,34 @@ a.policy-tag:hover {
   font-weight: 600;
 }
 
+/* --- Policy Atlas / Tree --- */
+.policies-section {
+  padding: 3rem 0 4rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.policies-subtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-light);
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.policy-tree-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.policy-tree-container svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.policy-tree-container svg text {
+  font-family: 'Source Sans 3', sans-serif;
+}
+
 /* --- Search/Filter --- */
 .filter-bar {
   display: flex;

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-03-07T18:36:19.313Z",
+    "generated": "2026-03-07T19:01:21.998Z",
     "overallPreparedness": 1.6,
     "overallRating": "Critically Unprepared",
     "scenarioCount": 10,
@@ -652,6 +652,88 @@
           "url": "https://www.aspeninstitute.org/"
         }
       ]
+    }
+  ],
+  "challenges": [
+    {
+      "id": "mass-unemployment",
+      "tag": "mass_unemployment",
+      "problemName": "Mass Unemployment",
+      "opportunityName": "Prevent Mass Unemployment",
+      "description": "Ensuring rapid AI-driven automation does not leave millions without livelihoods, by creating new pathways to employment and income security.",
+      "preparedness": 1.6,
+      "rating": "Critically Unprepared",
+      "scenarioCount": 7
+    },
+    {
+      "id": "fiscal-crisis",
+      "tag": "fiscal_crisis",
+      "problemName": "Fiscal Crisis",
+      "opportunityName": "Prevent Fiscal Crisis",
+      "description": "Protecting government revenue bases as AI erodes traditional tax streams, and building fiscal resilience for the transition period.",
+      "preparedness": 1.6,
+      "rating": "Critically Unprepared",
+      "scenarioCount": 7
+    },
+    {
+      "id": "inequality",
+      "tag": "inequality",
+      "problemName": "Inequality",
+      "opportunityName": "Reduce Inequality",
+      "description": "Preventing extreme concentration of AI-generated wealth and ensuring broad-based benefit from productivity gains.",
+      "preparedness": 1.6,
+      "rating": "Critically Unprepared",
+      "scenarioCount": 8
+    },
+    {
+      "id": "ai-concentration",
+      "tag": "ai_concentration",
+      "problemName": "AI Concentration",
+      "opportunityName": "Prevent AI Concentration",
+      "description": "Avoiding monopolistic control of critical AI infrastructure and ensuring competitive, accessible AI ecosystems.",
+      "preparedness": 1.5,
+      "rating": "Critically Unprepared",
+      "scenarioCount": 7
+    },
+    {
+      "id": "skills-obsolescence",
+      "tag": "skills_obsolescence",
+      "problemName": "Skills Obsolescence",
+      "opportunityName": "Prevent Skills Obsolescence",
+      "description": "Adapting education and training systems so workers can continuously acquire relevant skills in a rapidly changing economy.",
+      "preparedness": 1.6,
+      "rating": "Critically Unprepared",
+      "scenarioCount": 7
+    },
+    {
+      "id": "public-service-disruption",
+      "tag": "public_service_disruption",
+      "problemName": "Public Service Disruption",
+      "opportunityName": "Protect Public Services",
+      "description": "Ensuring essential public services remain reliable, accessible, and human-centred as AI transforms service delivery.",
+      "preparedness": 1.7,
+      "rating": "Critically Unprepared",
+      "scenarioCount": 7
+    },
+    {
+      "id": "democratic-erosion",
+      "tag": "democratic_erosion",
+      "problemName": "Democratic Erosion",
+      "opportunityName": "Safeguard Democracy",
+      "description": "Maintaining democratic accountability, transparency, and citizen agency in the face of AI-enabled surveillance and manipulation.",
+      "preparedness": 1.6,
+      "rating": "Critically Unprepared",
+      "scenarioCount": 6
+    },
+    {
+      "id": "existential-risk",
+      "tag": "existential_risk",
+      "problemName": "Existential Risk",
+      "opportunityName": "Mitigate Existential Risk",
+      "description": "Ensuring advanced AI systems remain aligned with human values and that catastrophic or irreversible outcomes are prevented.",
+      "preparedness": 1.5,
+      "rating": "Critically Unprepared",
+      "scenarioCount": 5
     }
   ]
 }
