@@ -673,15 +673,13 @@
     scenarios.sort((a, b) => b.evaluation.likelihood - a.evaluation.likelihood);
 
     if (scenarios.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" class="no-results">No scenarios match your filters.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="no-results">No scenarios match your filters.</td></tr>';
       return;
     }
 
     tbody.innerHTML = scenarios
       .map((s) => {
         const ev = s.evaluation;
-        const prepPct = Math.round(((ev.preparedness - 1) / 4) * 100);
-        const prepColor = getPreparednessColor(ev.preparedness);
 
         // Show policy challenge tags
         const challengeHtml = s.tags.length
@@ -694,18 +692,12 @@
             <a href="scenario.html#${s.id}" class="scenario-name">${s.title}</a>
             <div class="scenario-institution">${s.institution}</div>
           </td>
-          <td>${likelihoodBadge(ev.likelihood)}</td>
           <td>
             <div class="scenario-card-tags">${challengeHtml}</div>
           </td>
-          <td class="preparedness-cell">
-            <div class="preparedness-bar-container">
-              <div class="preparedness-bar">
-                <div class="preparedness-bar-fill" style="width: ${prepPct}%; background-color: ${prepColor};"></div>
-              </div>
-              ${preparednessBadge(ev.preparedness)}
-            </div>
-          </td>
+          <td>${likelihoodBadge(ev.likelihood)}</td>
+          <td>${impactBadge(ev.impact)}</td>
+          <td>${preparednessBadge(ev.preparedness)}</td>
         </tr>`;
       })
       .join('');
