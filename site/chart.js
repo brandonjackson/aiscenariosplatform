@@ -673,7 +673,7 @@
     scenarios.sort((a, b) => b.evaluation.likelihood - a.evaluation.likelihood);
 
     if (scenarios.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="3" class="no-results">No scenarios match your filters.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="no-results">No scenarios match your filters.</td></tr>';
       return;
     }
 
@@ -692,10 +692,12 @@
             <a href="scenario.html#${s.id}" class="scenario-name">${s.title}</a>
             <div class="scenario-institution">${s.institution}</div>
           </td>
-          <td>${likelihoodBadge(ev.likelihood)}</td>
           <td>
             <div class="scenario-card-tags">${challengeHtml}</div>
           </td>
+          <td>${likelihoodBadge(ev.likelihood)}</td>
+          <td>${impactBadge(ev.impact)}</td>
+          <td>${preparednessBadge(ev.preparedness)}</td>
         </tr>`;
       })
       .join('');
