@@ -56,8 +56,8 @@
     return ev.impact + ((ev.preparedness - 1) / 4) * (5 - ev.impact);
   }
 
-  // Score-to-label mapping (1-5 scale, using float ranges)
-  function getScoreLabel(score) {
+  // --- Preparedness labels & colors ---
+  function getPreparednessLabel(score) {
     if (score < 1.8) return 'Critically Unprepared';
     if (score < 2.6) return 'Highly Unprepared';
     if (score < 3.4) return 'Unprepared';
@@ -65,26 +65,28 @@
     return 'Prepared';
   }
 
-  // Score-to-color mapping: 1=black, 2=red, 3=orange, 4=yellow, 5=green
-  function getScoreColor(score) {
-    if (score < 1.8) return '#000000'; // Critically Unprepared (black)
-    if (score < 2.6) return '#c0392b'; // Highly Unprepared (red)
-    if (score < 3.4) return '#e67e22'; // Unprepared (orange)
-    if (score < 4.2) return '#f1c40f'; // Almost Prepared (yellow)
-    return '#27ae60';                  // Prepared (green)
-  }
-
-  // 5-stage color based on net impact (1-5, higher = better)
-  function getNetImpactColor(netImpact) {
-    return getScoreColor(netImpact);
-  }
-
-  // Preparedness-based color for table bars (1-5 scale)
   function getPreparednessColor(score) {
-    return getScoreColor(score);
+    if (score < 1.8) return '#000000';
+    if (score < 2.6) return '#c0392b';
+    if (score < 3.4) return '#e67e22';
+    if (score < 4.2) return '#f1c40f';
+    return '#27ae60';
   }
 
-  // Likelihood label mapping (1-5 scale, using same float ranges)
+  // --- Impact labels & colors (same color scale as preparedness) ---
+  function getImpactLabel(score) {
+    if (score < 1.8) return 'Systemic Risk';
+    if (score < 2.6) return 'Broken for All';
+    if (score < 3.4) return 'Broken for Some';
+    if (score < 4.2) return 'Stable';
+    return 'Improving';
+  }
+
+  function getImpactColor(score) {
+    return getPreparednessColor(score);
+  }
+
+  // --- Likelihood labels & colors (white to mid grey) ---
   function getLikelihoodLabel(score) {
     if (score < 1.8) return 'Improbable';
     if (score < 2.6) return 'Possible';
@@ -93,13 +95,34 @@
     return 'Emerging';
   }
 
-  // Likelihood color: white to mid grey
   function getLikelihoodColor(score) {
-    if (score < 1.8) return '#cccccc'; // Improbable (lightest)
-    if (score < 2.6) return '#aaaaaa'; // Possible
-    if (score < 3.4) return '#888888'; // Plausible
-    if (score < 4.2) return '#666666'; // Probable
-    return '#444444';                  // Emerging (mid grey)
+    if (score < 1.8) return '#cccccc';
+    if (score < 2.6) return '#aaaaaa';
+    if (score < 3.4) return '#888888';
+    if (score < 4.2) return '#666666';
+    return '#444444';
+  }
+
+  // --- Net impact color (uses preparedness color scale) ---
+  function getNetImpactColor(netImpact) {
+    return getPreparednessColor(netImpact);
+  }
+
+  // --- Badge HTML helpers ---
+  function makeBadge(label, bgColor, textColor) {
+    return `<span class="score-badge" style="background:${bgColor};color:${textColor};border:1px solid #fff;border-radius:5px;">${label}</span>`;
+  }
+
+  function likelihoodBadge(score) {
+    return makeBadge(getLikelihoodLabel(score), getLikelihoodColor(score), '#000');
+  }
+
+  function impactBadge(score) {
+    return makeBadge(getImpactLabel(score), getImpactColor(score), '#fff');
+  }
+
+  function preparednessBadge(score) {
+    return makeBadge(getPreparednessLabel(score), getPreparednessColor(score), '#fff');
   }
 
   function getDotColor(d) {
@@ -114,9 +137,9 @@
     const ev = d.evaluation;
     tooltip.innerHTML = `
       <div class="tt-title">${d.title}</div>
-      <div class="tt-row"><span class="tt-label">Likelihood</span><span style="color:${getLikelihoodColor(ev.likelihood)}">${getLikelihoodLabel(ev.likelihood)}</span></div>
-      <div class="tt-row"><span class="tt-label">Impact</span><span style="color:${getScoreColor(ev.impact)}">${getScoreLabel(ev.impact)}</span></div>
-      <div class="tt-row"><span class="tt-label">Preparedness</span><span style="color:${getScoreColor(ev.preparedness)}">${getScoreLabel(ev.preparedness)}</span></div>
+      <div class="tt-row"><span class="tt-label">Likelihood</span>${likelihoodBadge(ev.likelihood)}</div>
+      <div class="tt-row"><span class="tt-label">Impact</span>${impactBadge(ev.impact)}</div>
+      <div class="tt-row"><span class="tt-label">Preparedness</span>${preparednessBadge(ev.preparedness)}</div>
       <div class="tt-summary">${truncate(d.summary, 120)}</div>
     `;
 
@@ -486,7 +509,7 @@
             <a href="scenario.html#${s.id}" class="scenario-name">${s.title}</a>
             <div class="scenario-institution">${s.institution}</div>
           </td>
-          <td><span class="likelihood-badge" style="color: ${getLikelihoodColor(ev.likelihood)};">${getLikelihoodLabel(ev.likelihood)}</span></td>
+          <td>${likelihoodBadge(ev.likelihood)}</td>
           <td>
             <div class="policy-tags">${policyHtml}</div>
           </td>
@@ -495,7 +518,7 @@
               <div class="preparedness-bar">
                 <div class="preparedness-bar-fill" style="width: ${prepPct}%; background-color: ${prepColor};"></div>
               </div>
-              <span class="preparedness-label" style="color: ${prepColor};">${getScoreLabel(ev.preparedness)}</span>
+              ${preparednessBadge(ev.preparedness)}
             </div>
           </td>
         </tr>`;
