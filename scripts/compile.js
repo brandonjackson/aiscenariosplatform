@@ -39,10 +39,10 @@ function toNumber(val) {
 }
 
 function getRating(score) {
-  if (score < 1.5) return 'Critically Unprepared';
-  if (score < 2.5) return 'Highly Unprepared';
-  if (score < 3.5) return 'Unprepared';
-  if (score < 4.5) return 'Almost Prepared';
+  if (score < 1.8) return 'Critically Unprepared';
+  if (score < 2.6) return 'Highly Unprepared';
+  if (score < 3.4) return 'Unprepared';
+  if (score < 4.2) return 'Almost Prepared';
   return 'Prepared';
 }
 
