@@ -1,5 +1,5 @@
 /**
- * chart.js — Interactive scatter plot for AI Scenarios Platform
+ * chart.js — Interactive scatter plot for AI Preparedness Tracker
  * Uses D3.js v7 (loaded from CDN in index.html)
  */
 
