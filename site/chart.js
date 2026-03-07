@@ -1,6 +1,10 @@
 /**
- * chart.js — Interactive scatter plot for AI Preparedness Tracker
- * Uses D3.js v7 (loaded from CDN in index.html)
+ * chart.js — Interactive chart widget for AI Preparedness Tracker
+ * Uses D3.js v7 (loaded from CDN)
+ *
+ * Page-aware: detects which page it's on and initializes accordingly.
+ * Both index.html and policies.html include this file so chart code
+ * never diverges.
  */
 
 (function () {
@@ -8,6 +12,7 @@
 
   // --- State ---
   let data = null;
+  let chartContainer = null;
   let currentMode = 'risk'; // 'risk' | 'policyGaps' | 'preparedness'
 
   // --- Helpers ---
@@ -31,12 +36,10 @@
       yLabel: 'Net Impact',
       type: 'scatter',
       getY: (d) => {
-        // netImpact = impact + ((preparedness - 1) / 4) * (5 - impact)
-        // Range 1-5: 1=worst (systemic risk, unprepared), 5=best (improving, prepared)
         const ev = d.evaluation;
         return ev.impact + ((ev.preparedness - 1) / 4) * (5 - ev.impact);
       },
-      yDomain: [5, 1], // 5(better)=bottom, 1(worse)=top
+      yDomain: [5, 1],
       dangerZone: true,
     },
     policyGaps: {
@@ -50,13 +53,11 @@
   };
 
   // --- Color helpers ---
-  // Net impact: impact + ((preparedness - 1) / 4) * (5 - impact), range 1-5, higher = better
   function getNetImpact(d) {
     const ev = d.evaluation;
     return ev.impact + ((ev.preparedness - 1) / 4) * (5 - ev.impact);
   }
 
-  // --- Preparedness labels & colors ---
   function getPreparednessLabel(score) {
     if (score < 1.8) return 'Critically Unprepared';
     if (score < 2.6) return 'Highly Unprepared';
@@ -73,7 +74,6 @@
     return '#27ae60';
   }
 
-  // --- Impact labels & colors (same color scale as preparedness) ---
   function getImpactLabel(score) {
     if (score < 1.8) return 'Systemic Risk';
     if (score < 2.6) return 'Broken for All';
@@ -86,7 +86,6 @@
     return getPreparednessColor(score);
   }
 
-  // --- Likelihood labels & colors (white to mid grey) ---
   function getLikelihoodLabel(score) {
     if (score < 1.8) return 'Improbable';
     if (score < 2.6) return 'Possible';
@@ -103,7 +102,6 @@
     return '#444444';
   }
 
-  // --- Net impact color (uses preparedness color scale) ---
   function getNetImpactColor(netImpact) {
     return getPreparednessColor(netImpact);
   }
@@ -132,8 +130,6 @@
   // --- Tooltip ---
   function showTooltip(event, d, container) {
     const tooltip = container.querySelector('.chart-tooltip');
-    const mode = MODE_CONFIG[currentMode];
-
     const ev = d.evaluation;
     tooltip.innerHTML = `
       <div class="tt-title">${d.title}</div>
@@ -142,7 +138,6 @@
       <div class="tt-row"><span class="tt-label">Preparedness</span>${preparednessBadge(ev.preparedness)}</div>
       <div class="tt-summary">${truncate(d.summary, 120)}</div>
     `;
-
     tooltip.style.opacity = '1';
     positionTooltip(event, tooltip, container);
   }
@@ -151,16 +146,8 @@
     const rect = container.getBoundingClientRect();
     let x = event.clientX - rect.left + 15;
     let y = event.clientY - rect.top - 10;
-
-    // Prevent overflow right
-    if (x + 300 > rect.width) {
-      x = event.clientX - rect.left - 315;
-    }
-    // Prevent overflow bottom
-    if (y + 120 > rect.height) {
-      y = event.clientY - rect.top - 120;
-    }
-
+    if (x + 300 > rect.width) x = event.clientX - rect.left - 315;
+    if (y + 120 > rect.height) y = event.clientY - rect.top - 120;
     tooltip.style.left = x + 'px';
     tooltip.style.top = y + 'px';
   }
@@ -177,11 +164,9 @@
 
   // --- Policy Gaps table ---
   function renderPolicyGapsTable() {
-    const container = document.getElementById('chart-container');
-    if (!container || !data) return;
+    if (!chartContainer || !data) return;
 
-    // Clear previous
-    container.querySelectorAll('svg, .chart-table-wrapper').forEach((el) => el.remove());
+    chartContainer.querySelectorAll('svg, .chart-table-wrapper').forEach((el) => el.remove());
 
     const challenges = (data.challenges || [])
       .filter((c) => c.preparedness !== null)
@@ -219,30 +204,27 @@
         <tbody>${rows}</tbody>
       </table>`;
 
-    container.appendChild(wrapper);
+    chartContainer.appendChild(wrapper);
   }
 
   // --- Regional Preparedness bar chart ---
   function renderRegionalBarChart() {
-    const container = document.getElementById('chart-container');
-    if (!container || !data) return;
+    if (!chartContainer || !data) return;
 
-    // Clear previous
-    container.querySelectorAll('svg, .chart-table-wrapper').forEach((el) => el.remove());
+    chartContainer.querySelectorAll('svg, .chart-table-wrapper').forEach((el) => el.remove());
 
     const regions = data.regions || [];
     if (regions.length === 0) return;
 
-    // Dimensions — wider left margin to fit y-axis labels
     const barMargin = { top: 20, right: 30, bottom: 50, left: 140 };
-    const containerWidth = container.clientWidth;
+    const containerWidth = chartContainer.clientWidth;
     const width = containerWidth;
     const height = Math.min(400, Math.max(280, containerWidth * 0.55));
     const innerWidth = width - barMargin.left - barMargin.right;
     const innerHeight = height - barMargin.top - barMargin.bottom;
 
     const svg = d3
-      .select(container)
+      .select(chartContainer)
       .append('svg')
       .attr('width', width)
       .attr('height', height)
@@ -253,7 +235,6 @@
       .append('g')
       .attr('transform', `translate(${barMargin.left},${barMargin.top})`);
 
-    // Scales
     const xScale = d3
       .scaleBand()
       .domain(regions.map((r) => r.label))
@@ -262,9 +243,6 @@
 
     const yScale = d3.scaleLinear().domain([0, 5]).range([innerHeight, 0]);
 
-    // No background for preparedness bar chart
-
-    // Y grid lines
     g.append('g')
       .attr('class', 'grid-y')
       .call(d3.axisLeft(yScale).ticks(5).tickSize(-innerWidth).tickFormat(''))
@@ -273,7 +251,6 @@
       .attr('stroke-dasharray', '3,3');
     g.selectAll('.grid-y .domain').remove();
 
-    // Y axis labels
     const yAxisLabels = [
       { val: 1, text: 'Critically Unprepared' },
       { val: 2, text: 'Highly Unprepared' },
@@ -292,7 +269,6 @@
     yAxis.selectAll('line').attr('stroke', '#ccc');
     yAxis.select('.domain').attr('stroke', '#ccc');
 
-    // X axis
     const xAxis = g
       .append('g')
       .attr('transform', `translate(0,${innerHeight})`)
@@ -301,7 +277,6 @@
     xAxis.selectAll('line').attr('stroke', '#ccc');
     xAxis.select('.domain').attr('stroke', '#ccc');
 
-    // Bars
     g.selectAll('.bar')
       .data(regions)
       .join('rect')
@@ -314,7 +289,6 @@
       .attr('rx', 3)
       .attr('opacity', 0.85);
 
-    // Value labels on bars
     g.selectAll('.bar-label')
       .data(regions)
       .join('text')
@@ -328,7 +302,6 @@
       .attr('font-family', 'Source Sans 3, sans-serif')
       .text((d) => d.preparedness.toFixed(1) + '/5');
 
-    // Rating labels on bars
     g.selectAll('.bar-rating')
       .data(regions)
       .join('text')
@@ -346,8 +319,7 @@
 
   // --- Chart rendering ---
   function renderChart() {
-    const container = document.getElementById('chart-container');
-    if (!container || !data) return;
+    if (!chartContainer || !data) return;
 
     const mode = MODE_CONFIG[currentMode];
 
@@ -362,20 +334,18 @@
     }
 
     // Clear previous
-    container.querySelectorAll('svg, .chart-table-wrapper').forEach((el) => el.remove());
+    chartContainer.querySelectorAll('svg, .chart-table-wrapper').forEach((el) => el.remove());
 
     const scenarios = data.scenarios.filter((s) => s.evaluation);
 
-    // Dimensions
-    const containerWidth = container.clientWidth;
+    const containerWidth = chartContainer.clientWidth;
     const width = containerWidth;
     const height = Math.min(400, Math.max(280, containerWidth * 0.55));
     const innerWidth = width - MARGIN.left - MARGIN.right;
     const innerHeight = height - MARGIN.top - MARGIN.bottom;
 
-    // Create SVG
     const svg = d3
-      .select(container)
+      .select(chartContainer)
       .append('svg')
       .attr('width', width)
       .attr('height', height)
@@ -386,11 +356,10 @@
       .append('g')
       .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
-    // Scales
     const xScale = d3.scaleLinear().domain([0.5, 5.5]).range([0, innerWidth]);
     const yScale = d3.scaleLinear().domain(mode.yDomain).range([innerHeight, 0]);
 
-    // Plot area background: red → white → green vertical gradient
+    // Plot area background
     const plotDefs = svg.append('defs');
     const plotBgGrad = plotDefs
       .append('linearGradient')
@@ -402,59 +371,42 @@
     plotBgGrad.append('stop').attr('offset', '100%').attr('stop-color', '#e6f5eb');
 
     g.append('rect')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', innerWidth)
-      .attr('height', innerHeight)
+      .attr('x', 0).attr('y', 0)
+      .attr('width', innerWidth).attr('height', innerHeight)
       .attr('fill', 'url(#plot-bg-gradient)');
 
-    // Danger zone gradient (Net Risk mode) — reflects the dot color space
-    // Covers entire chart area, from green (bottom-left) through yellow/orange to red/dark (top-right)
     if (mode.dangerZone) {
       const defs = svg.append('defs');
 
-      // Horizontal gradient: left (low likelihood, green) → right (high likelihood, darker)
       const hGrad = defs
         .append('linearGradient')
         .attr('id', 'danger-gradient-h')
         .attr('x1', '0%').attr('y1', '0%')
         .attr('x2', '100%').attr('y2', '0%');
-
       hGrad.append('stop').attr('offset', '0%').attr('stop-color', '#27ae60').attr('stop-opacity', 0.0);
       hGrad.append('stop').attr('offset', '40%').attr('stop-color', '#f1c40f').attr('stop-opacity', 0.08);
       hGrad.append('stop').attr('offset', '70%').attr('stop-color', '#e67e22').attr('stop-opacity', 0.12);
       hGrad.append('stop').attr('offset', '100%').attr('stop-color', '#c0392b').attr('stop-opacity', 0.18);
 
-      // Vertical gradient: bottom (low risk, safe) → top (high risk, danger)
       const vGrad = defs
         .append('linearGradient')
         .attr('id', 'danger-gradient-v')
         .attr('x1', '0%').attr('y1', '100%')
         .attr('x2', '0%').attr('y2', '0%');
-
       vGrad.append('stop').attr('offset', '0%').attr('stop-color', '#27ae60').attr('stop-opacity', 0.0);
       vGrad.append('stop').attr('offset', '50%').attr('stop-color', '#e67e22').attr('stop-opacity', 0.06);
       vGrad.append('stop').attr('offset', '100%').attr('stop-color', '#000000').attr('stop-opacity', 0.18);
 
-      // Layer both gradients over the full chart area
-      g.append('rect')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', innerWidth)
-        .attr('height', innerHeight)
+      g.append('rect').attr('x', 0).attr('y', 0)
+        .attr('width', innerWidth).attr('height', innerHeight)
         .attr('fill', 'url(#danger-gradient-h)');
 
-      g.append('rect')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', innerWidth)
-        .attr('height', innerHeight)
+      g.append('rect').attr('x', 0).attr('y', 0)
+        .attr('width', innerWidth).attr('height', innerHeight)
         .attr('fill', 'url(#danger-gradient-v)');
 
-      // Danger zone label
       g.append('text')
-        .attr('x', innerWidth - 8)
-        .attr('y', 16)
+        .attr('x', innerWidth - 8).attr('y', 16)
         .attr('text-anchor', 'end')
         .attr('font-size', '10px')
         .attr('fill', '#c0392b')
@@ -463,17 +415,15 @@
         .text('HIGH RISK ZONE');
     }
 
-    // Grid lines — Y axis
+    // Grid lines
     g.append('g')
       .attr('class', 'grid-y')
       .call(d3.axisLeft(yScale).ticks(5).tickSize(-innerWidth).tickFormat(''))
       .selectAll('line')
       .attr('stroke', '#e2e4ea')
       .attr('stroke-dasharray', '3,3');
-
     g.selectAll('.grid-y .domain').remove();
 
-    // Grid lines — X axis at category boundaries (25, 50, 75)
     g.append('g')
       .attr('class', 'grid-x')
       .attr('transform', `translate(0,${innerHeight})`)
@@ -481,11 +431,10 @@
       .selectAll('line')
       .attr('stroke', '#e2e4ea')
       .attr('stroke-dasharray', '3,3');
-
     g.selectAll('.grid-x .domain').remove();
 
-    // X axis — qualitative likelihood labels
-    const xAxis = g
+    // X axis
+    const xAxisG = g
       .append('g')
       .attr('transform', `translate(0,${innerHeight})`)
       .call(
@@ -493,20 +442,17 @@
           .tickValues(LIKELIHOOD_TICKS)
           .tickFormat((d, i) => LIKELIHOOD_LABELS[i])
       );
+    xAxisG.selectAll('text').attr('font-size', '11px').attr('fill', '#6b7084');
+    xAxisG.selectAll('line').attr('stroke', '#ccc');
+    xAxisG.select('.domain').attr('stroke', '#ccc');
 
-    xAxis.selectAll('text').attr('font-size', '11px').attr('fill', '#6b7084');
-    xAxis.selectAll('line').attr('stroke', '#ccc');
-    xAxis.select('.domain').attr('stroke', '#ccc');
+    // Y axis
+    const yAxisG = g.append('g').call(d3.axisLeft(yScale).ticks(5).tickFormat(''));
+    yAxisG.selectAll('line').attr('stroke', '#ccc');
+    yAxisG.select('.domain').attr('stroke', '#ccc');
 
-    // Y axis — no numeric labels, just gridlines for reference
-    const yAxis = g.append('g').call(d3.axisLeft(yScale).ticks(5).tickFormat(''));
-    yAxis.selectAll('line').attr('stroke', '#ccc');
-    yAxis.select('.domain').attr('stroke', '#ccc');
-
-    // Y axis endpoint labels: "Better" at bottom, "Worse" at top
     g.append('text')
-      .attr('x', -10)
-      .attr('y', 4)
+      .attr('x', -10).attr('y', 4)
       .attr('text-anchor', 'end')
       .attr('font-size', '11px')
       .attr('fill', '#e74c3c')
@@ -514,17 +460,14 @@
       .text('Worse');
 
     g.append('text')
-      .attr('x', -10)
-      .attr('y', innerHeight + 4)
+      .attr('x', -10).attr('y', innerHeight + 4)
       .attr('text-anchor', 'end')
       .attr('font-size', '11px')
       .attr('fill', '#27ae60')
       .attr('font-family', 'Source Sans 3, sans-serif')
       .text('Better');
 
-    // Y axis label (mode name, rotated)
-    svg
-      .append('text')
+    svg.append('text')
       .attr('transform', 'rotate(-90)')
       .attr('x', -(MARGIN.top + innerHeight / 2))
       .attr('y', 14)
@@ -547,17 +490,14 @@
       })
       .style('cursor', 'pointer');
 
-    dots
-      .append('circle')
+    dots.append('circle')
       .attr('r', DOT_RADIUS)
       .attr('fill', (d) => getDotColor(d))
       .attr('stroke', '#fff')
       .attr('stroke-width', 2)
       .attr('opacity', 0.9);
 
-    // Labels — short name, positioned to avoid overlap where possible
-    dots
-      .append('text')
+    dots.append('text')
       .text((d) => shortName(d.title))
       .attr('x', DOT_RADIUS + 4)
       .attr('y', 4)
@@ -566,24 +506,22 @@
       .attr('font-family', 'Source Sans 3, sans-serif')
       .attr('pointer-events', 'none');
 
-    // Hover interactions
     dots
       .on('mouseenter', function (event, d) {
         d3.select(this).select('circle').transition().duration(150).attr('r', DOT_RADIUS_HOVER).attr('opacity', 1);
-        showTooltip(event, d, container);
+        showTooltip(event, d, chartContainer);
       })
       .on('mousemove', function (event, d) {
-        const tooltip = container.querySelector('.chart-tooltip');
-        positionTooltip(event, tooltip, container);
+        const tooltip = chartContainer.querySelector('.chart-tooltip');
+        positionTooltip(event, tooltip, chartContainer);
       })
       .on('mouseleave', function () {
         d3.select(this).select('circle').transition().duration(150).attr('r', DOT_RADIUS).attr('opacity', 0.9);
-        hideTooltip(container);
+        hideTooltip(chartContainer);
       });
   }
 
   function shortName(title) {
-    // Truncate long titles for chart labels
     const parts = title.split(':');
     const name = parts[0].trim();
     if (name.length > 20) return name.slice(0, 18) + '...';
@@ -600,11 +538,16 @@
   // --- Mode switching ---
   function setMode(mode) {
     currentMode = mode;
-    document.querySelectorAll('.chart-controls button').forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.mode === mode);
-    });
-    const titleEl = document.querySelector('.chart-title');
-    if (titleEl) titleEl.textContent = CHART_TITLES[mode] || '';
+    // Update controls that are siblings/ancestors of the chart container
+    const chartSection = chartContainer.closest('.chart-section') ||
+                         chartContainer.closest('.policies-chart-wrapper');
+    if (chartSection) {
+      chartSection.querySelectorAll('.chart-controls button').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+      const titleEl = chartSection.querySelector('.chart-title');
+      if (titleEl) titleEl.textContent = CHART_TITLES[mode] || '';
+    }
     renderChart();
   }
 
@@ -613,8 +556,6 @@
     if (!data) return;
 
     const meta = data.meta;
-
-    // Rating
     const ratingClass = getRatingClass(meta.overallRating);
 
     const ratingValueEl = document.getElementById('hero-rating-value');
@@ -634,13 +575,11 @@
       ratingBarFill.className = 'hero-rating-bar-fill bg-' + ratingClass.replace('rating-', '');
     }
 
-    // How it works numbers
     const scenarioCountEl = document.getElementById('scenario-count');
     const policyCountEl = document.getElementById('policy-count');
     if (scenarioCountEl) scenarioCountEl.textContent = meta.scenarioCount;
     if (policyCountEl) policyCountEl.textContent = meta.policyCount;
 
-    // Scenario table
     populateScenarioTable();
   }
 
@@ -656,7 +595,6 @@
     let scenarios = data.scenarios.filter((s) => s.evaluation);
     const policies = data.policies;
 
-    // Apply filters
     if (searchTerm) {
       scenarios = scenarios.filter((s) =>
         s.title.toLowerCase().includes(searchTerm) ||
@@ -669,7 +607,6 @@
       scenarios = scenarios.filter((s) => s.tags.includes(selectedTag));
     }
 
-    // Sort by likelihood descending
     scenarios.sort((a, b) => b.evaluation.likelihood - a.evaluation.likelihood);
 
     if (scenarios.length === 0) {
@@ -680,8 +617,6 @@
     tbody.innerHTML = scenarios
       .map((s) => {
         const ev = s.evaluation;
-
-        // Show policy challenge tags
         const challengeHtml = s.tags.length
           ? s.tags.slice(0, 4).map((tag) => `<span class="scenario-card-tag">${formatTag(tag)}</span>`).join('')
           : '<span class="policy-tag">&mdash;</span>';
@@ -714,7 +649,6 @@
     return map[rating] || 'rating-highly-unprepared';
   }
 
-
   // --- Initialization ---
   async function init() {
     try {
@@ -725,23 +659,45 @@
       return;
     }
 
+    // Detect chart container — homepage or policies page
+    chartContainer = document.getElementById('chart-container') ||
+                     document.getElementById('policies-chart-container');
+
+    // Set default mode based on which page we're on
+    if (document.getElementById('policies-chart-container')) {
+      currentMode = 'policyGaps';
+    } else {
+      currentMode = 'risk';
+    }
+
+    // Homepage-specific population
     populateHomepage();
-    renderChart();
 
-    // Bind chart controls
-    document.querySelectorAll('.chart-controls button').forEach((btn) => {
-      btn.addEventListener('click', () => setMode(btn.dataset.mode));
-    });
+    // Render chart if container exists
+    if (chartContainer) {
+      renderChart();
 
-    // Bind search/filter
+      // Bind chart controls — find controls relative to the chart's parent section
+      const chartSection = chartContainer.closest('.chart-section') ||
+                           chartContainer.closest('.policies-chart-wrapper');
+      if (chartSection) {
+        chartSection.querySelectorAll('.chart-controls button').forEach((btn) => {
+          btn.addEventListener('click', () => setMode(btn.dataset.mode));
+        });
+        // Set initial active state
+        chartSection.querySelectorAll('.chart-controls button').forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.mode === currentMode);
+        });
+        const titleEl = chartSection.querySelector('.chart-title');
+        if (titleEl) titleEl.textContent = CHART_TITLES[currentMode] || '';
+      }
+    }
+
+    // Bind search/filter (homepage)
     const searchInput = document.getElementById('filter-search');
     const tagSelect = document.getElementById('filter-tag');
-    if (searchInput) {
-      searchInput.addEventListener('input', populateScenarioTable);
-    }
-    if (tagSelect) {
-      tagSelect.addEventListener('change', populateScenarioTable);
-    }
+    if (searchInput) searchInput.addEventListener('input', populateScenarioTable);
+    if (tagSelect) tagSelect.addEventListener('change', populateScenarioTable);
 
     // Responsive resize
     let resizeTimer;
@@ -749,6 +705,10 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => { renderChart(); }, 200);
     });
+
+    // Expose data for other page scripts
+    window._aiptData = data;
+    window.dispatchEvent(new Event('aiptDataReady'));
   }
 
   // Wait for DOM

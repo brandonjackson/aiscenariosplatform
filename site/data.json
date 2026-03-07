@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-03-07T20:31:53.122Z",
+    "generated": "2026-03-07T21:05:17.333Z",
     "overallPreparedness": 1.6,
     "overallRating": "Critically Unprepared",
     "scenarioCount": 10,
@@ -358,6 +358,8 @@
       "name": "Variable-Rate Token Tax",
       "challengeTag": "fiscal_crisis",
       "description": "A tax on AI inference compute (tokens) that scales with capability level, creating a new revenue base as traditional income tax erodes. Revenue funds transition programs and public AI infrastructure.",
+      "updated": "2025-11-15",
+      "isNoRegret": false,
       "citations": [
         {
           "text": "Windfall Trust policy brief on token taxation",
@@ -378,6 +380,8 @@
       "name": "AI Wealth Tax",
       "challengeTag": "inequality",
       "description": "Progressive tax on AI-derived capital gains and wealth concentration, targeting the extreme value capture by AI company shareholders and compute owners.",
+      "updated": "2025-10-20",
+      "isNoRegret": false,
       "citations": [
         {
           "text": "Piketty on capital taxation in the 21st century",
@@ -398,6 +402,8 @@
       "name": "National Skills Transition Fund",
       "challengeTag": "skills_obsolescence",
       "description": "Government-backed fund providing income support and retraining for workers displaced by AI, with a focus on professional and knowledge workers rather than just manufacturing.",
+      "updated": "2026-02-28",
+      "isNoRegret": true,
       "citations": [
         {
           "text": "Singapore SkillsFuture program evaluation",
@@ -418,6 +424,8 @@
       "name": "Digital Public Utility Framework",
       "challengeTag": "ai_concentration",
       "description": "Designates critical AI infrastructure as regulated utilities, requiring providers to offer access, maintain standards, and accept oversight in exchange for operating privileges.",
+      "updated": "2025-12-10",
+      "isNoRegret": false,
       "citations": [
         {
           "text": "Windfall Trust Digital Public Utilities paper",
@@ -438,6 +446,8 @@
       "name": "Universal Basic Income Pilots",
       "challengeTag": "mass_unemployment",
       "description": "Scaled UBI programs providing unconditional income floors, designed to maintain consumption and social stability during periods of rapid labor market disruption.",
+      "updated": "2026-01-15",
+      "isNoRegret": false,
       "citations": [
         {
           "text": "Stanford Basic Income Lab research",
@@ -458,6 +468,8 @@
       "name": "Public AI Service Corporation",
       "challengeTag": "public_service_disruption",
       "description": "A government-backed entity providing AI services for public sector needs — health, education, benefits administration — ensuring critical services aren't dependent on private AI providers.",
+      "updated": "2026-03-01",
+      "isNoRegret": true,
       "citations": [
         {
           "text": "British AI Corporation proposal (Chatham House)",
@@ -478,6 +490,8 @@
       "name": "International AI Safety Research Fund",
       "challengeTag": "existential_risk",
       "description": "Multilateral fund for AI alignment and safety research, modeled on CERN, ensuring safety research keeps pace with capability development.",
+      "updated": "2026-02-14",
+      "isNoRegret": true,
       "citations": [
         {
           "text": "METR autonomous capability evaluations",
@@ -498,6 +512,8 @@
       "name": "Democratic AI Oversight Board",
       "challengeTag": "democratic_erosion",
       "description": "Independent regulatory body with democratic accountability, technical expertise, and enforcement power to oversee AI deployment in sensitive domains.",
+      "updated": "2026-01-20",
+      "isNoRegret": true,
       "citations": [
         {
           "text": "EU AI Act implementation framework",
@@ -518,6 +534,8 @@
       "name": "AI Transition Fiscal Buffer",
       "challengeTag": "fiscal_crisis",
       "description": "Sovereign wealth fund mechanism that captures AI productivity gains through equity stakes and compute levies, building fiscal resilience before tax base erosion accelerates.",
+      "updated": "2025-09-30",
+      "isNoRegret": false,
       "citations": [
         {
           "text": "Norway sovereign wealth fund model",
@@ -538,6 +556,8 @@
       "name": "AI-Era Job Guarantee",
       "challengeTag": "mass_unemployment",
       "description": "Government employer-of-last-resort program focusing on care work, community development, and environmental restoration — sectors where human presence has intrinsic value.",
+      "updated": "2025-11-01",
+      "isNoRegret": false,
       "citations": [
         {
           "text": "Pavlina Tcherneva job guarantee proposal",
@@ -558,6 +578,8 @@
       "name": "Compute Commons Initiative",
       "challengeTag": "ai_concentration",
       "description": "Public compute infrastructure ensuring researchers and small organizations can access AI training and inference without dependence on hyperscaler monopolies.",
+      "updated": "2026-02-05",
+      "isNoRegret": true,
       "citations": [
         {
           "text": "National AI Research Resource proposal",
@@ -578,6 +600,8 @@
       "name": "Adaptive Education System",
       "challengeTag": "skills_obsolescence",
       "description": "Reform of education systems to emphasize adaptability and continuous learning rather than fixed credentials, with AI-powered personalized learning pathways.",
+      "updated": "2026-03-05",
+      "isNoRegret": true,
       "citations": [
         {
           "text": "OECD Future of Education and Skills 2030",
@@ -598,6 +622,8 @@
       "name": "AI Arms Control Framework",
       "challengeTag": "democratic_erosion",
       "description": "International treaty framework for military AI, establishing verification mechanisms, prohibited applications, and confidence-building measures between major powers.",
+      "updated": "2025-12-20",
+      "isNoRegret": false,
       "citations": [
         {
           "text": "RAND AI arms control analysis",
@@ -618,6 +644,8 @@
       "name": "Citizens Data Dividend",
       "challengeTag": "inequality",
       "description": "Mechanism for citizens to receive payments from AI companies that use public data and publicly-funded research, recognizing collective contribution to AI development.",
+      "updated": "2025-10-15",
+      "isNoRegret": false,
       "citations": [
         {
           "text": "Jaron Lanier data dignity proposal",
@@ -638,6 +666,8 @@
       "name": "Social Safety Net Modernization",
       "challengeTag": "public_service_disruption",
       "description": "Comprehensive reform of benefits systems to handle rapid employment transitions, including portable benefits, income smoothing, and AI-assisted case management.",
+      "updated": "2026-01-10",
+      "isNoRegret": true,
       "citations": [
         {
           "text": "Brookings Institution future of work report",
