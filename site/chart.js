@@ -114,7 +114,7 @@
   }
 
   function likelihoodBadge(score) {
-    return makeBadge(getLikelihoodLabel(score), getLikelihoodColor(score), '#000');
+    return makeBadge(getLikelihoodLabel(score), getLikelihoodColor(score), '#fff');
   }
 
   function impactBadge(score) {

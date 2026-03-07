@@ -253,7 +253,7 @@
       if (ev) {
         document.getElementById('eval-card').style.display = '';
         document.getElementById('eval-date').textContent = 'Evaluated: ' + ev.date;
-        document.getElementById('eval-likelihood').innerHTML = makeBadge(getLikelihoodLabel(ev.likelihood), getLikelihoodColor(ev.likelihood), '#000');
+        document.getElementById('eval-likelihood').innerHTML = makeBadge(getLikelihoodLabel(ev.likelihood), getLikelihoodColor(ev.likelihood), '#fff');
         document.getElementById('eval-likelihood-bar').style.width = ((ev.likelihood - 1) / 4) * 100 + '%';
         document.getElementById('eval-likelihood-bar').style.backgroundColor = getLikelihoodColor(ev.likelihood);
 
