@@ -153,17 +153,13 @@ function compile() {
 
   // Overall preparedness is a weighted average on 1-5 scale
   const overallPreparedness = totalWeight > 0
-    ? Math.round(weightedPreparedness / totalWeight * 100) / 100
+    ? Math.round(weightedPreparedness / totalWeight * 10) / 10
     : 1;
-
-  // Convert to percentage (1-5 scale maps to 0-100%)
-  const overallPreparednessPct = Math.round(((overallPreparedness - 1) / 4) * 100);
 
   const output = {
     meta: {
       generated: new Date().toISOString(),
       overallPreparedness,
-      overallPreparednessPct,
       overallRating: getRating(overallPreparedness),
       scenarioCount: scenarios.length,
       policyCount: policies.length,
@@ -177,7 +173,7 @@ function compile() {
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
 
   console.log(`\n✅ Compiled successfully → ${OUTPUT_PATH}`);
-  console.log(`\n  Overall Preparedness: ${overallPreparedness}/5 (${overallPreparednessPct}%)`);
+  console.log(`\n  Overall Preparedness: ${overallPreparedness}/5`);
   console.log(`  Rating: ${output.meta.overallRating}`);
   console.log(`  Scenarios: ${output.meta.scenarioCount}`);
   console.log(`  Policies: ${output.meta.policyCount}\n`);

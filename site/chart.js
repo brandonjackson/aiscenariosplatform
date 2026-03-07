@@ -385,7 +385,7 @@
       ratingValueEl.className = 'hero-rating-value ' + ratingClass;
     }
     if (ratingPctEl) {
-      ratingPctEl.textContent = `(${meta.overallPreparednessPct}%)`;
+      ratingPctEl.textContent = `(${meta.overallPreparedness}/5)`;
       ratingPctEl.className = 'hero-rating-pct ' + ratingClass;
     }
     if (ratingBarFill) {
