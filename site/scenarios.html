@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scenarios — AI Preparedness Tracker</title>
+  <meta name="description" content="All transformative AI scenarios evaluated for likelihood, impact, and preparedness.">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="site-logo">AI Preparedness <span>Tracker</span></a>
+      <nav class="site-nav">
+        <a href="scenarios.html" class="active">Scenarios</a>
+        <a href="policies.html">Policies</a>
+        <a href="methodology.html">Methodology</a>
+        <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero / Chart Section -->
+  <section class="scenarios-hero">
+    <div class="container">
+      <div class="section-label">Evaluations</div>
+      <h1 class="section-title">Scenario Overview</h1>
+      <p class="scenarios-subtitle">Each scenario describes a plausible pathway for transformative AI. Our expert panel evaluates likelihood, impact, and current preparedness on a 1&ndash;5 scale.</p>
+
+      <!-- Chart -->
+      <div class="scenarios-chart-wrapper">
+        <div class="chart-header">
+          <div class="chart-title">Scenario Landscape</div>
+          <div class="chart-controls">
+            <button data-mode="risk" class="active">Net Impact</button>
+            <button data-mode="impact">Impact</button>
+            <button data-mode="preparedness">Preparedness</button>
+          </div>
+        </div>
+        <div id="chart-container" class="scenarios-page-chart">
+          <div class="chart-tooltip"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scenario Cards -->
+  <section class="scenarios-list-section">
+    <div class="container">
+      <div class="filter-bar">
+        <input type="text" id="filter-search" class="filter-search" placeholder="Search scenarios...">
+        <select id="filter-tag" class="filter-select">
+          <option value="">All Challenges</option>
+          <option value="mass_unemployment">Mass Unemployment</option>
+          <option value="fiscal_crisis">Fiscal Crisis</option>
+          <option value="inequality">Inequality</option>
+          <option value="ai_concentration">AI Concentration</option>
+          <option value="skills_obsolescence">Skills Obsolescence</option>
+          <option value="public_service_disruption">Public Service Disruption</option>
+          <option value="democratic_erosion">Democratic Erosion</option>
+          <option value="existential_risk">Existential Risk</option>
+        </select>
+        <select id="filter-sort" class="filter-select">
+          <option value="likelihood">Sort by Likelihood</option>
+          <option value="impact">Sort by Impact</option>
+          <option value="preparedness">Sort by Preparedness</option>
+          <option value="title">Sort by Title</option>
+        </select>
+      </div>
+      <div class="scenario-cards-grid" id="scenario-cards-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span>&copy; 2026 AI Preparedness Tracker. Data-driven AI preparedness tracking.</span>
+        <div class="footer-links">
+          <a href="https://github.com/brandonjackson/aiscenariosplatform" target="_blank" rel="noopener">Source</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  (function() {
+    'use strict';
+
+    let data = null;
+    let currentMode = 'risk';
+
+    // --- Constants ---
+    const MARGIN = { top: 20, right: 30, bottom: 50, left: 55 };
+    const DOT_RADIUS = 7;
+    const DOT_RADIUS_HOVER = 10;
+
+    const LIKELIHOOD_TICKS = [1.4, 2.2, 3.0, 3.8, 4.6];
+    const LIKELIHOOD_LABELS = ['Improbable', 'Possible', 'Plausible', 'Probable', 'Emerging'];
+    const LIKELIHOOD_BOUNDARIES = [1.8, 2.6, 3.4, 4.2];
+
+    const MODE_CONFIG = {
+      risk: {
+        label: 'Net Impact',
+        yLabel: 'Net Impact',
+        getY: function(d) {
+          var ev = d.evaluation;
+          return ev.impact + ((ev.preparedness - 1) / 4) * (5 - ev.impact);
+        },
+        yDomain: [5, 1],
+        dangerZone: true,
+      },
+      impact: {
+        label: 'Impact',
+        yLabel: 'Impact',
+        getY: function(d) { return d.evaluation.impact; },
+        yDomain: [5, 1],
+        dangerZone: false,
+      },
+      preparedness: {
+        label: 'Preparedness',
+        yLabel: 'Preparedness',
+        getY: function(d) { return d.evaluation.preparedness; },
+        yDomain: [5, 1],
+        dangerZone: false,
+      },
+    };
+
+    // --- Color helpers ---
+    function getPreparednessLabel(score) {
+      if (score < 1.8) return 'Critically Unprepared';
+      if (score < 2.6) return 'Highly Unprepared';
+      if (score < 3.4) return 'Unprepared';
+      if (score < 4.2) return 'Almost Prepared';
+      return 'Prepared';
+    }
+
+    function getPreparednessColor(score) {
+      if (score < 1.8) return '#000000';
+      if (score < 2.6) return '#c0392b';
+      if (score < 3.4) return '#e67e22';
+      if (score < 4.2) return '#f1c40f';
+      return '#27ae60';
+    }
+
+    function getImpactLabel(score) {
+      if (score < 1.8) return 'Systemic Risk';
+      if (score < 2.6) return 'Broken for All';
+      if (score < 3.4) return 'Broken for Some';
+      if (score < 4.2) return 'Stable';
+      return 'Improving';
+    }
+
+    function getImpactColor(score) {
+      return getPreparednessColor(score);
+    }
+
+    function getLikelihoodLabel(score) {
+      if (score < 1.8) return 'Improbable';
+      if (score < 2.6) return 'Possible';
+      if (score < 3.4) return 'Plausible';
+      if (score < 4.2) return 'Probable';
+      return 'Emerging';
+    }
+
+    function getLikelihoodColor(score) {
+      if (score < 1.8) return '#cccccc';
+      if (score < 2.6) return '#aaaaaa';
+      if (score < 3.4) return '#888888';
+      if (score < 4.2) return '#666666';
+      return '#444444';
+    }
+
+    function makeBadge(label, bgColor, textColor) {
+      return '<span class="score-badge" style="background:' + bgColor + ';color:' + textColor + ';border:1px solid #fff;border-radius:5px;">' + label + '</span>';
+    }
+
+    function likelihoodBadge(score) {
+      return makeBadge(getLikelihoodLabel(score), getLikelihoodColor(score), '#fff');
+    }
+
+    function impactBadge(score) {
+      return makeBadge(getImpactLabel(score), getImpactColor(score), '#fff');
+    }
+
+    function preparednessBadge(score) {
+      return makeBadge(getPreparednessLabel(score), getPreparednessColor(score), '#fff');
+    }
+
+    function formatTag(tag) {
+      return tag.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    }
+
+    function truncate(str, len) {
+      if (!str) return '';
+      return str.length > len ? str.slice(0, len) + '...' : str;
+    }
+
+    function shortName(title) {
+      var parts = title.split(':');
+      var name = parts[0].trim();
+      if (name.length > 20) return name.slice(0, 18) + '...';
+      return name;
+    }
+
+    function getDotColor(d) {
+      return getPreparednessColor(d.evaluation.preparedness);
+    }
+
+    // --- Tooltip ---
+    function showTooltip(event, d, container) {
+      var tooltip = container.querySelector('.chart-tooltip');
+      var ev = d.evaluation;
+      tooltip.innerHTML =
+        '<div class="tt-title">' + d.title + '</div>' +
+        '<div class="tt-row"><span class="tt-label">Likelihood</span>' + likelihoodBadge(ev.likelihood) + '</div>' +
+        '<div class="tt-row"><span class="tt-label">Impact</span>' + impactBadge(ev.impact) + '</div>' +
+        '<div class="tt-row"><span class="tt-label">Preparedness</span>' + preparednessBadge(ev.preparedness) + '</div>' +
+        '<div class="tt-summary">' + truncate(d.summary, 120) + '</div>';
+      tooltip.style.opacity = '1';
+      positionTooltip(event, tooltip, container);
+    }
+
+    function positionTooltip(event, tooltip, container) {
+      var rect = container.getBoundingClientRect();
+      var x = event.clientX - rect.left + 15;
+      var y = event.clientY - rect.top - 10;
+      if (x + 300 > rect.width) x = event.clientX - rect.left - 315;
+      if (y + 120 > rect.height) y = event.clientY - rect.top - 120;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    }
+
+    function hideTooltip(container) {
+      container.querySelector('.chart-tooltip').style.opacity = '0';
+    }
+
+    // --- Chart rendering ---
+    function renderChart() {
+      var container = document.getElementById('chart-container');
+      if (!container || !data) return;
+
+      container.querySelectorAll('svg').forEach(function(el) { el.remove(); });
+
+      var scenarios = data.scenarios.filter(function(s) { return s.evaluation; });
+      var mode = MODE_CONFIG[currentMode];
+
+      var containerWidth = container.clientWidth;
+      var width = containerWidth;
+      var height = Math.min(450, Math.max(320, containerWidth * 0.45));
+      var innerWidth = width - MARGIN.left - MARGIN.right;
+      var innerHeight = height - MARGIN.top - MARGIN.bottom;
+
+      var svg = d3.select(container)
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('viewBox', '0 0 ' + width + ' ' + height)
+        .attr('preserveAspectRatio', 'xMidYMid meet');
+
+      var g = svg.append('g')
+        .attr('transform', 'translate(' + MARGIN.left + ',' + MARGIN.top + ')');
+
+      var xScale = d3.scaleLinear().domain([0.5, 5.5]).range([0, innerWidth]);
+      var yScale = d3.scaleLinear().domain(mode.yDomain).range([innerHeight, 0]);
+
+      // Background gradient
+      var plotDefs = svg.append('defs');
+      var plotBgGrad = plotDefs.append('linearGradient')
+        .attr('id', 'plot-bg-gradient')
+        .attr('x1', '0%').attr('y1', '0%')
+        .attr('x2', '0%').attr('y2', '100%');
+      plotBgGrad.append('stop').attr('offset', '0%').attr('stop-color', '#fde8e6');
+      plotBgGrad.append('stop').attr('offset', '50%').attr('stop-color', '#ffffff');
+      plotBgGrad.append('stop').attr('offset', '100%').attr('stop-color', '#e6f5eb');
+
+      g.append('rect').attr('x', 0).attr('y', 0)
+        .attr('width', innerWidth).attr('height', innerHeight)
+        .attr('fill', 'url(#plot-bg-gradient)');
+
+      // Danger zone
+      if (mode.dangerZone) {
+        var defs = svg.append('defs');
+        var hGrad = defs.append('linearGradient')
+          .attr('id', 'danger-gradient-h')
+          .attr('x1', '0%').attr('y1', '0%')
+          .attr('x2', '100%').attr('y2', '0%');
+        hGrad.append('stop').attr('offset', '0%').attr('stop-color', '#27ae60').attr('stop-opacity', 0.0);
+        hGrad.append('stop').attr('offset', '40%').attr('stop-color', '#f1c40f').attr('stop-opacity', 0.08);
+        hGrad.append('stop').attr('offset', '70%').attr('stop-color', '#e67e22').attr('stop-opacity', 0.12);
+        hGrad.append('stop').attr('offset', '100%').attr('stop-color', '#c0392b').attr('stop-opacity', 0.18);
+
+        var vGrad = defs.append('linearGradient')
+          .attr('id', 'danger-gradient-v')
+          .attr('x1', '0%').attr('y1', '100%')
+          .attr('x2', '0%').attr('y2', '0%');
+        vGrad.append('stop').attr('offset', '0%').attr('stop-color', '#27ae60').attr('stop-opacity', 0.0);
+        vGrad.append('stop').attr('offset', '50%').attr('stop-color', '#e67e22').attr('stop-opacity', 0.06);
+        vGrad.append('stop').attr('offset', '100%').attr('stop-color', '#000000').attr('stop-opacity', 0.18);
+
+        g.append('rect').attr('x', 0).attr('y', 0)
+          .attr('width', innerWidth).attr('height', innerHeight)
+          .attr('fill', 'url(#danger-gradient-h)');
+        g.append('rect').attr('x', 0).attr('y', 0)
+          .attr('width', innerWidth).attr('height', innerHeight)
+          .attr('fill', 'url(#danger-gradient-v)');
+
+        g.append('text')
+          .attr('x', innerWidth - 8).attr('y', 16)
+          .attr('text-anchor', 'end')
+          .attr('font-size', '10px').attr('fill', '#c0392b')
+          .attr('opacity', 0.5)
+          .attr('font-family', 'Source Sans 3, sans-serif')
+          .text('HIGH RISK ZONE');
+      }
+
+      // Grid lines
+      g.append('g').attr('class', 'grid-y')
+        .call(d3.axisLeft(yScale).ticks(5).tickSize(-innerWidth).tickFormat(''))
+        .selectAll('line').attr('stroke', '#e2e4ea').attr('stroke-dasharray', '3,3');
+      g.selectAll('.grid-y .domain').remove();
+
+      g.append('g').attr('class', 'grid-x')
+        .attr('transform', 'translate(0,' + innerHeight + ')')
+        .call(d3.axisBottom(xScale).tickValues(LIKELIHOOD_BOUNDARIES).tickSize(-innerHeight).tickFormat(''))
+        .selectAll('line').attr('stroke', '#e2e4ea').attr('stroke-dasharray', '3,3');
+      g.selectAll('.grid-x .domain').remove();
+
+      // Axes
+      var xAxis = g.append('g')
+        .attr('transform', 'translate(0,' + innerHeight + ')')
+        .call(d3.axisBottom(xScale)
+          .tickValues(LIKELIHOOD_TICKS)
+          .tickFormat(function(d, i) { return LIKELIHOOD_LABELS[i]; }));
+      xAxis.selectAll('text').attr('font-size', '11px').attr('fill', '#6b7084');
+      xAxis.selectAll('line').attr('stroke', '#ccc');
+      xAxis.select('.domain').attr('stroke', '#ccc');
+
+      var yAxis = g.append('g').call(d3.axisLeft(yScale).ticks(5).tickFormat(''));
+      yAxis.selectAll('line').attr('stroke', '#ccc');
+      yAxis.select('.domain').attr('stroke', '#ccc');
+
+      g.append('text').attr('x', -10).attr('y', 4)
+        .attr('text-anchor', 'end').attr('font-size', '11px')
+        .attr('fill', '#e74c3c').attr('font-family', 'Source Sans 3, sans-serif')
+        .text('Worse');
+      g.append('text').attr('x', -10).attr('y', innerHeight + 4)
+        .attr('text-anchor', 'end').attr('font-size', '11px')
+        .attr('fill', '#27ae60').attr('font-family', 'Source Sans 3, sans-serif')
+        .text('Better');
+
+      svg.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', -(MARGIN.top + innerHeight / 2))
+        .attr('y', 14)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '12px').attr('fill', '#6b7084')
+        .attr('font-family', 'Source Sans 3, sans-serif')
+        .text(mode.yLabel);
+
+      // Dots
+      var dots = g.selectAll('.dot')
+        .data(scenarios)
+        .join('g')
+        .attr('class', 'dot')
+        .attr('transform', function(d) {
+          var x = xScale(d.evaluation.likelihood);
+          var y = yScale(mode.getY(d));
+          return 'translate(' + x + ',' + y + ')';
+        })
+        .style('cursor', 'pointer');
+
+      dots.append('circle')
+        .attr('r', DOT_RADIUS)
+        .attr('fill', function(d) { return getDotColor(d); })
+        .attr('stroke', '#fff').attr('stroke-width', 2)
+        .attr('opacity', 0.9);
+
+      dots.append('text')
+        .text(function(d) { return shortName(d.title); })
+        .attr('x', DOT_RADIUS + 4).attr('y', 4)
+        .attr('font-size', '10px').attr('fill', '#6b7084')
+        .attr('font-family', 'Source Sans 3, sans-serif')
+        .attr('pointer-events', 'none');
+
+      dots.on('mouseenter', function(event, d) {
+        d3.select(this).select('circle').transition().duration(150)
+          .attr('r', DOT_RADIUS_HOVER).attr('opacity', 1);
+        showTooltip(event, d, container);
+      })
+      .on('mousemove', function(event) {
+        positionTooltip(event, container.querySelector('.chart-tooltip'), container);
+      })
+      .on('mouseleave', function() {
+        d3.select(this).select('circle').transition().duration(150)
+          .attr('r', DOT_RADIUS).attr('opacity', 0.9);
+        hideTooltip(container);
+      })
+      .on('click', function(event, d) {
+        window.location.href = 'scenario.html#' + d.id;
+      });
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.chart-controls button').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+      renderChart();
+    }
+
+    // --- Scenario Cards ---
+    function renderScenarioCards() {
+      var grid = document.getElementById('scenario-cards-grid');
+      if (!grid || !data) return;
+
+      var searchInput = document.getElementById('filter-search');
+      var tagSelect = document.getElementById('filter-tag');
+      var sortSelect = document.getElementById('filter-sort');
+      var searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+      var selectedTag = tagSelect ? tagSelect.value : '';
+      var sortBy = sortSelect ? sortSelect.value : 'likelihood';
+
+      var scenarios = data.scenarios.filter(function(s) { return s.evaluation; });
+
+      // Apply search filter
+      if (searchTerm) {
+        scenarios = scenarios.filter(function(s) {
+          return s.title.toLowerCase().includes(searchTerm) ||
+            s.institution.toLowerCase().includes(searchTerm) ||
+            s.authors.toLowerCase().includes(searchTerm) ||
+            s.summary.toLowerCase().includes(searchTerm);
+        });
+      }
+
+      // Apply tag filter
+      if (selectedTag) {
+        scenarios = scenarios.filter(function(s) { return s.tags.includes(selectedTag); });
+      }
+
+      // Sort
+      if (sortBy === 'likelihood') {
+        scenarios.sort(function(a, b) { return b.evaluation.likelihood - a.evaluation.likelihood; });
+      } else if (sortBy === 'impact') {
+        scenarios.sort(function(a, b) { return a.evaluation.impact - b.evaluation.impact; });
+      } else if (sortBy === 'preparedness') {
+        scenarios.sort(function(a, b) { return a.evaluation.preparedness - b.evaluation.preparedness; });
+      } else if (sortBy === 'title') {
+        scenarios.sort(function(a, b) { return a.title.localeCompare(b.title); });
+      }
+
+      if (scenarios.length === 0) {
+        grid.innerHTML = '<p class="no-results">No scenarios match your filters.</p>';
+        return;
+      }
+
+      grid.innerHTML = scenarios.map(function(s) {
+        var ev = s.evaluation;
+        var prepPct = Math.round(((ev.preparedness - 1) / 4) * 100);
+        var prepColor = getPreparednessColor(ev.preparedness);
+
+        // Get relevant challenge tags
+        var tagBadges = s.tags.slice(0, 4).map(function(tag) {
+          return '<span class="scenario-card-tag">' + formatTag(tag) + '</span>';
+        }).join('');
+
+        // Find relevant policies
+        var relevantPolicies = data.policies
+          .filter(function(p) { return s.tags.includes(p.challengeTag); })
+          .slice(0, 3);
+        var policyLinks = relevantPolicies.map(function(p) {
+          return '<a href="policy.html#' + p.id + '" class="policy-tag">' + p.name + '</a>';
+        }).join('');
+
+        return '<a href="scenario.html#' + s.id + '" class="scenario-card">' +
+          '<div class="scenario-card-header">' +
+            '<h3 class="scenario-card-title">' + s.title + '</h3>' +
+            '<div class="scenario-card-meta">' + s.authors + ' &middot; ' + s.institution + ' &middot; ' + s.year + '</div>' +
+          '</div>' +
+          '<p class="scenario-card-summary">' + truncate(s.summary, 180) + '</p>' +
+          '<div class="scenario-card-tags">' + tagBadges + '</div>' +
+          '<div class="scenario-card-metrics">' +
+            '<div class="scenario-card-metric">' +
+              '<span class="scenario-card-metric-label">Likelihood</span>' +
+              likelihoodBadge(ev.likelihood) +
+            '</div>' +
+            '<div class="scenario-card-metric">' +
+              '<span class="scenario-card-metric-label">Impact</span>' +
+              impactBadge(ev.impact) +
+            '</div>' +
+            '<div class="scenario-card-metric">' +
+              '<span class="scenario-card-metric-label">Preparedness</span>' +
+              '<div class="preparedness-bar-container">' +
+                '<div class="preparedness-bar">' +
+                  '<div class="preparedness-bar-fill" style="width:' + prepPct + '%;background-color:' + prepColor + ';"></div>' +
+                '</div>' +
+                preparednessBadge(ev.preparedness) +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</a>';
+      }).join('');
+    }
+
+    // --- Init ---
+    async function init() {
+      try {
+        var response = await fetch('data.json');
+        data = await response.json();
+      } catch (err) {
+        console.error('Failed to load data.json:', err);
+        return;
+      }
+
+      renderChart();
+      renderScenarioCards();
+
+      // Chart controls
+      document.querySelectorAll('.chart-controls button').forEach(function(btn) {
+        btn.addEventListener('click', function() { setMode(btn.dataset.mode); });
+      });
+
+      // Filters
+      var searchInput = document.getElementById('filter-search');
+      var tagSelect = document.getElementById('filter-tag');
+      var sortSelect = document.getElementById('filter-sort');
+      if (searchInput) searchInput.addEventListener('input', renderScenarioCards);
+      if (tagSelect) tagSelect.addEventListener('change', renderScenarioCards);
+      if (sortSelect) sortSelect.addEventListener('change', renderScenarioCards);
+
+      // Responsive resize
+      var resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderChart, 200);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
+</body>
+</html>
