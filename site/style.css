@@ -1059,6 +1059,78 @@ a.policy-tag:hover {
   font-family: 'Source Sans 3', sans-serif;
 }
 
+/* --- Challenges Grid --- */
+.challenges-section {
+  padding: 3rem 0 4rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.challenges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.challenge-card {
+  display: block;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 1.25rem;
+  color: var(--color-text);
+  transition: all var(--transition);
+  text-decoration: none;
+}
+
+.challenge-card:hover {
+  border-color: var(--color-accent);
+  background: var(--color-bg-alt);
+  text-decoration: none;
+}
+
+.challenge-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.challenge-card-title {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.challenge-card-desc {
+  font-size: 0.88rem;
+  color: var(--color-text);
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.challenge-card-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  font-weight: 600;
+}
+
+/* --- All Policies Section --- */
+.all-policies-section {
+  padding: 3rem 0 4rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* --- Active nav link --- */
+.site-nav a.active {
+  color: var(--color-primary);
+}
+
 /* --- Search/Filter --- */
 .filter-bar {
   display: flex;

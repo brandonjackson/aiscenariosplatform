@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-03-07T19:01:21.998Z",
+    "generated": "2026-03-07T19:14:28.118Z",
     "overallPreparedness": 1.6,
     "overallRating": "Critically Unprepared",
     "scenarioCount": 10,
@@ -663,7 +663,11 @@
       "description": "Ensuring rapid AI-driven automation does not leave millions without livelihoods, by creating new pathways to employment and income security.",
       "preparedness": 1.6,
       "rating": "Critically Unprepared",
-      "scenarioCount": 7
+      "scenarioCount": 7,
+      "policyIds": [
+        "ubi-pilot",
+        "job-guarantee"
+      ]
     },
     {
       "id": "fiscal-crisis",
@@ -673,7 +677,11 @@
       "description": "Protecting government revenue bases as AI erodes traditional tax streams, and building fiscal resilience for the transition period.",
       "preparedness": 1.6,
       "rating": "Critically Unprepared",
-      "scenarioCount": 7
+      "scenarioCount": 7,
+      "policyIds": [
+        "token-tax",
+        "fiscal-buffer"
+      ]
     },
     {
       "id": "inequality",
@@ -683,7 +691,11 @@
       "description": "Preventing extreme concentration of AI-generated wealth and ensuring broad-based benefit from productivity gains.",
       "preparedness": 1.6,
       "rating": "Critically Unprepared",
-      "scenarioCount": 8
+      "scenarioCount": 8,
+      "policyIds": [
+        "wealth-tax",
+        "data-dividend"
+      ]
     },
     {
       "id": "ai-concentration",
@@ -693,7 +705,11 @@
       "description": "Avoiding monopolistic control of critical AI infrastructure and ensuring competitive, accessible AI ecosystems.",
       "preparedness": 1.5,
       "rating": "Critically Unprepared",
-      "scenarioCount": 7
+      "scenarioCount": 7,
+      "policyIds": [
+        "dpu-framework",
+        "compute-commons"
+      ]
     },
     {
       "id": "skills-obsolescence",
@@ -703,7 +719,11 @@
       "description": "Adapting education and training systems so workers can continuously acquire relevant skills in a rapidly changing economy.",
       "preparedness": 1.6,
       "rating": "Critically Unprepared",
-      "scenarioCount": 7
+      "scenarioCount": 7,
+      "policyIds": [
+        "skills-fund",
+        "adaptive-ed"
+      ]
     },
     {
       "id": "public-service-disruption",
@@ -713,7 +733,11 @@
       "description": "Ensuring essential public services remain reliable, accessible, and human-centred as AI transforms service delivery.",
       "preparedness": 1.7,
       "rating": "Critically Unprepared",
-      "scenarioCount": 7
+      "scenarioCount": 7,
+      "policyIds": [
+        "public-ai",
+        "safety-net-reform"
+      ]
     },
     {
       "id": "democratic-erosion",
@@ -723,7 +747,11 @@
       "description": "Maintaining democratic accountability, transparency, and citizen agency in the face of AI-enabled surveillance and manipulation.",
       "preparedness": 1.6,
       "rating": "Critically Unprepared",
-      "scenarioCount": 6
+      "scenarioCount": 6,
+      "policyIds": [
+        "dem-oversight",
+        "arms-control"
+      ]
     },
     {
       "id": "existential-risk",
@@ -733,7 +761,10 @@
       "description": "Ensuring advanced AI systems remain aligned with human values and that catastrophic or irreversible outcomes are prevented.",
       "preparedness": 1.5,
       "rating": "Critically Unprepared",
-      "scenarioCount": 5
+      "scenarioCount": 5,
+      "policyIds": [
+        "alignment-fund"
+      ]
     }
   ]
 }
