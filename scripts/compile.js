@@ -76,12 +76,19 @@ function compile() {
   console.log(`  Challenges:  ${rawChallenges.length}`);
   console.log(`  Regions:     ${rawRegional.length}`);
 
-  // 2. Deduplicate evaluations — keep latest per scenario_id
+  // 2. Deduplicate evaluations — keep latest and previous per scenario_id
   const latestEvals = {};
+  const previousEvals = {};
   for (const ev of rawEvaluations) {
     const id = ev.scenario_id;
     if (!latestEvals[id] || ev.date > latestEvals[id].date) {
+      // Demote current latest to previous
+      if (latestEvals[id]) {
+        previousEvals[id] = latestEvals[id];
+      }
       latestEvals[id] = ev;
+    } else if (!previousEvals[id] || ev.date > previousEvals[id].date) {
+      previousEvals[id] = ev;
     }
   }
 
@@ -104,6 +111,14 @@ function compile() {
       }
     } : null;
 
+    const prev = previousEvals[row.id];
+    const previousEvaluation = prev ? {
+      date: prev.date,
+      likelihood: toNumber(prev.likelihood),
+      impact: toNumber(prev.impact),
+      preparedness: toNumber(prev.preparedness),
+    } : null;
+
     return {
       id: row.id,
       title: row.title,
@@ -121,6 +136,7 @@ function compile() {
       },
       tags,
       evaluation,
+      previousEvaluation,
     };
   });
 
