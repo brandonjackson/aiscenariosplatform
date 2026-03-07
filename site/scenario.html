@@ -253,19 +253,28 @@
       if (ev) {
         document.getElementById('eval-card').style.display = '';
         document.getElementById('eval-date').textContent = 'Evaluated: ' + ev.date;
-        document.getElementById('eval-likelihood').innerHTML = makeBadge(getLikelihoodLabel(ev.likelihood), getLikelihoodColor(ev.likelihood), '#fff');
+        const likelihoodLabel = getLikelihoodLabel(ev.likelihood);
+        const likelihoodColor = getLikelihoodColor(ev.likelihood);
+        document.getElementById('eval-likelihood').textContent = likelihoodLabel + ' (' + ev.likelihood.toFixed(1) + '/5)';
+        document.getElementById('eval-likelihood').style.color = likelihoodColor;
         document.getElementById('eval-likelihood-bar').style.width = ((ev.likelihood - 1) / 4) * 100 + '%';
-        document.getElementById('eval-likelihood-bar').style.backgroundColor = getLikelihoodColor(ev.likelihood);
+        document.getElementById('eval-likelihood-bar').style.backgroundColor = likelihoodColor;
 
-        document.getElementById('eval-impact').innerHTML = makeBadge(getImpactLabel(ev.impact), getImpactColor(ev.impact), '#fff');
+        const impactLabel = getImpactLabel(ev.impact);
+        const impactColor = getImpactColor(ev.impact);
+        document.getElementById('eval-impact').textContent = impactLabel + ' (' + ev.impact.toFixed(1) + '/5)';
+        document.getElementById('eval-impact').style.color = impactColor;
         const impactPct = ((ev.impact - 1) / 4) * 100;
         document.getElementById('eval-impact-bar').style.width = impactPct + '%';
-        document.getElementById('eval-impact-bar').style.backgroundColor = getImpactColor(ev.impact);
+        document.getElementById('eval-impact-bar').style.backgroundColor = impactColor;
 
-        document.getElementById('eval-preparedness').innerHTML = makeBadge(getPreparednessLabel(ev.preparedness), getPreparednessColor(ev.preparedness), '#fff');
+        const prepLabel = getPreparednessLabel(ev.preparedness);
+        const prepColor = getPreparednessColor(ev.preparedness);
+        document.getElementById('eval-preparedness').textContent = prepLabel + ' (' + ev.preparedness.toFixed(1) + '/5)';
+        document.getElementById('eval-preparedness').style.color = prepColor;
         const prepPct = ((ev.preparedness - 1) / 4) * 100;
         document.getElementById('eval-preparedness-bar').style.width = prepPct + '%';
-        document.getElementById('eval-preparedness-bar').style.backgroundColor = getPreparednessColor(ev.preparedness);
+        document.getElementById('eval-preparedness-bar').style.backgroundColor = prepColor;
 
         // Rationale
         if (ev.rationale) {
