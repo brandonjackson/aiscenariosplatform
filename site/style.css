@@ -944,6 +944,145 @@ a.policy-tag:hover {
   border-radius: 3px;
 }
 
+/* --- Challenges Scorecard (scenario page) --- */
+.challenges-scorecard {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.scorecard-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+  transition: background 0.15s;
+}
+
+.scorecard-row:last-child {
+  border-bottom: none;
+}
+
+.scorecard-row:hover {
+  background: var(--color-bg-alt);
+}
+
+.scorecard-rating-indicator {
+  width: 5px;
+  flex-shrink: 0;
+}
+
+.scorecard-rating-indicator.rating-critically-unprepared { background: var(--color-critically-unprepared); }
+.scorecard-rating-indicator.rating-highly-unprepared { background: var(--color-highly-unprepared); }
+.scorecard-rating-indicator.rating-unprepared { background: var(--color-unprepared); }
+.scorecard-rating-indicator.rating-almost-prepared { background: var(--color-almost-prepared); }
+.scorecard-rating-indicator.rating-prepared { background: var(--color-prepared); }
+
+.scorecard-content {
+  flex: 1;
+  padding: 1rem 1.25rem;
+}
+
+.scorecard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.scorecard-challenge-name {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.scorecard-challenge-name a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.scorecard-challenge-name a:hover {
+  color: var(--color-accent);
+}
+
+.scorecard-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.scorecard-badge.rating-critically-unprepared { background: var(--color-critically-unprepared); }
+.scorecard-badge.rating-highly-unprepared { background: var(--color-highly-unprepared); }
+.scorecard-badge.rating-unprepared { background: var(--color-unprepared); }
+.scorecard-badge.rating-almost-prepared { background: var(--color-almost-prepared); color: #333; }
+.scorecard-badge.rating-prepared { background: var(--color-prepared); }
+
+.scorecard-desc {
+  font-size: 0.88rem;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin: 0 0 0.6rem 0;
+}
+
+.scorecard-policies {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.scorecard-policies-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.scorecard-policy-link {
+  font-size: 0.82rem;
+  color: var(--color-accent);
+  background: var(--color-bg-alt);
+  padding: 0.15rem 0.55rem;
+  border-radius: 3px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.scorecard-policy-link:hover {
+  background: #e8e8e8;
+  color: var(--color-primary);
+}
+
+.scorecard-no-policies {
+  font-size: 0.82rem;
+  color: var(--color-text-light);
+  font-style: italic;
+}
+
+@media (max-width: 480px) {
+  .scorecard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+  .scorecard-content {
+    padding: 0.75rem 1rem;
+  }
+}
+
 /* --- Citation Cards (policy page) --- */
 .citation-list {
   display: flex;
