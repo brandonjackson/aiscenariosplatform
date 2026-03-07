@@ -1190,7 +1190,7 @@ a.policy-tag:hover {
 }
 
 .policies-hero-highlight {
-  color: var(--color-critically-unprepared);
+  color: var(--color-highly-unprepared);
   font-style: italic;
 }
 
