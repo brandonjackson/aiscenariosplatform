@@ -363,6 +363,74 @@ a:hover {
   font-size: 0.78rem;
 }
 
+/* --- Policy Gaps Table (in chart container) --- */
+.chart-table-wrapper {
+  width: 100%;
+}
+
+.gap-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.gap-table thead th {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-light);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.gap-table tbody td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.88rem;
+}
+
+.gap-table tbody tr:hover {
+  background: var(--color-bg-alt);
+}
+
+.gap-challenge-name {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.gap-policy-count {
+  color: var(--color-text-light);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.gap-preparedness {
+  min-width: 120px;
+}
+
+.gap-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gap-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--color-border);
+  border-radius: 3px;
+  overflow: hidden;
+  min-width: 50px;
+}
+
+.gap-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
 /* --- What is Transformative AI? --- */
 .what-section {
   padding: 4rem 0;

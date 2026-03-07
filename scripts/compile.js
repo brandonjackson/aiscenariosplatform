@@ -68,11 +68,13 @@ function compile() {
   const rawEvaluations = readCSV('evaluations.csv');
   const rawPolicies = readCSV('policies.csv');
   const rawChallenges = readCSV('challenges.csv');
+  const rawRegional = readCSV('regional_preparedness.csv');
 
   console.log(`  Scenarios:   ${rawScenarios.length}`);
   console.log(`  Evaluations: ${rawEvaluations.length}`);
   console.log(`  Policies:    ${rawPolicies.length}`);
   console.log(`  Challenges:  ${rawChallenges.length}`);
+  console.log(`  Regions:     ${rawRegional.length}`);
 
   // 2. Deduplicate evaluations — keep latest per scenario_id
   const latestEvals = {};
@@ -202,6 +204,14 @@ function compile() {
     ? Math.round(weightedPreparedness / totalWeight * 10) / 10
     : 1;
 
+  // 7. Transform regional preparedness
+  const regions = rawRegional.map(row => ({
+    id: row.region,
+    label: row.label,
+    preparedness: toNumber(row.preparedness),
+    rating: getRating(toNumber(row.preparedness)),
+  }));
+
   const output = {
     meta: {
       generated: new Date().toISOString(),
@@ -213,6 +223,7 @@ function compile() {
     scenarios,
     policies,
     challenges,
+    regions,
   };
 
   // 6. Write output
