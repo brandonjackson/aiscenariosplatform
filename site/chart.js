@@ -477,6 +477,43 @@
       .attr('font-family', 'Source Sans 3, sans-serif')
       .text(mode.yLabel);
 
+    // Arrow marker definition
+    const arrowDefs = svg.append('defs');
+    arrowDefs.append('marker')
+      .attr('id', 'arrowhead')
+      .attr('viewBox', '0 0 10 10')
+      .attr('refX', 8)
+      .attr('refY', 5)
+      .attr('markerWidth', 5)
+      .attr('markerHeight', 5)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M 0 1 L 10 5 L 0 9 Z')
+      .attr('fill', '#c0392b');
+
+    // Trend arrows (previous → current evaluation)
+    const scenariosWithHistory = scenarios.filter((d) => d.previousEvaluation);
+    if (scenariosWithHistory.length > 0) {
+      const getPrevY = (d) => {
+        // Build a fake scenario with previous eval to compute Y
+        const prev = { evaluation: d.previousEvaluation };
+        return mode.getY(prev);
+      };
+
+      g.selectAll('.trend-arrow')
+        .data(scenariosWithHistory)
+        .join('line')
+        .attr('class', 'trend-arrow')
+        .attr('x1', (d) => xScale(d.previousEvaluation.likelihood))
+        .attr('y1', (d) => yScale(getPrevY(d)))
+        .attr('x2', (d) => xScale(d.evaluation.likelihood))
+        .attr('y2', (d) => yScale(mode.getY(d)))
+        .attr('stroke', '#c0392b')
+        .attr('stroke-width', 1.5)
+        .attr('stroke-opacity', 0.6)
+        .attr('marker-end', 'url(#arrowhead)');
+    }
+
     // Dots
     const dots = g
       .selectAll('.dot')
