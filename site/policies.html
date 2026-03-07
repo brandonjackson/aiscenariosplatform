@@ -6,6 +6,7 @@
   <title>Policy Atlas — AI Preparedness Tracker</title>
   <meta name="description" content="Policy proposals and challenge areas for transformative AI preparedness.">
   <link rel="stylesheet" href="style.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
 
@@ -22,12 +23,39 @@
     </div>
   </header>
 
-  <!-- Policies Hero -->
+  <!-- Policies Hero with Chart -->
   <section class="policies-hero">
     <div class="container">
-      <div class="policies-hero-inner">
-        <h1 class="policies-hero-title">AI progress is accelerating. But <span class="policies-hero-highlight"><span id="policies-hero-count">...</span> policy challenges</span> remain unsolved.</h1>
-        <p class="policies-hero-subtitle">The Policy Atlas maps every credible response to transformative AI — and, more importantly, every void where no response exists.</p>
+      <div class="policies-hero-grid">
+        <div class="policies-hero-text">
+          <h1 class="policies-hero-title">AI progress is accelerating. But <span class="policies-hero-highlight"><span id="policies-hero-count">...</span> policy challenges</span> remain unsolved.</h1>
+          <p class="policies-hero-subtitle">The Policy Atlas maps every credible response to transformative AI — and, more importantly, every void where no response exists.</p>
+        </div>
+        <div class="policies-chart-wrapper">
+          <div class="chart-header">
+            <div class="chart-title">Top Policy Gaps</div>
+            <div class="chart-controls">
+              <button data-mode="risk">Scenarios</button>
+              <button data-mode="policyGaps" class="active">Policy Gaps</button>
+              <button data-mode="preparedness">Preparedness</button>
+            </div>
+          </div>
+          <div id="policies-chart-container">
+            <div class="chart-tooltip"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- No-Regrets Policies -->
+  <section class="no-regrets-section">
+    <div class="container">
+      <div class="section-label">Clear Winners</div>
+      <h2 class="section-title">No-Regrets Policies</h2>
+      <p class="section-subtitle">These proposals deliver value regardless of which AI scenario materializes. They reduce risk, build resilience, and face minimal political downside. Policymakers should act on these now.</p>
+      <div class="no-regrets-grid" id="no-regrets-grid">
+        <!-- Populated by JS -->
       </div>
     </div>
   </section>
@@ -43,11 +71,12 @@
     </div>
   </section>
 
-  <!-- All Policies -->
+  <!-- Top Open Problems (formerly All Policies) -->
   <section class="all-policies-section">
     <div class="container">
-      <div class="section-label">All Policies</div>
-      <h2 class="section-title">Policy Proposals</h2>
+      <div class="section-label">Open Problems</div>
+      <h2 class="section-title">Top Open Problems</h2>
+      <p class="section-subtitle">Policy proposals ranked by the preparedness gap they address — the least-prepared challenges first.</p>
       <div class="filter-bar">
         <input type="text" id="policy-filter-search" class="filter-search" placeholder="Search policies...">
         <select id="policy-filter-tag" class="filter-select">
@@ -55,6 +84,18 @@
         </select>
       </div>
       <div class="policy-list" id="policy-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Progress -->
+  <section class="recent-progress-section">
+    <div class="container">
+      <div class="section-label">Activity</div>
+      <h2 class="section-title">Recent Progress</h2>
+      <p class="section-subtitle">The most recently updated policy proposals in our atlas.</p>
+      <div class="recent-progress-list" id="recent-progress-list">
         <!-- Populated by JS -->
       </div>
     </div>
@@ -71,6 +112,9 @@
       </div>
     </div>
   </footer>
+
+  <!-- Shared chart widget (same file as homepage — keeps chart code in sync) -->
+  <script src="chart.js"></script>
 
   <script>
   (function() {
@@ -107,27 +151,78 @@
       return makeBadge(getPreparednessLabel(score), getPreparednessColor(score), '#fff');
     }
 
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      var d = new Date(dateStr + 'T00:00:00');
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+    }
+
+    function timeAgo(dateStr) {
+      if (!dateStr) return '';
+      var now = new Date('2026-03-07T00:00:00');
+      var then = new Date(dateStr + 'T00:00:00');
+      var days = Math.floor((now - then) / (1000 * 60 * 60 * 24));
+      if (days === 0) return 'Today';
+      if (days === 1) return '1 day ago';
+      if (days < 30) return days + ' days ago';
+      if (days < 60) return '1 month ago';
+      return Math.floor(days / 30) + ' months ago';
+    }
+
     // --- Policies Hero ---
     function renderPoliciesHero() {
-      const countEl = document.getElementById('policies-hero-count');
+      var countEl = document.getElementById('policies-hero-count');
       if (!countEl || !data || !data.challenges) return;
 
-      // Count challenges that are critically unprepared (preparedness < 1.8)
-      const criticalCount = data.challenges.filter(function(c) {
+      var criticalCount = data.challenges.filter(function(c) {
         return c.preparedness !== null && c.preparedness < 1.8;
       }).length;
 
       countEl.textContent = criticalCount;
     }
 
+    // --- No-Regrets Policies ---
+    function renderNoRegrets() {
+      var grid = document.getElementById('no-regrets-grid');
+      if (!grid || !data) return;
+
+      var noRegretPolicies = data.policies.filter(function(p) { return p.isNoRegret; });
+
+      if (noRegretPolicies.length === 0) {
+        grid.innerHTML = '<p class="no-results">No no-regret policies identified yet.</p>';
+        return;
+      }
+
+      grid.innerHTML = noRegretPolicies.map(function(p) {
+        var challenge = data.challenges ? data.challenges.find(function(c) { return c.tag === p.challengeTag; }) : null;
+        var challengeName = challenge ? challenge.opportunityName : formatTag(p.challengeTag);
+
+        return '<a href="policy.html#' + p.id + '" class="no-regret-card">' +
+          '<div class="no-regret-card-badge">No-Regret</div>' +
+          '<h3 class="no-regret-card-title">' + p.name + '</h3>' +
+          '<div class="no-regret-card-challenge">' + challengeName + '</div>' +
+          '<p class="no-regret-card-desc">' + p.description + '</p>' +
+          (p.updated ? '<div class="no-regret-card-updated">Updated ' + formatDate(p.updated) + '</div>' : '') +
+        '</a>';
+      }).join('');
+    }
+
     // --- Challenges Grid ---
     function renderChallengesGrid() {
-      const grid = document.getElementById('challenges-grid');
+      var grid = document.getElementById('challenges-grid');
       if (!grid || !data || !data.challenges) return;
 
-      grid.innerHTML = data.challenges.map(function(c) {
-        const color = c.preparedness !== null ? getPreparednessColor(c.preparedness) : '#999';
-        const policyCount = data.policies.filter(function(p) { return p.challengeTag === c.tag; }).length;
+      // Sort by preparedness ascending (least prepared first)
+      var sortedChallenges = data.challenges.slice().sort(function(a, b) {
+        var aPrep = a.preparedness !== null ? a.preparedness : 999;
+        var bPrep = b.preparedness !== null ? b.preparedness : 999;
+        return aPrep - bPrep;
+      });
+
+      grid.innerHTML = sortedChallenges.map(function(c) {
+        var color = c.preparedness !== null ? getPreparednessColor(c.preparedness) : '#999';
+        var policyCount = data.policies.filter(function(p) { return p.challengeTag === c.tag; }).length;
         return '<a href="challenge.html#' + c.id + '" class="challenge-card" style="border-left: 4px solid ' + color + ';">' +
           '<div class="challenge-card-header">' +
             '<h3 class="challenge-card-title">' + c.opportunityName + '</h3>' +
@@ -142,17 +237,25 @@
       }).join('');
     }
 
-    // --- Policies List ---
+    // --- Policies List (Top Open Problems — sorted by challenge preparedness ascending) ---
     function renderPoliciesList() {
-      const list = document.getElementById('policy-list');
-      const searchInput = document.getElementById('policy-filter-search');
-      const tagSelect = document.getElementById('policy-filter-tag');
+      var list = document.getElementById('policy-list');
+      var searchInput = document.getElementById('policy-filter-search');
+      var tagSelect = document.getElementById('policy-filter-tag');
       if (!list || !data) return;
 
-      const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-      const selectedTag = tagSelect ? tagSelect.value : '';
+      var searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+      var selectedTag = tagSelect ? tagSelect.value : '';
 
-      let policies = data.policies;
+      // Build a map of challenge preparedness for sorting
+      var challengePrep = {};
+      if (data.challenges) {
+        data.challenges.forEach(function(c) {
+          challengePrep[c.tag] = c.preparedness !== null ? c.preparedness : 999;
+        });
+      }
+
+      var policies = data.policies.slice();
 
       if (searchTerm) {
         policies = policies.filter(function(p) {
@@ -165,18 +268,31 @@
         policies = policies.filter(function(p) { return p.challengeTag === selectedTag; });
       }
 
+      // Sort by challenge preparedness ascending (least prepared challenges first)
+      policies.sort(function(a, b) {
+        var aPrep = challengePrep[a.challengeTag] !== undefined ? challengePrep[a.challengeTag] : 999;
+        var bPrep = challengePrep[b.challengeTag] !== undefined ? challengePrep[b.challengeTag] : 999;
+        return aPrep - bPrep;
+      });
+
       if (policies.length === 0) {
         list.innerHTML = '<p class="no-results">No policies match your filters.</p>';
         return;
       }
 
       list.innerHTML = policies.map(function(p) {
-        const citationsHtml = p.citations.map(function(c) {
+        var citationsHtml = p.citations.map(function(c) {
           return '<a href="' + c.url + '" class="policy-citation" target="_blank" rel="noopener">' + c.text + '</a>';
         }).join('');
 
+        var challenge = data.challenges ? data.challenges.find(function(c) { return c.tag === p.challengeTag; }) : null;
+        var prepScore = challenge && challenge.preparedness !== null ? challenge.preparedness : null;
+
         return '<div class="policy-detail-card">' +
-          '<div class="policy-detail-name"><a href="policy.html#' + p.id + '">' + p.name + '</a></div>' +
+          '<div class="policy-detail-header">' +
+            '<div class="policy-detail-name"><a href="policy.html#' + p.id + '">' + p.name + '</a></div>' +
+            (prepScore !== null ? preparednessBadge(prepScore) : '') +
+          '</div>' +
           '<div class="policy-detail-tag">' + formatTag(p.challengeTag) + '</div>' +
           '<p class="policy-detail-desc">' + p.description + '</p>' +
           (citationsHtml ? '<div class="policy-detail-citations">' + citationsHtml + '</div>' : '') +
@@ -184,13 +300,42 @@
       }).join('');
     }
 
+    // --- Recent Progress ---
+    function renderRecentProgress() {
+      var list = document.getElementById('recent-progress-list');
+      if (!list || !data) return;
+
+      var recentPolicies = data.policies
+        .filter(function(p) { return p.updated; })
+        .slice()
+        .sort(function(a, b) { return b.updated.localeCompare(a.updated); })
+        .slice(0, 6);
+
+      if (recentPolicies.length === 0) {
+        list.innerHTML = '<p class="no-results">No recent updates.</p>';
+        return;
+      }
+
+      list.innerHTML = recentPolicies.map(function(p) {
+        var challenge = data.challenges ? data.challenges.find(function(c) { return c.tag === p.challengeTag; }) : null;
+        var challengeName = challenge ? challenge.opportunityName : formatTag(p.challengeTag);
+
+        return '<a href="policy.html#' + p.id + '" class="recent-progress-card">' +
+          '<div class="recent-progress-card-date">' + timeAgo(p.updated) + '</div>' +
+          '<h3 class="recent-progress-card-title">' + p.name + '</h3>' +
+          '<div class="recent-progress-card-challenge">' + challengeName + '</div>' +
+          '<p class="recent-progress-card-desc">' + p.description + '</p>' +
+        '</a>';
+      }).join('');
+    }
+
     // --- Populate filter dropdown ---
     function populateFilterDropdown() {
-      const tagSelect = document.getElementById('policy-filter-tag');
+      var tagSelect = document.getElementById('policy-filter-tag');
       if (!tagSelect || !data || !data.challenges) return;
 
       data.challenges.forEach(function(c) {
-        const opt = document.createElement('option');
+        var opt = document.createElement('option');
         opt.value = c.tag;
         opt.textContent = c.opportunityName;
         tagSelect.appendChild(opt);
@@ -198,32 +343,38 @@
     }
 
     // --- Init ---
-    async function init() {
-      try {
-        const response = await fetch('data.json');
-        data = await response.json();
-      } catch (err) {
-        console.error('Failed to load data.json:', err);
-        return;
+    function initPoliciesPage() {
+      // Wait for chart.js to load data
+      if (window._aiptData) {
+        data = window._aiptData;
+        render();
+      } else {
+        window.addEventListener('aiptDataReady', function() {
+          data = window._aiptData;
+          render();
+        });
       }
+    }
 
+    function render() {
       renderPoliciesHero();
+      renderNoRegrets();
       renderChallengesGrid();
       populateFilterDropdown();
       renderPoliciesList();
+      renderRecentProgress();
 
       // Bind filters
       var searchInput = document.getElementById('policy-filter-search');
       var tagSelect = document.getElementById('policy-filter-tag');
       if (searchInput) searchInput.addEventListener('input', renderPoliciesList);
       if (tagSelect) tagSelect.addEventListener('change', renderPoliciesList);
-
     }
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
+      document.addEventListener('DOMContentLoaded', initPoliciesPage);
     } else {
-      init();
+      initPoliciesPage();
     }
   })();
   </script>

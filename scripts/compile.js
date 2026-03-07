@@ -140,6 +140,8 @@ function compile() {
       name: row.name,
       challengeTag: row.challenge_tag ? row.challenge_tag.replace('tag_', '') : '',
       description: row.description,
+      updated: row.updated || null,
+      isNoRegret: toBoolean(row.is_no_regret),
       citations,
     };
   });
