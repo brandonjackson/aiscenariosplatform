@@ -8,7 +8,7 @@
 
   // --- State ---
   let data = null;
-  let currentMode = 'risk'; // 'risk' | 'impact' | 'preparedness'
+  let currentMode = 'risk'; // 'risk' | 'policyGaps' | 'preparedness'
 
   // --- Constants ---
   const MARGIN = { top: 20, right: 30, bottom: 50, left: 55 };
@@ -24,6 +24,7 @@
     risk: {
       label: 'Net Impact',
       yLabel: 'Net Impact',
+      type: 'scatter',
       getY: (d) => {
         // netImpact = impact + ((preparedness - 1) / 4) * (5 - impact)
         // Range 1-5: 1=worst (systemic risk, unprepared), 5=best (improving, prepared)
@@ -33,19 +34,13 @@
       yDomain: [5, 1], // 5(better)=bottom, 1(worse)=top
       dangerZone: true,
     },
-    impact: {
-      label: 'Impact',
-      yLabel: 'Impact',
-      getY: (d) => d.evaluation.impact,
-      yDomain: [5, 1], // 5(improving)=bottom=better, 1(systemic risk)=top=worse
-      dangerZone: false,
+    policyGaps: {
+      label: 'Policy Gaps',
+      type: 'table',
     },
     preparedness: {
       label: 'Preparedness',
-      yLabel: 'Preparedness',
-      getY: (d) => d.evaluation.preparedness,
-      yDomain: [5, 1], // 5(prepared)=bottom=better, 1(unprepared)=top=worse
-      dangerZone: false,
+      type: 'barChart',
     },
   };
 
@@ -175,16 +170,212 @@
     return str.length > len ? str.slice(0, len) + '...' : str;
   }
 
+  // --- Policy Gaps table ---
+  function renderPolicyGapsTable() {
+    const container = document.getElementById('chart-container');
+    if (!container || !data) return;
+
+    // Clear previous
+    container.querySelectorAll('svg, .chart-table-wrapper').forEach((el) => el.remove());
+
+    const challenges = (data.challenges || [])
+      .filter((c) => c.preparedness !== null)
+      .sort((a, b) => a.preparedness - b.preparedness);
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'chart-table-wrapper';
+
+    const rows = challenges
+      .map((c) => {
+        const pct = Math.round(((c.preparedness - 1) / 4) * 100);
+        const color = getPreparednessColor(c.preparedness);
+        const policyCount = c.policyIds ? c.policyIds.length : 0;
+        return `
+          <tr>
+            <td class="gap-challenge-name">${c.problemName}</td>
+            <td class="gap-policy-count">${policyCount} ${policyCount === 1 ? 'policy' : 'policies'}</td>
+            <td class="gap-preparedness">
+              <div class="gap-bar-container">
+                <div class="gap-bar">
+                  <div class="gap-bar-fill" style="width: ${pct}%; background-color: ${color};"></div>
+                </div>
+                ${preparednessBadge(c.preparedness)}
+              </div>
+            </td>
+          </tr>`;
+      })
+      .join('');
+
+    wrapper.innerHTML = `
+      <table class="gap-table">
+        <thead>
+          <tr>
+            <th>Challenge</th>
+            <th>Policies</th>
+            <th>Preparedness</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+
+    container.appendChild(wrapper);
+  }
+
+  // --- Regional Preparedness bar chart ---
+  function renderRegionalBarChart() {
+    const container = document.getElementById('chart-container');
+    if (!container || !data) return;
+
+    // Clear previous
+    container.querySelectorAll('svg, .chart-table-wrapper').forEach((el) => el.remove());
+
+    const regions = data.regions || [];
+    if (regions.length === 0) return;
+
+    // Dimensions
+    const containerWidth = container.clientWidth;
+    const width = containerWidth;
+    const height = Math.min(400, Math.max(280, containerWidth * 0.55));
+    const innerWidth = width - MARGIN.left - MARGIN.right;
+    const innerHeight = height - MARGIN.top - MARGIN.bottom;
+
+    const svg = d3
+      .select(container)
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('viewBox', `0 0 ${width} ${height}`)
+      .attr('preserveAspectRatio', 'xMidYMid meet');
+
+    const g = svg
+      .append('g')
+      .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
+
+    // Scales
+    const xScale = d3
+      .scaleBand()
+      .domain(regions.map((r) => r.label))
+      .range([0, innerWidth])
+      .padding(0.35);
+
+    const yScale = d3.scaleLinear().domain([0, 5]).range([innerHeight, 0]);
+
+    // Background gradient
+    const defs = svg.append('defs');
+    const bgGrad = defs
+      .append('linearGradient')
+      .attr('id', 'bar-bg-gradient')
+      .attr('x1', '0%').attr('y1', '0%')
+      .attr('x2', '0%').attr('y2', '100%');
+    bgGrad.append('stop').attr('offset', '0%').attr('stop-color', '#e6f5eb');
+    bgGrad.append('stop').attr('offset', '100%').attr('stop-color', '#fde8e6');
+
+    g.append('rect')
+      .attr('x', 0).attr('y', 0)
+      .attr('width', innerWidth).attr('height', innerHeight)
+      .attr('fill', 'url(#bar-bg-gradient)');
+
+    // Y grid lines
+    g.append('g')
+      .attr('class', 'grid-y')
+      .call(d3.axisLeft(yScale).ticks(5).tickSize(-innerWidth).tickFormat(''))
+      .selectAll('line')
+      .attr('stroke', '#e2e4ea')
+      .attr('stroke-dasharray', '3,3');
+    g.selectAll('.grid-y .domain').remove();
+
+    // Y axis labels
+    const yAxisLabels = [
+      { val: 1, text: 'Critically Unprepared' },
+      { val: 2, text: 'Highly Unprepared' },
+      { val: 3, text: 'Unprepared' },
+      { val: 4, text: 'Almost Prepared' },
+      { val: 5, text: 'Prepared' },
+    ];
+
+    const yAxis = g.append('g').call(
+      d3.axisLeft(yScale).tickValues([1, 2, 3, 4, 5]).tickFormat((d) => {
+        const found = yAxisLabels.find((l) => l.val === d);
+        return found ? found.text : '';
+      })
+    );
+    yAxis.selectAll('text').attr('font-size', '10px').attr('fill', '#6b7084');
+    yAxis.selectAll('line').attr('stroke', '#ccc');
+    yAxis.select('.domain').attr('stroke', '#ccc');
+
+    // X axis
+    const xAxis = g
+      .append('g')
+      .attr('transform', `translate(0,${innerHeight})`)
+      .call(d3.axisBottom(xScale));
+    xAxis.selectAll('text').attr('font-size', '12px').attr('fill', '#6b7084').attr('font-weight', '600');
+    xAxis.selectAll('line').attr('stroke', '#ccc');
+    xAxis.select('.domain').attr('stroke', '#ccc');
+
+    // Bars
+    g.selectAll('.bar')
+      .data(regions)
+      .join('rect')
+      .attr('class', 'bar')
+      .attr('x', (d) => xScale(d.label))
+      .attr('y', (d) => yScale(d.preparedness))
+      .attr('width', xScale.bandwidth())
+      .attr('height', (d) => innerHeight - yScale(d.preparedness))
+      .attr('fill', (d) => getPreparednessColor(d.preparedness))
+      .attr('rx', 3)
+      .attr('opacity', 0.85);
+
+    // Value labels on bars
+    g.selectAll('.bar-label')
+      .data(regions)
+      .join('text')
+      .attr('class', 'bar-label')
+      .attr('x', (d) => xScale(d.label) + xScale.bandwidth() / 2)
+      .attr('y', (d) => yScale(d.preparedness) - 8)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '12px')
+      .attr('font-weight', '700')
+      .attr('fill', (d) => getPreparednessColor(d.preparedness))
+      .attr('font-family', 'Source Sans 3, sans-serif')
+      .text((d) => d.preparedness.toFixed(1) + '/5');
+
+    // Rating labels on bars
+    g.selectAll('.bar-rating')
+      .data(regions)
+      .join('text')
+      .attr('class', 'bar-rating')
+      .attr('x', (d) => xScale(d.label) + xScale.bandwidth() / 2)
+      .attr('y', (d) => yScale(d.preparedness) - 22)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '9px')
+      .attr('font-weight', '600')
+      .attr('fill', '#6b7084')
+      .attr('font-family', 'Source Sans 3, sans-serif')
+      .attr('text-transform', 'uppercase')
+      .text((d) => d.rating);
+  }
+
   // --- Chart rendering ---
   function renderChart() {
     const container = document.getElementById('chart-container');
     if (!container || !data) return;
 
+    const mode = MODE_CONFIG[currentMode];
+
+    if (mode.type === 'table') {
+      renderPolicyGapsTable();
+      return;
+    }
+
+    if (mode.type === 'barChart') {
+      renderRegionalBarChart();
+      return;
+    }
+
     // Clear previous
-    container.querySelectorAll('svg').forEach((el) => el.remove());
+    container.querySelectorAll('svg, .chart-table-wrapper').forEach((el) => el.remove());
 
     const scenarios = data.scenarios.filter((s) => s.evaluation);
-    const mode = MODE_CONFIG[currentMode];
 
     // Dimensions
     const containerWidth = container.clientWidth;
@@ -410,12 +601,21 @@
     return name;
   }
 
+  // --- Chart title map ---
+  const CHART_TITLES = {
+    risk: 'Key Scenarios to Watch',
+    policyGaps: 'Policy Challenges',
+    preparedness: 'Preparedness by Region',
+  };
+
   // --- Mode switching ---
   function setMode(mode) {
     currentMode = mode;
     document.querySelectorAll('.chart-controls button').forEach((btn) => {
       btn.classList.toggle('active', btn.dataset.mode === mode);
     });
+    const titleEl = document.querySelector('.chart-title');
+    if (titleEl) titleEl.textContent = CHART_TITLES[mode] || '';
     renderChart();
   }
 

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-03-07T19:14:28.118Z",
+    "generated": "2026-03-07T20:31:53.122Z",
     "overallPreparedness": 1.6,
     "overallRating": "Critically Unprepared",
     "scenarioCount": 10,
@@ -765,6 +765,26 @@
       "policyIds": [
         "alignment-fund"
       ]
+    }
+  ],
+  "regions": [
+    {
+      "id": "us",
+      "label": "United States",
+      "preparedness": 1.8,
+      "rating": "Highly Unprepared"
+    },
+    {
+      "id": "uk",
+      "label": "United Kingdom",
+      "preparedness": 2.1,
+      "rating": "Highly Unprepared"
+    },
+    {
+      "id": "eu",
+      "label": "European Union",
+      "preparedness": 2.4,
+      "rating": "Highly Unprepared"
     }
   ]
 }
