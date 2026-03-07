@@ -27,7 +27,7 @@
 
   const MODE_CONFIG = {
     risk: {
-      label: 'Net Impact',
+      label: 'Scenarios',
       yLabel: 'Net Impact',
       type: 'scatter',
       getY: (d) => {
@@ -185,15 +185,14 @@
 
     const challenges = (data.challenges || [])
       .filter((c) => c.preparedness !== null)
-      .sort((a, b) => a.preparedness - b.preparedness);
+      .sort((a, b) => a.preparedness - b.preparedness)
+      .slice(0, 5);
 
     const wrapper = document.createElement('div');
     wrapper.className = 'chart-table-wrapper';
 
     const rows = challenges
       .map((c) => {
-        const pct = Math.round(((c.preparedness - 1) / 4) * 100);
-        const color = getPreparednessColor(c.preparedness);
         const policyCount = c.policyIds ? c.policyIds.length : 0;
         return `
           <tr>
@@ -201,9 +200,6 @@
             <td class="gap-policy-count">${policyCount} ${policyCount === 1 ? 'policy' : 'policies'}</td>
             <td class="gap-preparedness">
               <div class="gap-bar-container">
-                <div class="gap-bar">
-                  <div class="gap-bar-fill" style="width: ${pct}%; background-color: ${color};"></div>
-                </div>
                 ${preparednessBadge(c.preparedness)}
               </div>
             </td>
@@ -237,12 +233,13 @@
     const regions = data.regions || [];
     if (regions.length === 0) return;
 
-    // Dimensions
+    // Dimensions — wider left margin to fit y-axis labels
+    const barMargin = { top: 20, right: 30, bottom: 50, left: 140 };
     const containerWidth = container.clientWidth;
     const width = containerWidth;
     const height = Math.min(400, Math.max(280, containerWidth * 0.55));
-    const innerWidth = width - MARGIN.left - MARGIN.right;
-    const innerHeight = height - MARGIN.top - MARGIN.bottom;
+    const innerWidth = width - barMargin.left - barMargin.right;
+    const innerHeight = height - barMargin.top - barMargin.bottom;
 
     const svg = d3
       .select(container)
@@ -254,7 +251,7 @@
 
     const g = svg
       .append('g')
-      .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
+      .attr('transform', `translate(${barMargin.left},${barMargin.top})`);
 
     // Scales
     const xScale = d3
@@ -265,20 +262,7 @@
 
     const yScale = d3.scaleLinear().domain([0, 5]).range([innerHeight, 0]);
 
-    // Background gradient
-    const defs = svg.append('defs');
-    const bgGrad = defs
-      .append('linearGradient')
-      .attr('id', 'bar-bg-gradient')
-      .attr('x1', '0%').attr('y1', '0%')
-      .attr('x2', '0%').attr('y2', '100%');
-    bgGrad.append('stop').attr('offset', '0%').attr('stop-color', '#e6f5eb');
-    bgGrad.append('stop').attr('offset', '100%').attr('stop-color', '#fde8e6');
-
-    g.append('rect')
-      .attr('x', 0).attr('y', 0)
-      .attr('width', innerWidth).attr('height', innerHeight)
-      .attr('fill', 'url(#bar-bg-gradient)');
+    // No background for preparedness bar chart
 
     // Y grid lines
     g.append('g')
@@ -609,7 +593,7 @@
   // --- Chart title map ---
   const CHART_TITLES = {
     risk: 'Key Scenarios to Watch',
-    policyGaps: 'Policy Challenges',
+    policyGaps: 'Top Policy Gaps',
     preparedness: 'Preparedness by Region',
   };
 

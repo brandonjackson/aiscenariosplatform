@@ -771,19 +771,19 @@
     {
       "id": "us",
       "label": "United States",
-      "preparedness": 1.8,
-      "rating": "Highly Unprepared"
+      "preparedness": 1.2,
+      "rating": "Critically Unprepared"
     },
     {
       "id": "uk",
       "label": "United Kingdom",
-      "preparedness": 2.1,
-      "rating": "Highly Unprepared"
+      "preparedness": 1.4,
+      "rating": "Critically Unprepared"
     },
     {
       "id": "eu",
       "label": "European Union",
-      "preparedness": 2.4,
+      "preparedness": 1.8,
       "rating": "Highly Unprepared"
     }
   ]
