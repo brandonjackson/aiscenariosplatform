@@ -1172,29 +1172,34 @@ a.policy-tag:hover {
 
 /* --- Policies Hero --- */
 .policies-hero {
-  padding: 4rem 0 3rem;
+  padding: 5rem 0 3.5rem;
   background: #fff;
 }
 
 .policies-hero-inner {
-  max-width: 700px;
+  max-width: 800px;
 }
 
-.policies-hero .hero-title {
+.policies-hero-title {
   font-family: var(--font-heading);
-  font-size: 2rem;
+  font-size: 2.75rem;
   line-height: 1.3;
   color: var(--color-primary);
   font-weight: 400;
-  margin-bottom: 0;
+  margin-bottom: 1.25rem;
 }
 
-.policies-hero .hero-rating-value {
-  font-family: var(--font-heading);
-  font-size: 3.5rem;
-  line-height: 1;
-  font-weight: 400;
-  letter-spacing: -0.02em;
+.policies-hero-highlight {
+  color: var(--color-critically-unprepared);
+  font-style: italic;
+}
+
+.policies-hero-subtitle {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--color-text-light);
+  max-width: 640px;
 }
 
 /* --- Challenges Grid --- */
