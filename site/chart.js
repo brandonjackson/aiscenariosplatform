@@ -15,61 +15,62 @@
   const DOT_RADIUS = 7;
   const DOT_RADIUS_HOVER = 10;
 
-  // Likelihood axis category boundaries and labels
-  const LIKELIHOOD_TICKS = [12.5, 37.5, 62.5, 87.5];
-  const LIKELIHOOD_LABELS = ['Improbable', 'Possible', 'Plausible', 'Probable'];
-  const LIKELIHOOD_BOUNDARIES = [25, 50, 75];
+  // Likelihood axis labels (1-5 scale)
+  const LIKELIHOOD_TICKS = [1, 2, 3, 4, 5];
+  const LIKELIHOOD_LABELS = ['Improbable', 'Possible', 'Plausible', 'Probable', 'Emerging'];
+  const LIKELIHOOD_BOUNDARIES = [1.5, 2.5, 3.5, 4.5];
 
   const MODE_CONFIG = {
     risk: {
       label: 'Net Impact',
       yLabel: 'Net Impact',
       getY: (d) => {
-        // impact × (1 - preparedness/200), higher = worse
-        // impact is negative for harmful, so we negate to get positive "risk"
-        const risk = Math.abs(d.evaluation.impact) * (1 - d.evaluation.preparedness / 200);
-        return risk;
+        // netImpact = impact + ((preparedness - 1) / 4) * (5 - impact)
+        // Range 1-5: 1=worst (systemic risk, unprepared), 5=best (improving, prepared)
+        const ev = d.evaluation;
+        return ev.impact + ((ev.preparedness - 1) / 4) * (5 - ev.impact);
       },
-      yDomain: [0, 100], // 0=bottom=better, 100=top=worse
+      yDomain: [5, 1], // 5(better)=bottom, 1(worse)=top
       dangerZone: true,
     },
     impact: {
       label: 'Impact',
       yLabel: 'Impact',
       getY: (d) => d.evaluation.impact,
-      yDomain: [100, -100], // 100(beneficial)=bottom=better, -100(harmful)=top=worse
+      yDomain: [5, 1], // 5(improving)=bottom=better, 1(systemic risk)=top=worse
       dangerZone: false,
     },
     preparedness: {
       label: 'Preparedness',
       yLabel: 'Preparedness',
       getY: (d) => d.evaluation.preparedness,
-      yDomain: [200, 0], // 200(prepared)=bottom=better, 0(unprepared)=top=worse
+      yDomain: [5, 1], // 5(prepared)=bottom=better, 1(unprepared)=top=worse
       dangerZone: false,
     },
   };
 
   // --- Color helpers ---
-  // Net impact score: |impact| × (1 - preparedness/200), range 0-100, higher = worse
+  // Net impact: impact + ((preparedness - 1) / 4) * (5 - impact), range 1-5, higher = better
   function getNetImpact(d) {
-    return Math.abs(d.evaluation.impact) * (1 - d.evaluation.preparedness / 200);
+    const ev = d.evaluation;
+    return ev.impact + ((ev.preparedness - 1) / 4) * (5 - ev.impact);
   }
 
-  // 5-stage scale based on net impact (0-100, higher = worse)
+  // 5-stage color based on net impact (1-5, higher = better)
   function getNetImpactColor(netImpact) {
-    if (netImpact >= 80) return '#4a4a4a'; // Critically Unprepared (dark grey)
-    if (netImpact >= 60) return '#c0392b'; // Highly Unprepared (red)
-    if (netImpact >= 40) return '#e67e22'; // Unprepared (orange)
-    if (netImpact >= 20) return '#f1c40f'; // Almost Prepared (yellow)
+    if (netImpact < 1.8) return '#4a4a4a'; // Critically Unprepared (dark grey)
+    if (netImpact < 2.6) return '#c0392b'; // Highly Unprepared (red)
+    if (netImpact < 3.4) return '#e67e22'; // Unprepared (orange)
+    if (netImpact < 4.2) return '#f1c40f'; // Almost Prepared (yellow)
     return '#27ae60';                       // Prepared (green)
   }
 
-  // Preparedness-based color for table bars (0-200 scale)
+  // Preparedness-based color for table bars (1-5 scale)
   function getPreparednessColor(score) {
-    if (score <= 40) return '#4a4a4a';  // Critically Unprepared
-    if (score <= 80) return '#c0392b';  // Highly Unprepared
-    if (score <= 120) return '#e67e22'; // Unprepared
-    if (score <= 160) return '#f1c40f'; // Almost Prepared
+    if (score < 1.5) return '#4a4a4a';  // Critically Unprepared
+    if (score < 2.5) return '#c0392b';  // Highly Unprepared
+    if (score < 3.5) return '#e67e22';  // Unprepared
+    if (score < 4.5) return '#f1c40f';  // Almost Prepared
     return '#27ae60';                    // Prepared
   }
 
@@ -84,9 +85,9 @@
 
     tooltip.innerHTML = `
       <div class="tt-title">${d.title}</div>
-      <div class="tt-row"><span class="tt-label">Likelihood</span><span>${d.evaluation.likelihood}%</span></div>
-      <div class="tt-row"><span class="tt-label">Impact</span><span>${d.evaluation.impact}</span></div>
-      <div class="tt-row"><span class="tt-label">Preparedness</span><span>${d.evaluation.preparedness}/200</span></div>
+      <div class="tt-row"><span class="tt-label">Likelihood</span><span>${d.evaluation.likelihood}/5</span></div>
+      <div class="tt-row"><span class="tt-label">Impact</span><span>${d.evaluation.impact}/5</span></div>
+      <div class="tt-row"><span class="tt-label">Preparedness</span><span>${d.evaluation.preparedness}/5</span></div>
       <div class="tt-summary">${truncate(d.summary, 120)}</div>
     `;
 
@@ -154,7 +155,7 @@
       .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
     // Scales
-    const xScale = d3.scaleLinear().domain([0, 100]).range([0, innerWidth]);
+    const xScale = d3.scaleLinear().domain([0.5, 5.5]).range([0, innerWidth]);
     const yScale = d3.scaleLinear().domain(mode.yDomain).range([innerHeight, 0]);
 
     // Plot area background: red → white → green vertical gradient
@@ -388,7 +389,7 @@
       ratingPctEl.className = 'hero-rating-pct ' + ratingClass;
     }
     if (ratingBarFill) {
-      ratingBarFill.style.width = (meta.overallPreparedness / 200) * 100 + '%';
+      ratingBarFill.style.width = ((meta.overallPreparedness - 1) / 4) * 100 + '%';
       ratingBarFill.className = 'hero-rating-bar-fill bg-' + ratingClass.replace('rating-', '');
     }
 
@@ -438,7 +439,7 @@
     tbody.innerHTML = scenarios
       .map((s) => {
         const ev = s.evaluation;
-        const prepPct = Math.round((ev.preparedness / 200) * 100);
+        const prepPct = Math.round(((ev.preparedness - 1) / 4) * 100);
         const prepColor = getPreparednessColor(ev.preparedness);
 
         // Find relevant policies (match challenge tags to scenario tags)
@@ -456,7 +457,7 @@
             <a href="scenario.html#${s.id}" class="scenario-name">${s.title}</a>
             <div class="scenario-institution">${s.institution}</div>
           </td>
-          <td><span class="likelihood-badge">${ev.likelihood}%</span></td>
+          <td><span class="likelihood-badge">${ev.likelihood}/5</span></td>
           <td>
             <div class="policy-tags">${policyHtml}</div>
           </td>
@@ -465,7 +466,7 @@
               <div class="preparedness-bar">
                 <div class="preparedness-bar-fill" style="width: ${prepPct}%; background-color: ${prepColor};"></div>
               </div>
-              <span class="preparedness-label" style="color: ${prepColor};">${ev.preparedness}/200</span>
+              <span class="preparedness-label" style="color: ${prepColor};">${ev.preparedness}/5</span>
             </div>
           </td>
         </tr>`;

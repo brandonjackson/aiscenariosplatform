@@ -39,10 +39,10 @@ function toNumber(val) {
 }
 
 function getRating(score) {
-  if (score <= 40) return 'Critically Unprepared';
-  if (score <= 80) return 'Highly Unprepared';
-  if (score <= 120) return 'Unprepared';
-  if (score <= 160) return 'Almost Prepared';
+  if (score < 1.5) return 'Critically Unprepared';
+  if (score < 2.5) return 'Highly Unprepared';
+  if (score < 3.5) return 'Unprepared';
+  if (score < 4.5) return 'Almost Prepared';
   return 'Prepared';
 }
 
@@ -146,17 +146,18 @@ function compile() {
   let weightedPreparedness = 0;
   let totalWeight = 0;
   for (const s of evaluatedScenarios) {
-    const weight = s.evaluation.likelihood / 100;
+    const weight = s.evaluation.likelihood;
     weightedPreparedness += s.evaluation.preparedness * weight;
     totalWeight += weight;
   }
-  
-  const overallPreparedness = totalWeight > 0 
-    ? Math.round(weightedPreparedness / totalWeight) 
-    : 0;
 
-  // Convert to percentage (preparedness is 0-200, so divide by 2 for percentage)
-  const overallPreparednessPct = Math.round(overallPreparedness / 2);
+  // Overall preparedness is a weighted average on 1-5 scale
+  const overallPreparedness = totalWeight > 0
+    ? Math.round(weightedPreparedness / totalWeight * 100) / 100
+    : 1;
+
+  // Convert to percentage (1-5 scale maps to 0-100%)
+  const overallPreparednessPct = Math.round(((overallPreparedness - 1) / 4) * 100);
 
   const output = {
     meta: {
@@ -176,7 +177,7 @@ function compile() {
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
 
   console.log(`\n✅ Compiled successfully → ${OUTPUT_PATH}`);
-  console.log(`\n  Overall Preparedness: ${overallPreparedness}/200 (${overallPreparednessPct}%)`);
+  console.log(`\n  Overall Preparedness: ${overallPreparedness}/5 (${overallPreparednessPct}%)`);
   console.log(`  Rating: ${output.meta.overallRating}`);
   console.log(`  Scenarios: ${output.meta.scenarioCount}`);
   console.log(`  Policies: ${output.meta.policyCount}\n`);

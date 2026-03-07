@@ -159,16 +159,17 @@
     }
 
     function getPreparednessColor(score) {
-      if (score <= 40) return '#c0392b';
-      if (score <= 80) return '#e67e22';
-      if (score <= 120) return '#f1c40f';
-      if (score <= 160) return '#27ae60';
+      if (score < 1.5) return '#c0392b';
+      if (score < 2.5) return '#e67e22';
+      if (score < 3.5) return '#f1c40f';
+      if (score < 4.5) return '#27ae60';
       return '#1e8449';
     }
 
     function getImpactColor(impact) {
-      if (impact >= 0) return '#27ae60';
-      if (impact >= -30) return '#e67e22';
+      if (impact >= 4) return '#27ae60';
+      if (impact >= 3) return '#f1c40f';
+      if (impact >= 2) return '#e67e22';
       return '#c0392b';
     }
 
@@ -215,17 +216,17 @@
       if (ev) {
         document.getElementById('eval-card').style.display = '';
         document.getElementById('eval-date').textContent = 'Evaluated: ' + ev.date;
-        document.getElementById('eval-likelihood').textContent = ev.likelihood + '%';
-        document.getElementById('eval-likelihood-bar').style.width = ev.likelihood + '%';
+        document.getElementById('eval-likelihood').textContent = ev.likelihood + '/5';
+        document.getElementById('eval-likelihood-bar').style.width = ((ev.likelihood - 1) / 4) * 100 + '%';
         document.getElementById('eval-likelihood-bar').style.backgroundColor = '#3498db';
 
-        document.getElementById('eval-impact').textContent = ev.impact;
-        const impactPct = Math.abs(ev.impact);
+        document.getElementById('eval-impact').textContent = ev.impact + '/5';
+        const impactPct = ((ev.impact - 1) / 4) * 100;
         document.getElementById('eval-impact-bar').style.width = impactPct + '%';
         document.getElementById('eval-impact-bar').style.backgroundColor = getImpactColor(ev.impact);
 
-        document.getElementById('eval-preparedness').textContent = ev.preparedness + '/200';
-        const prepPct = (ev.preparedness / 200) * 100;
+        document.getElementById('eval-preparedness').textContent = ev.preparedness + '/5';
+        const prepPct = ((ev.preparedness - 1) / 4) * 100;
         document.getElementById('eval-preparedness-bar').style.width = prepPct + '%';
         document.getElementById('eval-preparedness-bar').style.backgroundColor = getPreparednessColor(ev.preparedness);
 
