@@ -56,22 +56,32 @@
     return ev.impact + ((ev.preparedness - 1) / 4) * (5 - ev.impact);
   }
 
+  // Score-to-label mapping (1-5 scale, using float ranges)
+  function getScoreLabel(score) {
+    if (score < 1.8) return 'Critically Unprepared';
+    if (score < 2.6) return 'Highly Unprepared';
+    if (score < 3.4) return 'Unprepared';
+    if (score < 4.2) return 'Almost Prepared';
+    return 'Prepared';
+  }
+
+  // Score-to-color mapping: 1=black, 2=red, 3=orange, 4=yellow, 5=green
+  function getScoreColor(score) {
+    if (score < 1.8) return '#000000'; // Critically Unprepared (black)
+    if (score < 2.6) return '#c0392b'; // Highly Unprepared (red)
+    if (score < 3.4) return '#e67e22'; // Unprepared (orange)
+    if (score < 4.2) return '#f1c40f'; // Almost Prepared (yellow)
+    return '#27ae60';                  // Prepared (green)
+  }
+
   // 5-stage color based on net impact (1-5, higher = better)
   function getNetImpactColor(netImpact) {
-    if (netImpact < 1.8) return '#4a4a4a'; // Critically Unprepared (dark grey)
-    if (netImpact < 2.6) return '#c0392b'; // Highly Unprepared (red)
-    if (netImpact < 3.4) return '#e67e22'; // Unprepared (orange)
-    if (netImpact < 4.2) return '#f1c40f'; // Almost Prepared (yellow)
-    return '#27ae60';                       // Prepared (green)
+    return getScoreColor(netImpact);
   }
 
   // Preparedness-based color for table bars (1-5 scale)
   function getPreparednessColor(score) {
-    if (score < 1.5) return '#4a4a4a';  // Critically Unprepared
-    if (score < 2.5) return '#c0392b';  // Highly Unprepared
-    if (score < 3.5) return '#e67e22';  // Unprepared
-    if (score < 4.5) return '#f1c40f';  // Almost Prepared
-    return '#27ae60';                    // Prepared
+    return getScoreColor(score);
   }
 
   function getDotColor(d) {
@@ -83,11 +93,12 @@
     const tooltip = container.querySelector('.chart-tooltip');
     const mode = MODE_CONFIG[currentMode];
 
+    const ev = d.evaluation;
     tooltip.innerHTML = `
       <div class="tt-title">${d.title}</div>
-      <div class="tt-row"><span class="tt-label">Likelihood</span><span>${d.evaluation.likelihood}/5</span></div>
-      <div class="tt-row"><span class="tt-label">Impact</span><span>${d.evaluation.impact}/5</span></div>
-      <div class="tt-row"><span class="tt-label">Preparedness</span><span>${d.evaluation.preparedness}/5</span></div>
+      <div class="tt-row"><span class="tt-label">Likelihood</span><span>${ev.likelihood}/5</span></div>
+      <div class="tt-row"><span class="tt-label">Impact</span><span style="color:${getScoreColor(ev.impact)}">${getScoreLabel(ev.impact)}</span></div>
+      <div class="tt-row"><span class="tt-label">Preparedness</span><span style="color:${getScoreColor(ev.preparedness)}">${getScoreLabel(ev.preparedness)}</span></div>
       <div class="tt-summary">${truncate(d.summary, 120)}</div>
     `;
 
@@ -202,7 +213,7 @@
 
       vGrad.append('stop').attr('offset', '0%').attr('stop-color', '#27ae60').attr('stop-opacity', 0.0);
       vGrad.append('stop').attr('offset', '50%').attr('stop-color', '#e67e22').attr('stop-opacity', 0.06);
-      vGrad.append('stop').attr('offset', '100%').attr('stop-color', '#4a4a4a').attr('stop-opacity', 0.18);
+      vGrad.append('stop').attr('offset', '100%').attr('stop-color', '#000000').attr('stop-opacity', 0.18);
 
       // Layer both gradients over the full chart area
       g.append('rect')
@@ -466,7 +477,7 @@
               <div class="preparedness-bar">
                 <div class="preparedness-bar-fill" style="width: ${prepPct}%; background-color: ${prepColor};"></div>
               </div>
-              <span class="preparedness-label" style="color: ${prepColor};">${ev.preparedness}/5</span>
+              <span class="preparedness-label" style="color: ${prepColor};">${getScoreLabel(ev.preparedness)}</span>
             </div>
           </td>
         </tr>`;

@@ -89,12 +89,26 @@
       return tag.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
 
+    // Score-to-label mapping (1-5 scale, using float ranges)
+    function getScoreLabel(score) {
+      if (score < 1.8) return 'Critically Unprepared';
+      if (score < 2.6) return 'Highly Unprepared';
+      if (score < 3.4) return 'Unprepared';
+      if (score < 4.2) return 'Almost Prepared';
+      return 'Prepared';
+    }
+
+    // Score-to-color: 1=black, 2=red, 3=orange, 4=yellow, 5=green
+    function getScoreColor(score) {
+      if (score < 1.8) return '#000000';
+      if (score < 2.6) return '#c0392b';
+      if (score < 3.4) return '#e67e22';
+      if (score < 4.2) return '#f1c40f';
+      return '#27ae60';
+    }
+
     function getPreparednessColor(score) {
-      if (score < 1.5) return '#c0392b';
-      if (score < 2.5) return '#e67e22';
-      if (score < 3.5) return '#f1c40f';
-      if (score < 4.5) return '#27ae60';
-      return '#1e8449';
+      return getScoreColor(score);
     }
 
     async function init() {
@@ -142,7 +156,7 @@
         document.getElementById('related-scenarios').innerHTML = related.map(s => {
           const ev = s.evaluation;
           const prepColor = ev ? getPreparednessColor(ev.preparedness) : '#ccc';
-          const prepText = ev ? ev.preparedness + '/5' : 'N/A';
+          const prepText = ev ? getScoreLabel(ev.preparedness) : 'N/A';
 
           return '<a href="scenario.html#' + s.id + '" class="related-card">' +
             '<div class="related-card-header">' +

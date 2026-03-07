@@ -158,19 +158,30 @@
       return;
     }
 
+    // Score-to-label mapping (1-5 scale, using float ranges)
+    function getScoreLabel(score) {
+      if (score < 1.8) return 'Critically Unprepared';
+      if (score < 2.6) return 'Highly Unprepared';
+      if (score < 3.4) return 'Unprepared';
+      if (score < 4.2) return 'Almost Prepared';
+      return 'Prepared';
+    }
+
+    // Score-to-color: 1=black, 2=red, 3=orange, 4=yellow, 5=green
+    function getScoreColor(score) {
+      if (score < 1.8) return '#000000';
+      if (score < 2.6) return '#c0392b';
+      if (score < 3.4) return '#e67e22';
+      if (score < 4.2) return '#f1c40f';
+      return '#27ae60';
+    }
+
     function getPreparednessColor(score) {
-      if (score < 1.5) return '#c0392b';
-      if (score < 2.5) return '#e67e22';
-      if (score < 3.5) return '#f1c40f';
-      if (score < 4.5) return '#27ae60';
-      return '#1e8449';
+      return getScoreColor(score);
     }
 
     function getImpactColor(impact) {
-      if (impact >= 4) return '#27ae60';
-      if (impact >= 3) return '#f1c40f';
-      if (impact >= 2) return '#e67e22';
-      return '#c0392b';
+      return getScoreColor(impact);
     }
 
     function formatTag(tag) {
@@ -220,12 +231,16 @@
         document.getElementById('eval-likelihood-bar').style.width = ((ev.likelihood - 1) / 4) * 100 + '%';
         document.getElementById('eval-likelihood-bar').style.backgroundColor = '#3498db';
 
-        document.getElementById('eval-impact').textContent = ev.impact + '/5';
+        const impactEl = document.getElementById('eval-impact');
+        impactEl.textContent = getScoreLabel(ev.impact);
+        impactEl.style.color = getImpactColor(ev.impact);
         const impactPct = ((ev.impact - 1) / 4) * 100;
         document.getElementById('eval-impact-bar').style.width = impactPct + '%';
         document.getElementById('eval-impact-bar').style.backgroundColor = getImpactColor(ev.impact);
 
-        document.getElementById('eval-preparedness').textContent = ev.preparedness + '/5';
+        const prepEl = document.getElementById('eval-preparedness');
+        prepEl.textContent = getScoreLabel(ev.preparedness);
+        prepEl.style.color = getPreparednessColor(ev.preparedness);
         const prepPct = ((ev.preparedness - 1) / 4) * 100;
         document.getElementById('eval-preparedness-bar').style.width = prepPct + '%';
         document.getElementById('eval-preparedness-bar').style.backgroundColor = getPreparednessColor(ev.preparedness);
