@@ -158,8 +158,8 @@
       return;
     }
 
-    // Score-to-label mapping (1-5 scale, using float ranges)
-    function getScoreLabel(score) {
+    // --- Preparedness labels & colors ---
+    function getPreparednessLabel(score) {
       if (score < 1.8) return 'Critically Unprepared';
       if (score < 2.6) return 'Highly Unprepared';
       if (score < 3.4) return 'Unprepared';
@@ -167,8 +167,7 @@
       return 'Prepared';
     }
 
-    // Score-to-color: 1=black, 2=red, 3=orange, 4=yellow, 5=green
-    function getScoreColor(score) {
+    function getPreparednessColor(score) {
       if (score < 1.8) return '#000000';
       if (score < 2.6) return '#c0392b';
       if (score < 3.4) return '#e67e22';
@@ -176,15 +175,20 @@
       return '#27ae60';
     }
 
-    function getPreparednessColor(score) {
-      return getScoreColor(score);
+    // --- Impact labels & colors ---
+    function getImpactLabel(score) {
+      if (score < 1.8) return 'Systemic Risk';
+      if (score < 2.6) return 'Broken for All';
+      if (score < 3.4) return 'Broken for Some';
+      if (score < 4.2) return 'Stable';
+      return 'Improving';
     }
 
-    function getImpactColor(impact) {
-      return getScoreColor(impact);
+    function getImpactColor(score) {
+      return getPreparednessColor(score);
     }
 
-    // Likelihood label mapping (1-5 scale, using same float ranges)
+    // --- Likelihood labels & colors ---
     function getLikelihoodLabel(score) {
       if (score < 1.8) return 'Improbable';
       if (score < 2.6) return 'Possible';
@@ -193,13 +197,17 @@
       return 'Emerging';
     }
 
-    // Likelihood color: white to mid grey
     function getLikelihoodColor(score) {
       if (score < 1.8) return '#cccccc';
       if (score < 2.6) return '#aaaaaa';
       if (score < 3.4) return '#888888';
       if (score < 4.2) return '#666666';
       return '#444444';
+    }
+
+    // --- Badge helper ---
+    function makeBadge(label, bgColor, textColor) {
+      return '<span class="score-badge" style="background:' + bgColor + ';color:' + textColor + ';border:1px solid #fff;border-radius:5px;">' + label + '</span>';
     }
 
     function formatTag(tag) {
@@ -245,22 +253,16 @@
       if (ev) {
         document.getElementById('eval-card').style.display = '';
         document.getElementById('eval-date').textContent = 'Evaluated: ' + ev.date;
-        const likelihoodEl = document.getElementById('eval-likelihood');
-        likelihoodEl.textContent = getLikelihoodLabel(ev.likelihood);
-        likelihoodEl.style.color = getLikelihoodColor(ev.likelihood);
+        document.getElementById('eval-likelihood').innerHTML = makeBadge(getLikelihoodLabel(ev.likelihood), getLikelihoodColor(ev.likelihood), '#000');
         document.getElementById('eval-likelihood-bar').style.width = ((ev.likelihood - 1) / 4) * 100 + '%';
         document.getElementById('eval-likelihood-bar').style.backgroundColor = getLikelihoodColor(ev.likelihood);
 
-        const impactEl = document.getElementById('eval-impact');
-        impactEl.textContent = getScoreLabel(ev.impact);
-        impactEl.style.color = getImpactColor(ev.impact);
+        document.getElementById('eval-impact').innerHTML = makeBadge(getImpactLabel(ev.impact), getImpactColor(ev.impact), '#fff');
         const impactPct = ((ev.impact - 1) / 4) * 100;
         document.getElementById('eval-impact-bar').style.width = impactPct + '%';
         document.getElementById('eval-impact-bar').style.backgroundColor = getImpactColor(ev.impact);
 
-        const prepEl = document.getElementById('eval-preparedness');
-        prepEl.textContent = getScoreLabel(ev.preparedness);
-        prepEl.style.color = getPreparednessColor(ev.preparedness);
+        document.getElementById('eval-preparedness').innerHTML = makeBadge(getPreparednessLabel(ev.preparedness), getPreparednessColor(ev.preparedness), '#fff');
         const prepPct = ((ev.preparedness - 1) / 4) * 100;
         document.getElementById('eval-preparedness-bar').style.width = prepPct + '%';
         document.getElementById('eval-preparedness-bar').style.backgroundColor = getPreparednessColor(ev.preparedness);

@@ -596,7 +596,19 @@ a.policy-tag:hover {
   min-width: 32px;
 }
 
-/* Likelihood badge */
+/* Score badge (shared pill style for likelihood, impact, preparedness) */
+.score-badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 5px;
+  border: 1px solid #fff;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* Likelihood badge (legacy class, kept for compat) */
 .likelihood-badge {
   font-size: 0.82rem;
   font-weight: 600;

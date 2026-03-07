@@ -89,8 +89,8 @@
       return tag.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
 
-    // Score-to-label mapping (1-5 scale, using float ranges)
-    function getScoreLabel(score) {
+    // --- Preparedness labels & colors ---
+    function getPreparednessLabel(score) {
       if (score < 1.8) return 'Critically Unprepared';
       if (score < 2.6) return 'Highly Unprepared';
       if (score < 3.4) return 'Unprepared';
@@ -98,8 +98,7 @@
       return 'Prepared';
     }
 
-    // Score-to-color: 1=black, 2=red, 3=orange, 4=yellow, 5=green
-    function getScoreColor(score) {
+    function getPreparednessColor(score) {
       if (score < 1.8) return '#000000';
       if (score < 2.6) return '#c0392b';
       if (score < 3.4) return '#e67e22';
@@ -107,11 +106,20 @@
       return '#27ae60';
     }
 
-    function getPreparednessColor(score) {
-      return getScoreColor(score);
+    // --- Impact labels & colors ---
+    function getImpactLabel(score) {
+      if (score < 1.8) return 'Systemic Risk';
+      if (score < 2.6) return 'Broken for All';
+      if (score < 3.4) return 'Broken for Some';
+      if (score < 4.2) return 'Stable';
+      return 'Improving';
     }
 
-    // Likelihood label mapping (1-5 scale, using same float ranges)
+    function getImpactColor(score) {
+      return getPreparednessColor(score);
+    }
+
+    // --- Likelihood labels & colors ---
     function getLikelihoodLabel(score) {
       if (score < 1.8) return 'Improbable';
       if (score < 2.6) return 'Possible';
@@ -120,13 +128,17 @@
       return 'Emerging';
     }
 
-    // Likelihood color: white to mid grey
     function getLikelihoodColor(score) {
       if (score < 1.8) return '#cccccc';
       if (score < 2.6) return '#aaaaaa';
       if (score < 3.4) return '#888888';
       if (score < 4.2) return '#666666';
       return '#444444';
+    }
+
+    // --- Badge helper ---
+    function makeBadge(label, bgColor, textColor) {
+      return '<span class="score-badge" style="background:' + bgColor + ';color:' + textColor + ';border:1px solid #fff;border-radius:5px;">' + label + '</span>';
     }
 
     async function init() {
@@ -173,17 +185,14 @@
         document.getElementById('related-section').style.display = '';
         document.getElementById('related-scenarios').innerHTML = related.map(s => {
           const ev = s.evaluation;
-          const prepColor = ev ? getPreparednessColor(ev.preparedness) : '#ccc';
-          const prepText = ev ? getScoreLabel(ev.preparedness) : 'N/A';
-
           return '<a href="scenario.html#' + s.id + '" class="related-card">' +
             '<div class="related-card-header">' +
               '<h3 class="related-card-title">' + s.title + '</h3>' +
               '<span class="related-card-institution">' + s.institution + '</span>' +
             '</div>' +
             '<div class="related-card-metrics">' +
-              (ev ? '<span class="related-metric" style="color:' + getLikelihoodColor(ev.likelihood) + '">Likelihood: ' + getLikelihoodLabel(ev.likelihood) + '</span>' : '') +
-              '<span class="related-metric" style="color:' + prepColor + '">Preparedness: ' + prepText + '</span>' +
+              (ev ? '<span class="related-metric">Likelihood: ' + makeBadge(getLikelihoodLabel(ev.likelihood), getLikelihoodColor(ev.likelihood), '#000') + '</span>' : '') +
+              (ev ? '<span class="related-metric">Preparedness: ' + makeBadge(getPreparednessLabel(ev.preparedness), getPreparednessColor(ev.preparedness), '#fff') + '</span>' : '') +
             '</div>' +
           '</a>';
         }).join('');
