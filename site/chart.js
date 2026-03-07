@@ -10,6 +10,11 @@
   let data = null;
   let currentMode = 'risk'; // 'risk' | 'policyGaps' | 'preparedness'
 
+  // --- Helpers ---
+  function formatTag(tag) {
+    return tag.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
   // --- Constants ---
   const MARGIN = { top: 20, right: 30, bottom: 50, left: 55 };
   const DOT_RADIUS = 7;
@@ -694,13 +699,9 @@
         const prepPct = Math.round(((ev.preparedness - 1) / 4) * 100);
         const prepColor = getPreparednessColor(ev.preparedness);
 
-        // Find relevant policies (match challenge tags to scenario tags)
-        const relevantPolicies = policies
-          .filter((p) => s.tags.includes(p.challengeTag))
-          .slice(0, 3);
-
-        const policyHtml = relevantPolicies.length
-          ? relevantPolicies.map((p) => `<a href="policy.html#${p.id}" class="policy-tag">${p.name}</a>`).join('')
+        // Show policy challenge tags
+        const challengeHtml = s.tags.length
+          ? s.tags.slice(0, 4).map((tag) => `<span class="scenario-card-tag">${formatTag(tag)}</span>`).join('')
           : '<span class="policy-tag">&mdash;</span>';
 
         return `
@@ -711,7 +712,7 @@
           </td>
           <td>${likelihoodBadge(ev.likelihood)}</td>
           <td>
-            <div class="policy-tags">${policyHtml}</div>
+            <div class="scenario-card-tags">${challengeHtml}</div>
           </td>
           <td class="preparedness-cell">
             <div class="preparedness-bar-container">
