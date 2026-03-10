@@ -400,9 +400,7 @@ a:hover {
   color: var(--color-primary);
 }
 
-.gap-policy-count {
-  color: var(--color-text-light);
-  font-size: 0.82rem;
+.gap-likelihood {
   white-space: nowrap;
 }
 
