@@ -193,6 +193,13 @@ function compile() {
       .filter(p => p.challengeTag === tagName)
       .map(p => p.id);
 
+    // Compute average likelihood from tagged scenarios
+    let likelihood = null;
+    if (taggedScenarios.length > 0) {
+      const sum = taggedScenarios.reduce((acc, s) => acc + s.evaluation.likelihood, 0);
+      likelihood = Math.round(sum / taggedScenarios.length * 10) / 10;
+    }
+
     return {
       id: row.id,
       tag: tagName,
@@ -200,6 +207,7 @@ function compile() {
       opportunityName: row.opportunity_name,
       description: row.description,
       preparedness,
+      likelihood,
       rating: preparedness !== null ? getRating(preparedness) : null,
       scenarioCount: taggedScenarios.length,
       policyIds: challengePolicies,

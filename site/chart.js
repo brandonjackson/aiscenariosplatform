@@ -178,11 +178,10 @@
 
     const rows = challenges
       .map((c) => {
-        const policyCount = c.policyIds ? c.policyIds.length : 0;
         return `
           <tr>
             <td class="gap-challenge-name">${c.problemName}</td>
-            <td class="gap-policy-count">${policyCount} ${policyCount === 1 ? 'policy' : 'policies'}</td>
+            <td class="gap-likelihood">${c.likelihood !== null ? likelihoodBadge(c.likelihood) : '—'}</td>
             <td class="gap-preparedness">
               <div class="gap-bar-container">
                 ${preparednessBadge(c.preparedness)}
@@ -197,7 +196,7 @@
         <thead>
           <tr>
             <th>Challenge</th>
-            <th>Policies</th>
+            <th>Likelihood</th>
             <th>Preparedness</th>
           </tr>
         </thead>
